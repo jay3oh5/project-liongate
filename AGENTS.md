@@ -26,9 +26,9 @@
 
 <!-- agent-state:start -->
 Task: None
-Base: d0b47f0
+Base: b7b25b5
 Status: idle
 Next: None
 Blockers: None
-Verified: Release v0.1.0 tagged and published on GitHub. CI workflow compiled LionGate-v0.1.0.apk in ~1m 50s and attached to GitHub Release https://github.com/jay3oh5/project-liongate/releases/tag/v0.1.0.
+Verified: Release v0.1.0 published on GitHub. Complete README with release/build badges and CHANGELOG.md pushed to main.
 <!-- agent-state:end -->
