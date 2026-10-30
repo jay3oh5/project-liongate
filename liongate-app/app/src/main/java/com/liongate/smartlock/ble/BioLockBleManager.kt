@@ -62,6 +62,18 @@ class BioLockBleManager(private val context: Context) {
     private val _logMessage = MutableStateFlow<String>("")
     val logMessage: StateFlow<String> = _logMessage.asStateFlow()
 
+    private val _isPassageMode = MutableStateFlow(false)
+    val isPassageMode: StateFlow<Boolean> = _isPassageMode.asStateFlow()
+
+    private val _lockOnSeconds = MutableStateFlow(5)
+    val lockOnSeconds: StateFlow<Int> = _lockOnSeconds.asStateFlow()
+
+    private val _doorSensorMode = MutableStateFlow(1)
+    val doorSensorMode: StateFlow<Int> = _doorSensorMode.asStateFlow()
+
+    private val _lastTimeSync = MutableStateFlow<Long?>(null)
+    val lastTimeSync: StateFlow<Long?> = _lastTimeSync.asStateFlow()
+
     private var activeGatt: BluetoothGatt? = null
     private var pullChar: BluetoothGattCharacteristic? = null
     private var cmdChar: BluetoothGattCharacteristic? = null
@@ -755,6 +767,149 @@ class BioLockBleManager(private val context: Context) {
             delay(15)
         }
         return true
+    }
+
+    suspend fun setPassageMode(enable: Boolean): Result<Boolean> {
+        val gatt = activeGatt ?: return Result.failure(IllegalStateException("Not connected"))
+        return try {
+            log("Sending Passage Mode (Op=4, enable=$enable)...")
+            val payload = ZkProtocol.buildPassageModePayload(enable)
+            val msg = buildSessionC3Message(command = ZkProtocol.CMD_CONTROL, data = payload)
+            val resp = sendC3Packet(gatt, msg, timeoutMs = 2500)
+            if (resp != null && resp.isSuccess) {
+                _isPassageMode.value = enable
+                log("Passage Mode updated: enable=$enable (code=${resp.returnCode})")
+                Result.success(true)
+            } else {
+                val err = resp?.returnCode ?: -1
+                log("Passage Mode rejected: code=$err")
+                Result.failure(RuntimeException("Rejected by lock: $err"))
+            }
+        } catch (e: Exception) {
+            log("Error setting passage mode: ${e.message}")
+            Result.failure(e)
+        }
+    }
+
+    suspend fun lockNow(): Result<Boolean> {
+        val gatt = activeGatt ?: return Result.failure(IllegalStateException("Not connected"))
+        return try {
+            log("Sending immediate Force Lock (Op=1, duration=0s)...")
+            val payload = ZkProtocol.buildForceLockPayload()
+            val msg = buildSessionC3Message(command = ZkProtocol.CMD_CONTROL, data = payload)
+            val resp = sendC3Packet(gatt, msg, timeoutMs = 2000)
+            if (resp != null && resp.isSuccess) {
+                _isPassageMode.value = false
+                log("Force Lock accepted: motor clutch disengaged")
+                Result.success(true)
+            } else {
+                val err = resp?.returnCode ?: -1
+                log("Force Lock rejected: code=$err")
+                Result.failure(RuntimeException("Rejected: $err"))
+            }
+        } catch (e: Exception) {
+            log("Error sending force lock: ${e.message}")
+            Result.failure(e)
+        }
+    }
+
+    suspend fun setLockOnDuration(seconds: Int): Result<Boolean> {
+        val gatt = activeGatt ?: return Result.failure(IllegalStateException("Not connected"))
+        return try {
+            val clamped = seconds.coerceIn(1, 10)
+            log("Setting LockOn duration = ${clamped}s...")
+            val payload = ZkProtocol.buildSetLockOnPayload(clamped)
+            val msg = buildSessionC3Message(command = ZkProtocol.CMD_SET_PARAM, data = payload)
+            val resp = sendC3Packet(gatt, msg, timeoutMs = 2000)
+            if (resp != null && resp.isSuccess) {
+                _lockOnSeconds.value = clamped
+                log("LockOn duration updated to ${clamped}s")
+                Result.success(true)
+            } else {
+                val err = resp?.returnCode ?: -1
+                log("Set LockOn rejected: code=$err")
+                Result.failure(RuntimeException("Rejected: $err"))
+            }
+        } catch (e: Exception) {
+            log("Error setting LockOn: ${e.message}")
+            Result.failure(e)
+        }
+    }
+
+    suspend fun setDoorSensorMode(mode: Int): Result<Boolean> {
+        val gatt = activeGatt ?: return Result.failure(IllegalStateException("Not connected"))
+        return try {
+            log("Setting DSM mode = $mode...")
+            val payload = ZkProtocol.buildSetDsmPayload(mode)
+            val msg = buildSessionC3Message(command = ZkProtocol.CMD_SET_PARAM, data = payload)
+            val resp = sendC3Packet(gatt, msg, timeoutMs = 2000)
+            if (resp != null && resp.isSuccess) {
+                _doorSensorMode.value = mode
+                log("DSM mode updated to $mode")
+                Result.success(true)
+            } else {
+                val err = resp?.returnCode ?: -1
+                log("Set DSM rejected: code=$err")
+                Result.failure(RuntimeException("Rejected: $err"))
+            }
+        } catch (e: Exception) {
+            log("Error setting DSM: ${e.message}")
+            Result.failure(e)
+        }
+    }
+
+    suspend fun syncTime(): Result<Boolean> {
+        val gatt = activeGatt ?: return Result.failure(IllegalStateException("Not connected"))
+        return try {
+            val epoch = System.currentTimeMillis() / 1000
+            val tz = java.util.TimeZone.getDefault()
+            val tzOffset = tz.getOffset(System.currentTimeMillis()) / 3600000
+            val payload = ZkProtocol.buildSyncTimePayload(epoch, tzOffset)
+            log("Syncing Lock RTC: SysTime=$epoch, TimeZone=$tzOffset...")
+            val msg = buildSessionC3Message(command = ZkProtocol.CMD_SET_PARAM, data = payload)
+            val resp = sendC3Packet(gatt, msg, timeoutMs = 2500)
+            if (resp != null && resp.isSuccess) {
+                _lastTimeSync.value = System.currentTimeMillis()
+                log("Lock RTC synchronized successfully!")
+                Result.success(true)
+            } else {
+                val err = resp?.returnCode ?: -1
+                log("RTC sync rejected: code=$err")
+                Result.failure(RuntimeException("Rejected: $err"))
+            }
+        } catch (e: Exception) {
+            log("Error syncing RTC: ${e.message}")
+            Result.failure(e)
+        }
+    }
+
+    suspend fun queryLockParams(): Result<Map<String, String>> {
+        val gatt = activeGatt ?: return Result.failure(IllegalStateException("Not connected"))
+        return try {
+            log("Querying lock parameters (LockOn, DSM, etc.)...")
+            val payload = ZkProtocol.buildGetDeviceParamPayload("LockOn,DSM,MachineVSType,AlarmFunOff")
+            val msg = buildSessionC3Message(command = ZkProtocol.CMD_GET_PARAM, data = payload)
+            val resp = sendC3Packet(gatt, msg, timeoutMs = 2500)
+            if (resp != null) {
+                val str = String(resp.data, Charsets.US_ASCII).trim()
+                log("Lock params response: $str")
+                val map = mutableMapOf<String, String>()
+                str.split(",").forEach { pair ->
+                    val parts = pair.split("=")
+                    if (parts.size == 2) {
+                        map[parts[0].trim()] = parts[1].trim()
+                    }
+                }
+                map["LockOn"]?.toIntOrNull()?.let { _lockOnSeconds.value = it }
+                map["DSM"]?.toIntOrNull()?.let { _doorSensorMode.value = it }
+                Result.success(map)
+            } else {
+                Result.failure(RuntimeException("No response from lock"))
+            }
+        } catch (e: Exception) {
+            log("Error querying lock parameters: ${e.message}")
+            Result.failure(e)
+        }
     }
 
     private fun log(msg: String) {

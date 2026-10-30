@@ -29,13 +29,20 @@ import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.Bluetooth
 import androidx.compose.material.icons.filled.BluetoothSearching
 import androidx.compose.material.icons.filled.CheckCircle
 import androidx.compose.material.icons.filled.Key
 import androidx.compose.material.icons.filled.Lock
 import androidx.compose.material.icons.filled.LockOpen
+import androidx.compose.material.icons.filled.MeetingRoom
 import androidx.compose.material.icons.filled.Refresh
+import androidx.compose.material.icons.filled.Remove
+import androidx.compose.material.icons.filled.Sensors
+import androidx.compose.material.icons.filled.Settings
+import androidx.compose.material.icons.filled.Sync
+import androidx.compose.material.icons.filled.Timer
 import androidx.compose.material.icons.filled.Visibility
 import androidx.compose.material.icons.filled.VisibilityOff
 import androidx.compose.material3.Button
@@ -86,6 +93,9 @@ import com.liongate.smartlock.ui.theme.Slate400
 import com.liongate.smartlock.ui.theme.Slate700
 import com.liongate.smartlock.ui.theme.Slate800
 import com.liongate.smartlock.ui.theme.Slate900
+import java.text.SimpleDateFormat
+import java.util.Date
+import java.util.Locale
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -101,10 +111,15 @@ fun LockScreen(
     val connectionState by bleManager.connectionState.collectAsState()
     val discoveredDevices by bleManager.discoveredDevices.collectAsState()
     val logMessage by bleManager.logMessage.collectAsState()
+    val isPassageMode by bleManager.isPassageMode.collectAsState()
+    val lockOnSeconds by bleManager.lockOnSeconds.collectAsState()
+    val doorSensorMode by bleManager.doorSensorMode.collectAsState()
+    val lastTimeSync by bleManager.lastTimeSync.collectAsState()
 
     var pinText by remember(savedPin) { mutableStateOf(savedPin) }
     var showPin by remember { mutableStateOf(false) }
     var showDeviceSheet by remember { mutableStateOf(false) }
+    var showSettingsSheet by remember { mutableStateOf(false) }
 
     val vibrator = remember { context.getSystemService(Vibrator::class.java) }
 
@@ -143,6 +158,13 @@ fun LockScreen(
                     }
                 },
                 actions = {
+                    IconButton(onClick = { showSettingsSheet = true }) {
+                        Icon(
+                            Icons.Default.Settings,
+                            contentDescription = "Lock Settings",
+                            tint = Slate400
+                        )
+                    }
                     IconButton(onClick = { showDeviceSheet = true; bleManager.startScan() }) {
                         Icon(
                             Icons.Default.BluetoothSearching,
@@ -299,6 +321,84 @@ fun LockScreen(
                 )
             }
 
+            // Quick Controls: Passage Mode & Force Lock
+            val isConnected = connectionState is LockConnectionState.Connected ||
+                    connectionState is LockConnectionState.Unlocked ||
+                    connectionState is LockConnectionState.Unlocking
+
+            Row(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(vertical = 4.dp),
+                horizontalArrangement = Arrangement.spacedBy(12.dp)
+            ) {
+                // Passage Mode Toggle
+                Button(
+                    onClick = { bleManager.setPassageMode(!isPassageMode) },
+                    enabled = isConnected,
+                    colors = ButtonDefaults.buttonColors(
+                        containerColor = if (isPassageMode) Amber500 else Slate800,
+                        contentColor = if (isPassageMode) Slate900 else Color.White,
+                        disabledContainerColor = Slate800.copy(alpha = 0.5f),
+                        disabledContentColor = Slate400.copy(alpha = 0.5f)
+                    ),
+                    shape = RoundedCornerShape(12.dp),
+                    modifier = Modifier
+                        .weight(1f)
+                        .height(48.dp)
+                        .border(
+                            1.dp,
+                            if (isPassageMode) Amber500 else Slate700,
+                            RoundedCornerShape(12.dp)
+                        )
+                ) {
+                    Row(verticalAlignment = Alignment.CenterVertically) {
+                        Icon(
+                            if (isPassageMode) Icons.Default.LockOpen else Icons.Default.MeetingRoom,
+                            contentDescription = null,
+                            modifier = Modifier.size(18.dp)
+                        )
+                        Spacer(modifier = Modifier.width(6.dp))
+                        Text(
+                            if (isPassageMode) "Passage: ON" else "Passage Mode",
+                            fontSize = 12.sp,
+                            fontWeight = FontWeight.SemiBold
+                        )
+                    }
+                }
+
+                // Force Lock / Relock Now Button
+                Button(
+                    onClick = { bleManager.lockNow() },
+                    enabled = isConnected,
+                    colors = ButtonDefaults.buttonColors(
+                        containerColor = Slate800,
+                        contentColor = Rose500,
+                        disabledContainerColor = Slate800.copy(alpha = 0.5f),
+                        disabledContentColor = Slate400.copy(alpha = 0.5f)
+                    ),
+                    shape = RoundedCornerShape(12.dp),
+                    modifier = Modifier
+                        .weight(1f)
+                        .height(48.dp)
+                        .border(1.dp, Rose500.copy(alpha = 0.5f), RoundedCornerShape(12.dp))
+                ) {
+                    Row(verticalAlignment = Alignment.CenterVertically) {
+                        Icon(
+                            Icons.Default.Lock,
+                            contentDescription = null,
+                            modifier = Modifier.size(18.dp)
+                        )
+                        Spacer(modifier = Modifier.width(6.dp))
+                        Text(
+                            "Lock Now",
+                            fontSize = 12.sp,
+                            fontWeight = FontWeight.SemiBold
+                        )
+                    }
+                }
+            }
+
             // PIN Code & Configuration Card
             Card(
                 modifier = Modifier.fillMaxWidth(),
@@ -442,6 +542,216 @@ fun LockScreen(
                         }
                     }
                 }
+            }
+        }
+    }
+
+    // Lock Hardware Settings Bottom Sheet
+    if (showSettingsSheet) {
+        val settingsSheetState = rememberModalBottomSheetState(skipPartiallyExpanded = true)
+        ModalBottomSheet(
+            onDismissRequest = { showSettingsSheet = false },
+            sheetState = settingsSheetState,
+            containerColor = Slate800
+        ) {
+            Column(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(20.dp)
+            ) {
+                Row(
+                    modifier = Modifier.fillMaxWidth(),
+                    horizontalArrangement = Arrangement.SpaceBetween,
+                    verticalAlignment = Alignment.CenterVertically
+                ) {
+                    Row(verticalAlignment = Alignment.CenterVertically) {
+                        Icon(Icons.Default.Settings, contentDescription = null, tint = Cyan500)
+                        Spacer(modifier = Modifier.width(8.dp))
+                        Text(
+                            "Lock Hardware Settings",
+                            fontWeight = FontWeight.Bold,
+                            fontSize = 18.sp,
+                            color = Color.White
+                        )
+                    }
+                }
+
+                Spacer(modifier = Modifier.height(16.dp))
+
+                // Section 1: Auto-Relock Hold Duration (LockOn)
+                Card(
+                    modifier = Modifier.fillMaxWidth(),
+                    colors = CardDefaults.cardColors(containerColor = Slate700.copy(alpha = 0.6f)),
+                    shape = RoundedCornerShape(12.dp)
+                ) {
+                    Column(modifier = Modifier.padding(14.dp)) {
+                        Row(verticalAlignment = Alignment.CenterVertically) {
+                            Icon(Icons.Default.Timer, contentDescription = null, tint = Cyan500, modifier = Modifier.size(20.dp))
+                            Spacer(modifier = Modifier.width(8.dp))
+                            Text("Auto-Relock Delay (LockOn)", fontWeight = FontWeight.SemiBold, color = Color.White)
+                        }
+                        Text(
+                            "Hold-open duration before clutch automatically relocks",
+                            fontSize = 12.sp,
+                            color = Slate400,
+                            modifier = Modifier.padding(top = 2.dp, bottom = 10.dp)
+                        )
+                        Row(
+                            modifier = Modifier.fillMaxWidth(),
+                            horizontalArrangement = Arrangement.SpaceBetween,
+                            verticalAlignment = Alignment.CenterVertically
+                        ) {
+                            Text(
+                                "$lockOnSeconds seconds",
+                                fontSize = 16.sp,
+                                fontWeight = FontWeight.Bold,
+                                color = Cyan500
+                            )
+                            Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
+                                Button(
+                                    onClick = {
+                                        if (lockOnSeconds > 1) bleManager.setLockOnDuration(lockOnSeconds - 1)
+                                    },
+                                    enabled = lockOnSeconds > 1,
+                                    colors = ButtonDefaults.buttonColors(containerColor = Slate800),
+                                    shape = RoundedCornerShape(8.dp)
+                                ) {
+                                    Icon(Icons.Default.Remove, contentDescription = "Decrease", tint = Color.White)
+                                }
+                                Button(
+                                    onClick = {
+                                        if (lockOnSeconds < 10) bleManager.setLockOnDuration(lockOnSeconds + 1)
+                                    },
+                                    enabled = lockOnSeconds < 10,
+                                    colors = ButtonDefaults.buttonColors(containerColor = Slate800),
+                                    shape = RoundedCornerShape(8.dp)
+                                ) {
+                                    Icon(Icons.Default.Add, contentDescription = "Increase", tint = Color.White)
+                                }
+                            }
+                        }
+                    }
+                }
+
+                Spacer(modifier = Modifier.height(12.dp))
+
+                // Section 2: Door Sensor Mode (DSM)
+                Card(
+                    modifier = Modifier.fillMaxWidth(),
+                    colors = CardDefaults.cardColors(containerColor = Slate700.copy(alpha = 0.6f)),
+                    shape = RoundedCornerShape(12.dp)
+                ) {
+                    Column(modifier = Modifier.padding(14.dp)) {
+                        Row(verticalAlignment = Alignment.CenterVertically) {
+                            Icon(Icons.Default.Sensors, contentDescription = null, tint = Cyan500, modifier = Modifier.size(20.dp))
+                            Spacer(modifier = Modifier.width(8.dp))
+                            Text("Door Sensor Mode (DSM)", fontWeight = FontWeight.SemiBold, color = Color.White)
+                        }
+                        Text(
+                            "Defines magnetic sensor trigger reaction",
+                            fontSize = 12.sp,
+                            color = Slate400,
+                            modifier = Modifier.padding(top = 2.dp, bottom = 10.dp)
+                        )
+                        Row(
+                            modifier = Modifier.fillMaxWidth(),
+                            horizontalArrangement = Arrangement.spacedBy(8.dp)
+                        ) {
+                            val modes = listOf(
+                                1 to "Auto-Relock (NC)",
+                                0 to "Normal Open (NO)",
+                                2 to "Disabled (None)"
+                            )
+                            modes.forEach { (modeValue, modeLabel) ->
+                                val isSelected = doorSensorMode == modeValue
+                                Card(
+                                    modifier = Modifier
+                                        .weight(1f)
+                                        .clickable { bleManager.setDoorSensorMode(modeValue) }
+                                        .border(
+                                            1.dp,
+                                            if (isSelected) Cyan500 else Slate700,
+                                            RoundedCornerShape(8.dp)
+                                        ),
+                                    colors = CardDefaults.cardColors(
+                                        containerColor = if (isSelected) Cyan500.copy(alpha = 0.2f) else Slate800
+                                    ),
+                                    shape = RoundedCornerShape(8.dp)
+                                ) {
+                                    Box(
+                                        modifier = Modifier
+                                            .fillMaxWidth()
+                                            .padding(vertical = 10.dp, horizontal = 4.dp),
+                                        contentAlignment = Alignment.Center
+                                    ) {
+                                        Text(
+                                            modeLabel,
+                                            fontSize = 10.sp,
+                                            fontWeight = if (isSelected) FontWeight.Bold else FontWeight.Normal,
+                                            color = if (isSelected) Cyan500 else Slate400,
+                                            maxLines = 2
+                                        )
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+
+                Spacer(modifier = Modifier.height(12.dp))
+
+                // Section 3: Lock RTC Clock Synchronization
+                Card(
+                    modifier = Modifier.fillMaxWidth(),
+                    colors = CardDefaults.cardColors(containerColor = Slate700.copy(alpha = 0.6f)),
+                    shape = RoundedCornerShape(12.dp)
+                ) {
+                    Column(modifier = Modifier.padding(14.dp)) {
+                        Row(
+                            modifier = Modifier.fillMaxWidth(),
+                            horizontalArrangement = Arrangement.SpaceBetween,
+                            verticalAlignment = Alignment.CenterVertically
+                        ) {
+                            Row(verticalAlignment = Alignment.CenterVertically) {
+                                Icon(Icons.Default.Sync, contentDescription = null, tint = Cyan500, modifier = Modifier.size(20.dp))
+                                Spacer(modifier = Modifier.width(8.dp))
+                                Text("Sync Lock Clock (RTC)", fontWeight = FontWeight.SemiBold, color = Color.White)
+                            }
+                            Button(
+                                onClick = { bleManager.syncTime() },
+                                colors = ButtonDefaults.buttonColors(containerColor = Cyan500),
+                                shape = RoundedCornerShape(8.dp)
+                            ) {
+                                Text("Sync Now", fontSize = 12.sp)
+                            }
+                        }
+                        Spacer(modifier = Modifier.height(4.dp))
+                        val formattedTime = lastTimeSync?.let {
+                            SimpleDateFormat("yyyy-MM-dd HH:mm:ss", Locale.getDefault()).format(Date(it * 1000L))
+                        } ?: "Not synchronized"
+                        Text(
+                            "Last Sync: $formattedTime",
+                            fontSize = 12.sp,
+                            color = Slate400
+                        )
+                    }
+                }
+
+                Spacer(modifier = Modifier.height(12.dp))
+
+                // Section 4: Query Lock Parameters
+                Button(
+                    onClick = { bleManager.queryLockParams() },
+                    modifier = Modifier.fillMaxWidth(),
+                    colors = ButtonDefaults.buttonColors(containerColor = Slate700),
+                    shape = RoundedCornerShape(12.dp)
+                ) {
+                    Icon(Icons.Default.Refresh, contentDescription = null, modifier = Modifier.size(16.dp))
+                    Spacer(modifier = Modifier.width(8.dp))
+                    Text("Refresh Lock Parameters", fontSize = 13.sp)
+                }
+
+                Spacer(modifier = Modifier.height(16.dp))
             }
         }
     }

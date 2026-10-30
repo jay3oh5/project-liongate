@@ -12,9 +12,14 @@ object ZkProtocol {
     const val C3_PROTOCOL_VERSION: Byte = 0x01.toByte()
 
     const val CMD_CONNECT: Byte = 0x01.toByte()
-    const val CMD_CONNECT_SESSION: Byte = 0x76.toByte()
-    const val CMD_CONTROL: Byte = 0x05.toByte()
     const val CMD_DISCONNECT: Byte = 0x02.toByte()
+    const val CMD_SET_PARAM: Byte = 0x03.toByte()
+    const val CMD_GET_PARAM: Byte = 0x04.toByte()
+    const val CMD_CONTROL: Byte = 0x05.toByte()
+    const val CMD_GET_TABLE_STRUCT: Byte = 0x06.toByte()
+    const val CMD_SET_TABLE_STRUCT: Byte = 0x07.toByte()
+    const val CMD_TABLE_DATA: Byte = 0x08.toByte()
+    const val CMD_CONNECT_SESSION: Byte = 0x76.toByte()
 
     const val CMD_ACK_OK: Int = 200        // 0xC8
     const val CMD_ACK_OK_NEW: Int = 201    // 0xC9
@@ -160,5 +165,45 @@ object ZkProtocol {
             durationSeconds.toByte(), // Param 3: Duration in seconds
             0x00.toByte()  // Param 4: Reserved
         )
+    }
+
+    fun buildPassageModePayload(enable: Boolean): ByteArray {
+        // Operation 4: Normally Open (Passage Mode)
+        // Param 1: Door 1, Param 2: 0, Param 3: 1 (enable) or 0 (disable), Param 4: 0
+        return byteArrayOf(
+            0x04.toByte(),
+            0x01.toByte(),
+            0x00.toByte(),
+            if (enable) 0x01.toByte() else 0x00.toByte(),
+            0x00.toByte()
+        )
+    }
+
+    fun buildForceLockPayload(): ByteArray {
+        // Operation 1: Output Control with duration = 0s (immediately relock / disengage clutch)
+        return byteArrayOf(
+            0x01.toByte(),
+            0x01.toByte(),
+            0x00.toByte(),
+            0x00.toByte(),
+            0x00.toByte()
+        )
+    }
+
+    fun buildSyncTimePayload(epochSeconds: Long, tzOffsetHours: Int): ByteArray {
+        return "SysTime=$epochSeconds,TimeZone=$tzOffsetHours,TimeZoneMin=0".toByteArray(Charsets.US_ASCII)
+    }
+
+    fun buildSetLockOnPayload(seconds: Int): ByteArray {
+        val clamped = seconds.coerceIn(1, 10)
+        return "LockOn=$clamped".toByteArray(Charsets.US_ASCII)
+    }
+
+    fun buildSetDsmPayload(mode: Int): ByteArray {
+        return "DSM=$mode".toByteArray(Charsets.US_ASCII)
+    }
+
+    fun buildGetDeviceParamPayload(paramNames: String): ByteArray {
+        return paramNames.toByteArray(Charsets.US_ASCII)
     }
 }
