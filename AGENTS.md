@@ -29,12 +29,10 @@ Task: App parity feature planning and implementation
 Base: 5a1b1be
 Status: active
 Next:
-  1. Review app parity plan with user
-  2. Implement Phase 1: Lock Controls & Settings Expansion (Passage Mode, Force Lock, LockOn, RTC sync)
-  3. Implement Phase 2: Audit Logs & Event History
-  4. Implement Phase 3: User Management
-  5. Implement Phase 4: Time Zones / Access Schedules
-  6. Implement Phase 5: Home Screen Widget
+  1. Implement Phase 2: Audit Logs & Event History (Query transaction logs, table data parsing, UI log browser)
+  2. Implement Phase 3: User Management (Add/delete user PINs, card IDs, permissions)
+  3. Implement Phase 4: Time Zones / Access Schedules (Door unlock schedules, passage mode timers)
+  4. Implement Phase 5: Home Screen Widget (Instant unlock 1-tap widget)
 Blockers: None
-Verified: Checked out branch feature/app-parity.
+Verified: Phase 1 implemented, tested, and pushed (commit 0fd8153) on branch feature/app-parity.
 <!-- agent-state:end -->
