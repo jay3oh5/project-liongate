@@ -25,10 +25,16 @@
 - Never commit secrets, binaries, or decompiled vendor code to Git.
 
 <!-- agent-state:start -->
-Task: None
-Base: b7b25b5
-Status: idle
-Next: None
+Task: App parity feature planning and implementation
+Base: 5a1b1be
+Status: active
+Next:
+  1. Review app parity plan with user
+  2. Implement Phase 1: Lock Controls & Settings Expansion (Passage Mode, Force Lock, LockOn, RTC sync)
+  3. Implement Phase 2: Audit Logs & Event History
+  4. Implement Phase 3: User Management
+  5. Implement Phase 4: Time Zones / Access Schedules
+  6. Implement Phase 5: Home Screen Widget
 Blockers: None
-Verified: Release v0.1.0 published on GitHub. Complete README with release/build badges and CHANGELOG.md pushed to main.
+Verified: Checked out branch feature/app-parity.
 <!-- agent-state:end -->
