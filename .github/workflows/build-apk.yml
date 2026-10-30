@@ -1,8 +1,9 @@
-name: Build LionGate APK
+name: Build and Release LionGate APK
 
 on:
   push:
     branches: [ "main" ]
+    tags: [ "v*" ]
   pull_request:
     branches: [ "main" ]
   workflow_dispatch:
@@ -12,7 +13,7 @@ permissions:
 
 jobs:
   build:
-    name: Assemble Debug APK
+    name: Assemble and Release APK
     runs-on: ubuntu-latest
 
     steps:
@@ -24,9 +25,6 @@ jobs:
         with:
           distribution: 'temurin'
           java-version: '17'
-
-      - name: Setup Android SDK
-        uses: android-actions/setup-android@v3
 
       - name: Setup Gradle 8.4
         uses: gradle/actions/setup-gradle@v3
@@ -47,11 +45,38 @@ jobs:
             echo "LIONGATE_DEFAULT_MAC=$DEFAULT_MAC" >> local.properties
           fi
           gradle assembleDebug --stacktrace
+          
+          # Rename output APK with version/tag for clean distribution
+          TAG_OR_BRANCH="${{ github.ref_name }}"
+          cp app/build/outputs/apk/debug/app-debug.apk app/build/outputs/apk/debug/LionGate-${TAG_OR_BRANCH}.apk
 
       - name: Upload Debug APK Artifact
         uses: actions/upload-artifact@v4
         with:
-          name: liongate-debug-apk
-          path: liongate-app/app/build/outputs/apk/debug/app-debug.apk
+          name: liongate-apk
+          path: liongate-app/app/build/outputs/apk/debug/*.apk
           if-no-files-found: error
           retention-days: 30
+
+      - name: Publish GitHub Release
+        if: startsWith(github.ref, 'refs/tags/')
+        uses: softprops/action-gh-release@v2
+        with:
+          files: liongate-app/app/build/outputs/apk/debug/LionGate-*.apk
+          name: Release ${{ github.ref_name }}
+          body: |
+            ### LionGate ${{ github.ref_name }}
+            
+            Modern 64-bit Android application targeting Android 14+ (tested on Samsung Galaxy S24 Ultra) for ZKTeco PL10B smart locks.
+            
+            #### Features:
+            - Single-pulse timed unlock protocol matching PL10B hardware specifications
+            - 5-second autonomous hardware auto-relock
+            - Real-time BLE RSSI signal meter and connection status
+            - Android 14+ Jetpack Compose Material 3 dark-themed interface
+            - Decoupled local credential security
+            
+            **Installation:** Download `LionGate-${{ github.ref_name }}.apk` below and install directly onto your Android device.
+          draft: false
+          prerelease: false
+          generate_release_notes: true
