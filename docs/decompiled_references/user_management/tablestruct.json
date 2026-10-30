@@ -1,0 +1,30 @@
+[
+  {
+    "deviceType": "4368",
+    "deviceTypeName": "BioLock",
+    "firmwareVersion": "svn.931",
+    "databaseVersion": "svn.931",
+    "tableStruct": "user=1,UID=i1,CardNo=i2,Pin=i3,Password=s4,Group=i5,StartTime=i6,EndTime=i7,Name=s8,Privilege=i9,SuperAuthorize=i10,Mark=s11\nuserauthorize=2,Pin=i1,AuthorizeTimezoneId=i2,AuthorizeDoorId=i3\nholiday=3,Holiday=i1,HolidayType=i2,Loop=i3\ntimezone=4,TimezoneId=i1,SunTime1=i2,SunTime2=i3,SunTime3=i4,MonTime1=i5,MonTime2=i6,MonTime3=i7,TueTime1=i8,TueTime2=i9,TueTime3=i10,WedTime1=i11,WedTime2=i12,WedTime3=i13,ThuTime1=i14,ThuTime2=i15,ThuTime3=i16,FriTime1=i17,FriTime2=i18,FriTime3=i19,SatTime1=i20,SatTime2=i21,SatTime3=i22,Hol1Time1=i23,Hol1Time2=i24,Hol1Time3=i25,Hol2Time1=i26,Hol2Time2=i27,Hol2Time3=i28,Hol3Time1=i29,Hol3Time2=i30,Hol3Time3=i31\ntransaction=5,Cardno=i1,Pin=i2,Verified=i3,DoorID=i4,EventType=i5,InOutState=i6,Time_second=i7,Index=i8\ntemplatev10=6,Size=i1,UID=i2,PIN=i3,FingerID=i4,Valid=i5,Template=B6,Resverd=i7,EndTag=i8"
+  },
+  {
+    "deviceType": "4368",
+    "deviceTypeName": "BioLock",
+    "firmwareVersion": "svn.930",
+    "databaseVersion": "svn.930",
+    "tableStruct": "user=1,UID=i1,CardNo=i2,Pin=i3,Password=s4,Group=i5,StartTime=i6,EndTime=i7,Name=s8,Privilege=i9,SuperAuthorize=i10,Mark=s11\nuserauthorize=2,Pin=i1,AuthorizeTimezoneId=i2,AuthorizeDoorId=i3\nholiday=3,Holiday=i1,HolidayType=i2,Loop=i3\ntimezone=4,TimezoneId=i1,SunTime1=i2,SunTime2=i3,SunTime3=i4,MonTime1=i5,MonTime2=i6,MonTime3=i7,TueTime1=i8,TueTime2=i9,TueTime3=i10,WedTime1=i11,WedTime2=i12,WedTime3=i13,ThuTime1=i14,ThuTime2=i15,ThuTime3=i16,FriTime1=i17,FriTime2=i18,FriTime3=i19,SatTime1=i20,SatTime2=i21,SatTime3=i22,Hol1Time1=i23,Hol1Time2=i24,Hol1Time3=i25,Hol2Time1=i26,Hol2Time2=i27,Hol2Time3=i28,Hol3Time1=i29,Hol3Time2=i30,Hol3Time3=i31\ntransaction=5,Cardno=i1,Pin=i2,Verified=i3,DoorID=i4,EventType=i5,InOutState=i6,Time_second=i7,Index=i8\ntemplatev10=6,Size=i1,UID=i2,PIN=i3,FingerID=i4,Valid=i5,Template=B6,Resverd=i7,EndTag=i8"
+  },
+  {
+    "deviceType": "4097",
+    "deviceTypeName": "IX8",
+    "firmwareVersion": "Ver 6.68.1001 Oct 26 2015",
+    "databaseVersion": "Ver 6.68.1001 Oct 26 2015",
+    "tableStruct": "user=1,PIN=i1,Privilege=i2,Password=s3,Name=s4,Card=i5,Group=i6,TimeZones=s7,PIN2=i8\ntemplatev10=2,Size=i1,PIN=i2,FingerID=i3,Vald=i4,Template=B5"
+  },
+  {
+    "deviceType": "4098",
+    "deviceTypeName": "MA300",
+    "firmwareVersion": "Ver 6.63 Mar 15 2016",
+    "databaseVersion": "Ver 6.63 Mar 15 2016",
+    "tableStruct": "user=1,PIN=i1,Privilege=i2,Password=s3,Name=s4,Card=i5,Group=i6,TimeZones=s7,PIN2=i8\ntemplatev10=2,Size=i1,PIN=i2,FingerID=i3,Valid=i4,Template=B5\nfileopt=3,Offset=i1,Count=i2"
+  }
+]
