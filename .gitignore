@@ -1,0 +1,39 @@
+# Private Secrets & Local Configuration
+liongate_secrets.json
+*.local.*
+local.properties
+.env
+.env.*
+
+# Large Binaries & Archives
+*.apk
+*.aab
+*.tar.gz
+*.zip
+
+# Decompiled Vendor Code & Manuals
+jadx_src/
+apktool_out/
+Manuals/
+*.pdf
+app_manual*.txt
+lock_manual.txt
+ZKBioBT_1.5.2.apk
+
+# OS & IDE Cache
+.DS_Store
+.idea/
+*.iml
+.vscode/
+
+# Python Cache
+__pycache__/
+*.pyc
+
+# Gradle & Android Build Outputs
+.gradle/
+build/
+app/build/
+liongate-app/.gradle/
+liongate-app/build/
+liongate-app/app/build/

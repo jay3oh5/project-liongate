@@ -1,0 +1,57 @@
+name: Build LionGate APK
+
+on:
+  push:
+    branches: [ "main" ]
+  pull_request:
+    branches: [ "main" ]
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  build:
+    name: Assemble Debug APK
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v4
+
+      - name: Set up JDK 17
+        uses: actions/setup-java@v4
+        with:
+          distribution: 'temurin'
+          java-version: '17'
+
+      - name: Setup Android SDK
+        uses: android-actions/setup-android@v3
+
+      - name: Setup Gradle 8.4
+        uses: gradle/actions/setup-gradle@v3
+        with:
+          gradle-version: '8.4'
+
+      - name: Build Debug APK
+        working-directory: ./liongate-app
+        env:
+          DEFAULT_PIN: ${{ secrets.LIONGATE_DEFAULT_PIN }}
+          DEFAULT_MAC: ${{ secrets.LIONGATE_DEFAULT_MAC }}
+        run: |
+          # If GitHub Secrets are provided, inject into local.properties for the build
+          if [ -n "$DEFAULT_PIN" ]; then
+            echo "LIONGATE_DEFAULT_PIN=$DEFAULT_PIN" >> local.properties
+          fi
+          if [ -n "$DEFAULT_MAC" ]; then
+            echo "LIONGATE_DEFAULT_MAC=$DEFAULT_MAC" >> local.properties
+          fi
+          gradle assembleDebug --stacktrace
+
+      - name: Upload Debug APK Artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: liongate-debug-apk
+          path: liongate-app/app/build/outputs/apk/debug/app-debug.apk
+          if-no-files-found: error
+          retention-days: 30
