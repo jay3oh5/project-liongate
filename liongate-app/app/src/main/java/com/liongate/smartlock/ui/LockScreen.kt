@@ -22,6 +22,7 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
@@ -33,6 +34,7 @@ import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.Bluetooth
 import androidx.compose.material.icons.filled.BluetoothSearching
 import androidx.compose.material.icons.filled.CheckCircle
+import androidx.compose.material.icons.filled.History
 import androidx.compose.material.icons.filled.Key
 import androidx.compose.material.icons.filled.Lock
 import androidx.compose.material.icons.filled.LockOpen
@@ -93,6 +95,9 @@ import com.liongate.smartlock.ui.theme.Slate400
 import com.liongate.smartlock.ui.theme.Slate700
 import com.liongate.smartlock.ui.theme.Slate800
 import com.liongate.smartlock.ui.theme.Slate900
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
 import java.text.SimpleDateFormat
 import java.util.Date
 import java.util.Locale
@@ -120,8 +125,10 @@ fun LockScreen(
     var showPin by remember { mutableStateOf(false) }
     var showDeviceSheet by remember { mutableStateOf(false) }
     var showSettingsSheet by remember { mutableStateOf(false) }
+    var showHistorySheet by remember { mutableStateOf(false) }
 
     val vibrator = remember { context.getSystemService(Vibrator::class.java) }
+    val coroutineScope = remember { CoroutineScope(Dispatchers.IO) }
 
     // Haptic feedback on unlock
     LaunchedEffect(connectionState) {
@@ -158,6 +165,13 @@ fun LockScreen(
                     }
                 },
                 actions = {
+                    IconButton(onClick = { showHistorySheet = true; coroutineScope.launch { bleManager.fetchAuditLogs() } }) {
+                        Icon(
+                            Icons.Default.History,
+                            contentDescription = "Audit Logs",
+                            tint = Emerald500
+                        )
+                    }
                     IconButton(onClick = { showSettingsSheet = true }) {
                         Icon(
                             Icons.Default.Settings,
@@ -334,7 +348,7 @@ fun LockScreen(
             ) {
                 // Passage Mode Toggle
                 Button(
-                    onClick = { bleManager.setPassageMode(!isPassageMode) },
+                    onClick = { coroutineScope.launch { bleManager.setPassageMode(!isPassageMode) } },
                     enabled = isConnected,
                     colors = ButtonDefaults.buttonColors(
                         containerColor = if (isPassageMode) Amber500 else Slate800,
@@ -369,7 +383,7 @@ fun LockScreen(
 
                 // Force Lock / Relock Now Button
                 Button(
-                    onClick = { bleManager.lockNow() },
+                    onClick = { coroutineScope.launch { bleManager.lockNow() } },
                     enabled = isConnected,
                     colors = ButtonDefaults.buttonColors(
                         containerColor = Slate800,
@@ -610,7 +624,7 @@ fun LockScreen(
                             Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
                                 Button(
                                     onClick = {
-                                        if (lockOnSeconds > 1) bleManager.setLockOnDuration(lockOnSeconds - 1)
+                                        if (lockOnSeconds > 1) coroutineScope.launch { bleManager.setLockOnDuration(lockOnSeconds - 1) }
                                     },
                                     enabled = lockOnSeconds > 1,
                                     colors = ButtonDefaults.buttonColors(containerColor = Slate800),
@@ -620,7 +634,7 @@ fun LockScreen(
                                 }
                                 Button(
                                     onClick = {
-                                        if (lockOnSeconds < 10) bleManager.setLockOnDuration(lockOnSeconds + 1)
+                                        if (lockOnSeconds < 10) coroutineScope.launch { bleManager.setLockOnDuration(lockOnSeconds + 1) }
                                     },
                                     enabled = lockOnSeconds < 10,
                                     colors = ButtonDefaults.buttonColors(containerColor = Slate800),
@@ -667,7 +681,7 @@ fun LockScreen(
                                 Card(
                                     modifier = Modifier
                                         .weight(1f)
-                                        .clickable { bleManager.setDoorSensorMode(modeValue) }
+                                            .clickable { coroutineScope.launch { bleManager.setDoorSensorMode(modeValue) } }
                                         .border(
                                             1.dp,
                                             if (isSelected) Cyan500 else Slate700,
@@ -718,7 +732,7 @@ fun LockScreen(
                                 Text("Sync Lock Clock (RTC)", fontWeight = FontWeight.SemiBold, color = Color.White)
                             }
                             Button(
-                                onClick = { bleManager.syncTime() },
+                                onClick = { coroutineScope.launch { bleManager.syncTime() } },
                                 colors = ButtonDefaults.buttonColors(containerColor = Cyan500),
                                 shape = RoundedCornerShape(8.dp)
                             ) {
@@ -741,7 +755,7 @@ fun LockScreen(
 
                 // Section 4: Query Lock Parameters
                 Button(
-                    onClick = { bleManager.queryLockParams() },
+                    onClick = { coroutineScope.launch { bleManager.queryLockParams() } },
                     modifier = Modifier.fillMaxWidth(),
                     colors = ButtonDefaults.buttonColors(containerColor = Slate700),
                     shape = RoundedCornerShape(12.dp)
@@ -752,6 +766,112 @@ fun LockScreen(
                 }
 
                 Spacer(modifier = Modifier.height(16.dp))
+            }
+        }
+    }
+
+    if (showHistorySheet) {
+        val historySheetState = rememberModalBottomSheetState(skipPartiallyExpanded = true)
+        val auditLogs by bleManager.auditLogs.collectAsState()
+        val isLoadingLogs by bleManager.isLoadingLogs.collectAsState()
+
+        ModalBottomSheet(
+            onDismissRequest = { showHistorySheet = false },
+            sheetState = historySheetState,
+            containerColor = Slate800
+        ) {
+            Column(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(20.dp)
+            ) {
+                Row(
+                    modifier = Modifier.fillMaxWidth(),
+                    horizontalArrangement = Arrangement.SpaceBetween,
+                    verticalAlignment = Alignment.CenterVertically
+                ) {
+                    Row(verticalAlignment = Alignment.CenterVertically) {
+                        Icon(Icons.Default.History, contentDescription = null, tint = Emerald500)
+                        Spacer(modifier = Modifier.width(8.dp))
+                        Text(
+                            "Event History",
+                            fontWeight = FontWeight.Bold,
+                            fontSize = 18.sp,
+                            color = Color.White
+                        )
+                    }
+                    IconButton(onClick = { coroutineScope.launch { bleManager.fetchAuditLogs() } }) {
+                        Icon(Icons.Default.Refresh, contentDescription = "Refresh", tint = if (isLoadingLogs) Slate400 else Emerald500)
+                    }
+                }
+
+                Spacer(modifier = Modifier.height(16.dp))
+
+                if (isLoadingLogs && auditLogs.isEmpty()) {
+                    Box(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .height(200.dp),
+                        contentAlignment = Alignment.Center
+                    ) {
+                        CircularProgressIndicator(color = Emerald500)
+                    }
+                } else if (auditLogs.isEmpty()) {
+                    Box(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .height(200.dp),
+                        contentAlignment = Alignment.Center
+                    ) {
+                        Text("No records found", color = Slate400)
+                    }
+                } else {
+                    LazyColumn(modifier = Modifier.heightIn(max = 400.dp)) {
+                        items(auditLogs) { log ->
+                            Card(
+                                modifier = Modifier
+                                    .fillMaxWidth()
+                                    .padding(vertical = 4.dp),
+                                colors = CardDefaults.cardColors(containerColor = Slate700)
+                            ) {
+                                Row(
+                                    modifier = Modifier.padding(12.dp),
+                                    verticalAlignment = Alignment.CenterVertically
+                                ) {
+                                    Box(
+                                        modifier = Modifier
+                                            .size(40.dp)
+                                            .background(Emerald500.copy(alpha = 0.2f), CircleShape),
+                                        contentAlignment = Alignment.Center
+                                    ) {
+                                        Icon(Icons.Default.LockOpen, contentDescription = null, tint = Emerald500, modifier = Modifier.size(20.dp))
+                                    }
+                                    Spacer(modifier = Modifier.width(12.dp))
+                                    Column {
+                                        Text(
+                                            log.formattedTime,
+                                            fontWeight = FontWeight.SemiBold,
+                                            color = Color.White,
+                                            fontSize = 14.sp
+                                        )
+                                        Row(verticalAlignment = Alignment.CenterVertically) {
+                                            Text(
+                                                log.verifyTypeDescription,
+                                                fontSize = 12.sp,
+                                                color = Emerald500
+                                            )
+                                            Text(
+                                                " • User/Card: ${if (log.cardNo.isNotEmpty() && log.cardNo != "0") log.cardNo else log.pin}",
+                                                fontSize = 12.sp,
+                                                color = Slate400
+                                            )
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
             }
         }
     }

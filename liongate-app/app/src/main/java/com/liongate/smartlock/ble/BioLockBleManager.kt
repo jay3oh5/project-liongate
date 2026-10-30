@@ -74,6 +74,12 @@ class BioLockBleManager(private val context: Context) {
     private val _lastTimeSync = MutableStateFlow<Long?>(null)
     val lastTimeSync: StateFlow<Long?> = _lastTimeSync.asStateFlow()
 
+    private val _auditLogs = MutableStateFlow<List<ZkProtocol.LockAuditRecord>>(emptyList())
+    val auditLogs: StateFlow<List<ZkProtocol.LockAuditRecord>> = _auditLogs.asStateFlow()
+
+    private val _isLoadingLogs = MutableStateFlow(false)
+    val isLoadingLogs: StateFlow<Boolean> = _isLoadingLogs.asStateFlow()
+
     private var activeGatt: BluetoothGatt? = null
     private var pullChar: BluetoothGattCharacteristic? = null
     private var cmdChar: BluetoothGattCharacteristic? = null
@@ -880,6 +886,50 @@ class BioLockBleManager(private val context: Context) {
         } catch (e: Exception) {
             log("Error syncing RTC: ${e.message}")
             Result.failure(e)
+        }
+    }
+
+    suspend fun fetchAuditLogs(): Result<List<ZkProtocol.LockAuditRecord>> {
+        val gatt = activeGatt ?: return Result.failure(IllegalStateException("Not connected"))
+        _isLoadingLogs.value = true
+        
+        return try {
+            log("Fetching audit logs from lock...")
+            
+            pullRxBuffer.reset()
+
+            val payload = ZkProtocol.buildGetDeviceDataPayload("transaction", "*", "")
+            val msg = buildSessionC3Message(command = ZkProtocol.CMD_TABLE_DATA, data = payload)
+            val resp = sendC3Packet(gatt, msg, timeoutMs = 4000)
+            
+            if (resp != null && resp.isSuccess) {
+                // We should read the accumulated data from pullRxBuffer which may span multiple packets
+                val accumulated = pullRxBuffer.toByteArray()
+                val parsedResp = ZkProtocol.parseC3Response(accumulated)
+                
+                val dataToParse = if (parsedResp != null && parsedResp.isSuccess) {
+                    parsedResp.data
+                } else {
+                    resp.data // Fallback to immediate response
+                }
+                
+                val rawData = String(dataToParse, Charsets.US_ASCII).trim()
+                log("Audit Logs raw response length: ${rawData.length}")
+                
+                val parsedRecords = ZkProtocol.parseAuditRecords(rawData)
+                _auditLogs.value = parsedRecords
+                log("Parsed ${parsedRecords.size} audit records.")
+                Result.success(parsedRecords)
+            } else {
+                val err = resp?.returnCode ?: -1
+                log("Fetch audit logs rejected/failed: code=$err")
+                Result.failure(RuntimeException("Fetch failed: $err"))
+            }
+        } catch (e: Exception) {
+            log("Error fetching audit logs: ${e.message}")
+            Result.failure(e)
+        } finally {
+            _isLoadingLogs.value = false
         }
     }
 

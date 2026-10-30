@@ -206,4 +206,71 @@ object ZkProtocol {
     fun buildGetDeviceParamPayload(paramNames: String): ByteArray {
         return paramNames.toByteArray(Charsets.US_ASCII)
     }
+
+    data class LockAuditRecord(
+        val id: Long,
+        val timestampSeconds: Long,
+        val pin: String,
+        val cardNo: String,
+        val verifyType: Int,
+        val eventType: Int,
+        val formattedTime: String,
+        val verifyTypeDescription: String
+    )
+
+    fun buildGetDeviceDataPayload(tableName: String = "transaction", fields: String = "*", filter: String = ""): ByteArray {
+        return "$tableName\t$fields\t$filter\n".toByteArray(Charsets.US_ASCII)
+    }
+
+    fun parseAuditRecords(rawTableData: String): List<LockAuditRecord> {
+        val lines = rawTableData.split("\r\n", "\n").map { it.trim() }.filter { it.isNotEmpty() }
+        val records = mutableListOf<LockAuditRecord>()
+        
+        for (line in lines) {
+            try {
+                val parts = line.split("\t")
+                var id = 0L
+                var cardNo = ""
+                var pin = ""
+                var verified = 0
+                var eventType = 0
+                var timeSecond = 0L
+                
+                for (part in parts) {
+                    val kv = part.split("=")
+                    if (kv.size == 2) {
+                        val key = kv[0].trim()
+                        val value = kv[1].trim()
+                        when (key) {
+                            "Index" -> id = value.toLongOrNull() ?: 0L
+                            "Cardno" -> cardNo = value
+                            "Pin" -> pin = value
+                            "Verified" -> verified = value.toIntOrNull() ?: 0
+                            "EventType" -> eventType = value.toIntOrNull() ?: 0
+                            "Time_second" -> timeSecond = value.toLongOrNull() ?: 0L
+                        }
+                    }
+                }
+                
+                if (timeSecond > 0) {
+                    val formattedTime = java.text.SimpleDateFormat("yyyy/MM/dd HH:mm", java.util.Locale.getDefault()).format(java.util.Date(timeSecond * 1000))
+                    val verifyDesc = when (verified) {
+                        1 -> "Fingerprint"
+                        3 -> "Password"
+                        4 -> "Card"
+                        10 -> "Bluetooth Admin"
+                        11 -> "Bluetooth App"
+                        200 -> "Hardware/Key"
+                        else -> "Method $verified"
+                    }
+                    records.add(LockAuditRecord(id, timeSecond, pin, cardNo, verified, eventType, formattedTime, verifyDesc))
+                }
+            } catch (e: Exception) {
+                // Ignore parse errors for individual lines
+            }
+        }
+        
+        // Sort descending by timestamp
+        return records.sortedByDescending { it.timestampSeconds }
+    }
 }
