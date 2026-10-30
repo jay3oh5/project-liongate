@@ -25,10 +25,10 @@
 - Never commit secrets, binaries, or decompiled vendor code to Git.
 
 <!-- agent-state:start -->
-Task: Release v0.1.0
-Base: 6461e63
-Status: active
-Next: Tag and push v0.1.0 to trigger GitHub Actions Release
+Task: None
+Base: d0b47f0
+Status: idle
+Next: None
 Blockers: None
-Verified: Single-pulse unlock and autonomous 5s hardware auto-relock confirmed working by user on physical PL10B lock with Galaxy S24 Ultra. Local secrets separation complete and verified; git repo pushed to https://github.com/jay3oh5/project-liongate.git.
+Verified: Release v0.1.0 tagged and published on GitHub. CI workflow compiled LionGate-v0.1.0.apk in ~1m 50s and attached to GitHub Release https://github.com/jay3oh5/project-liongate/releases/tag/v0.1.0.
 <!-- agent-state:end -->
