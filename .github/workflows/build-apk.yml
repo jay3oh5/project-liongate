@@ -2,10 +2,10 @@ name: Build and Release LionGate APK
 
 on:
   push:
-    branches: [ "main" ]
+    branches: [ "main", "feature/app-parity" ]
     tags: [ "v*" ]
   pull_request:
-    branches: [ "main" ]
+    branches: [ "main", "feature/app-parity" ]
   workflow_dispatch:
 
 permissions:
