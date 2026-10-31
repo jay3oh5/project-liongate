@@ -49,6 +49,10 @@ import androidx.compose.material.icons.filled.Sensors
 import androidx.compose.material.icons.filled.Settings
 import androidx.compose.material.icons.filled.Sync
 import androidx.compose.material.icons.filled.Timer
+import androidx.compose.material.icons.filled.Edit
+import androidx.compose.material.icons.filled.KeyboardArrowDown
+import androidx.compose.material.icons.filled.KeyboardArrowUp
+import androidx.compose.material.icons.filled.Schedule
 import androidx.compose.material.icons.filled.Visibility
 import androidx.compose.material.icons.filled.VisibilityOff
 import androidx.compose.material3.Button
@@ -131,6 +135,7 @@ fun LockScreen(
     var showSettingsSheet by remember { mutableStateOf(false) }
     var showHistorySheet by remember { mutableStateOf(false) }
     var showUserSheet by remember { mutableStateOf(false) }
+    var showSchedulesSheet by remember { mutableStateOf(false) }
 
     val vibrator = remember { context.getSystemService(Vibrator::class.java) }
     val coroutineScope = remember { CoroutineScope(Dispatchers.IO) }
@@ -175,6 +180,13 @@ fun LockScreen(
                             Icons.Default.History,
                             contentDescription = "Audit Logs",
                             tint = Emerald500
+                        )
+                    }
+                    IconButton(onClick = { showSchedulesSheet = true; coroutineScope.launch { bleManager.fetchTimeZones() } }) {
+                        Icon(
+                            Icons.Default.Schedule,
+                            contentDescription = "Access Schedules",
+                            tint = Cyan500
                         )
                     }
                     IconButton(onClick = { showUserSheet = true; coroutineScope.launch { bleManager.fetchUsers() } }) {
@@ -1076,6 +1088,167 @@ fun LockScreen(
                                             Icon(Icons.Default.Delete, contentDescription = "Delete", tint = Rose500)
                                         }
                                     }
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        }
+    }
+
+    if (showSchedulesSheet) {
+        val schedulesSheetState = rememberModalBottomSheetState(skipPartiallyExpanded = true)
+        val schedules by bleManager.schedules.collectAsState()
+        val isLoadingSchedules by bleManager.isLoadingSchedules.collectAsState()
+        var editSchedule by remember { mutableStateOf<com.liongate.smartlock.protocol.ZkProtocol.LockSchedule?>(null) }
+        
+        if (editSchedule != null) {
+            val schedule = editSchedule!!
+            var startHour by remember { mutableStateOf(schedule.startHour) }
+            var startMin by remember { mutableStateOf(schedule.startMinute) }
+            var endHour by remember { mutableStateOf(schedule.endHour) }
+            var endMin by remember { mutableStateOf(schedule.endMinute) }
+            var days by remember { mutableStateOf(schedule.activeDays.toMutableList()) }
+            
+            androidx.compose.material3.AlertDialog(
+                onDismissRequest = { editSchedule = null },
+                title = { Text("Edit Schedule ${schedule.timezoneId}", color = Color.White) },
+                text = {
+                    Column {
+                        Row(verticalAlignment = Alignment.CenterVertically, horizontalArrangement = Arrangement.SpaceBetween, modifier = Modifier.fillMaxWidth()) {
+                            Text("Start Time:", color = Slate400)
+                            Row(verticalAlignment = Alignment.CenterVertically) {
+                                IconButton(onClick = { startHour = (startHour - 1).mod(24) }) { Icon(Icons.Default.KeyboardArrowDown, contentDescription = null, tint = Cyan500) }
+                                Text("%02d".format(startHour), color = Color.White)
+                                IconButton(onClick = { startHour = (startHour + 1).mod(24) }) { Icon(Icons.Default.KeyboardArrowUp, contentDescription = null, tint = Cyan500) }
+                                Text(":", color = Color.White)
+                                IconButton(onClick = { startMin = (startMin - 1).mod(60) }) { Icon(Icons.Default.KeyboardArrowDown, contentDescription = null, tint = Cyan500) }
+                                Text("%02d".format(startMin), color = Color.White)
+                                IconButton(onClick = { startMin = (startMin + 1).mod(60) }) { Icon(Icons.Default.KeyboardArrowUp, contentDescription = null, tint = Cyan500) }
+                            }
+                        }
+                        Row(verticalAlignment = Alignment.CenterVertically, horizontalArrangement = Arrangement.SpaceBetween, modifier = Modifier.fillMaxWidth()) {
+                            Text("End Time:", color = Slate400)
+                            Row(verticalAlignment = Alignment.CenterVertically) {
+                                IconButton(onClick = { endHour = (endHour - 1).mod(24) }) { Icon(Icons.Default.KeyboardArrowDown, contentDescription = null, tint = Cyan500) }
+                                Text("%02d".format(endHour), color = Color.White)
+                                IconButton(onClick = { endHour = (endHour + 1).mod(24) }) { Icon(Icons.Default.KeyboardArrowUp, contentDescription = null, tint = Cyan500) }
+                                Text(":", color = Color.White)
+                                IconButton(onClick = { endMin = (endMin - 1).mod(60) }) { Icon(Icons.Default.KeyboardArrowDown, contentDescription = null, tint = Cyan500) }
+                                Text("%02d".format(endMin), color = Color.White)
+                                IconButton(onClick = { endMin = (endMin + 1).mod(60) }) { Icon(Icons.Default.KeyboardArrowUp, contentDescription = null, tint = Cyan500) }
+                            }
+                        }
+                        Spacer(modifier = Modifier.height(16.dp))
+                        Text("Active Days:", color = Slate400)
+                        Row(horizontalArrangement = Arrangement.SpaceEvenly, modifier = Modifier.fillMaxWidth()) {
+                            listOf("S", "M", "T", "W", "T", "F", "S").forEachIndexed { i, d ->
+                                val active = days[i]
+                                Box(
+                                    modifier = Modifier
+                                        .size(32.dp)
+                                        .background(if (active) Cyan500 else Slate700, CircleShape)
+                                        .clickable { days = days.toMutableList().apply { set(i, !active) } },
+                                    contentAlignment = Alignment.Center
+                                ) {
+                                    Text(d, color = if (active) Color.Black else Slate400, fontWeight = FontWeight.Bold, fontSize = 12.sp)
+                                }
+                            }
+                        }
+                    }
+                },
+                confirmButton = {
+                    Button(
+                        onClick = {
+                            val newSchedule = schedule.copy(
+                                startHour = startHour, startMinute = startMin,
+                                endHour = endHour, endMinute = endMin,
+                                activeDays = days
+                            )
+                            editSchedule = null
+                            coroutineScope.launch {
+                                if (bleManager.saveTimeZone(newSchedule).isSuccess) {
+                                    bleManager.fetchTimeZones()
+                                }
+                            }
+                        },
+                        colors = ButtonDefaults.buttonColors(containerColor = Cyan500)
+                    ) {
+                        Text("Save", color = Color.Black)
+                    }
+                },
+                dismissButton = {
+                    Button(
+                        onClick = { editSchedule = null },
+                        colors = ButtonDefaults.buttonColors(containerColor = Slate700)
+                    ) {
+                        Text("Cancel")
+                    }
+                },
+                containerColor = Slate800
+            )
+        }
+
+        ModalBottomSheet(
+            onDismissRequest = { showSchedulesSheet = false },
+            sheetState = schedulesSheetState,
+            containerColor = Slate800
+        ) {
+            Column(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(20.dp)
+            ) {
+                Row(
+                    modifier = Modifier.fillMaxWidth(),
+                    horizontalArrangement = Arrangement.SpaceBetween,
+                    verticalAlignment = Alignment.CenterVertically
+                ) {
+                    Row(verticalAlignment = Alignment.CenterVertically) {
+                        Icon(Icons.Default.Schedule, contentDescription = null, tint = Cyan500)
+                        Spacer(modifier = Modifier.width(8.dp))
+                        Text("Access Schedules", fontWeight = FontWeight.Bold, fontSize = 18.sp, color = Color.White)
+                    }
+                    IconButton(onClick = { coroutineScope.launch { bleManager.fetchTimeZones() } }) {
+                        Icon(Icons.Default.Refresh, contentDescription = "Refresh", tint = if (isLoadingSchedules) Slate400 else Cyan500)
+                    }
+                }
+
+                Spacer(modifier = Modifier.height(16.dp))
+
+                if (isLoadingSchedules && schedules.isEmpty()) {
+                    Box(modifier = Modifier.fillMaxWidth().height(200.dp), contentAlignment = Alignment.Center) {
+                        CircularProgressIndicator(color = Cyan500)
+                    }
+                } else if (schedules.isEmpty()) {
+                    Box(modifier = Modifier.fillMaxWidth().height(200.dp), contentAlignment = Alignment.Center) {
+                        Text("No schedules found", color = Slate400)
+                    }
+                } else {
+                    LazyColumn(modifier = Modifier.heightIn(max = 400.dp)) {
+                        items(schedules) { schedule ->
+                            Card(
+                                modifier = Modifier.fillMaxWidth().padding(vertical = 4.dp).clickable { editSchedule = schedule },
+                                colors = CardDefaults.cardColors(containerColor = Slate700)
+                            ) {
+                                Row(
+                                    modifier = Modifier.padding(12.dp).fillMaxWidth(),
+                                    verticalAlignment = Alignment.CenterVertically,
+                                    horizontalArrangement = Arrangement.SpaceBetween
+                                ) {
+                                    Column {
+                                        Text("Schedule ID ${schedule.timezoneId}", fontWeight = FontWeight.SemiBold, color = Color.White, fontSize = 14.sp)
+                                        Text("${schedule.formattedStartTime} - ${schedule.formattedEndTime}", fontSize = 12.sp, color = Cyan500)
+                                        Row(horizontalArrangement = Arrangement.spacedBy(4.dp), modifier = Modifier.padding(top = 4.dp)) {
+                                            listOf("Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat").forEachIndexed { i, d ->
+                                                if (schedule.activeDays.getOrNull(i) == true) {
+                                                    Text(d, fontSize = 10.sp, color = Slate900, modifier = Modifier.background(Cyan500, CircleShape).padding(horizontal = 4.dp, vertical = 2.dp))
+                                                }
+                                            }
+                                        }
+                                    }
+                                    Icon(Icons.Default.Edit, contentDescription = "Edit", tint = Slate400)
                                 }
                             }
                         }

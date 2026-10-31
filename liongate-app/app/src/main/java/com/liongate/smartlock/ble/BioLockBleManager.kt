@@ -80,6 +80,12 @@ class BioLockBleManager(private val context: Context) {
     private val _isLoadingLogs = MutableStateFlow(false)
     val isLoadingLogs: StateFlow<Boolean> = _isLoadingLogs.asStateFlow()
 
+    private val _schedules = MutableStateFlow<List<ZkProtocol.LockSchedule>>(emptyList())
+    val schedules: StateFlow<List<ZkProtocol.LockSchedule>> = _schedules
+
+    private val _isLoadingSchedules = MutableStateFlow(false)
+    val isLoadingSchedules: StateFlow<Boolean> = _isLoadingSchedules
+
     private val _users = MutableStateFlow<List<ZkProtocol.LockUser>>(emptyList())
     val users: StateFlow<List<ZkProtocol.LockUser>> = _users.asStateFlow()
 
@@ -979,6 +985,69 @@ class BioLockBleManager(private val context: Context) {
             Result.failure(e)
         } finally {
             _isLoadingUsers.value = false
+        }
+    }
+
+    suspend fun fetchTimeZones(): Result<List<ZkProtocol.LockSchedule>> {
+        val gatt = activeGatt ?: return Result.failure(IllegalStateException("Not connected"))
+        _isLoadingSchedules.value = true
+        
+        return try {
+            log("Fetching timezones from lock...")
+            pullRxBuffer.reset()
+            val payload = ZkProtocol.buildGetDeviceDataPayload("timezone", "*", "")
+            val msg = buildSessionC3Message(command = ZkProtocol.CMD_TABLE_DATA, data = payload)
+            val resp = sendC3Packet(gatt, msg, timeoutMs = 4000)
+            
+            if (resp != null && resp.isSuccess) {
+                val accumulated = pullRxBuffer.toByteArray()
+                val parsedResp = ZkProtocol.parseC3Response(accumulated)
+                
+                val dataToParse = if (parsedResp != null && parsedResp.isSuccess) {
+                    parsedResp.data
+                } else {
+                    resp.data
+                }
+                
+                val rawData = String(dataToParse, Charsets.US_ASCII).trim()
+                log("Timezones raw response length: ${rawData.length}")
+                
+                val parsedSchedules = ZkProtocol.parseTimeZones(rawData)
+                _schedules.value = parsedSchedules
+                log("Parsed ${parsedSchedules.size} schedules.")
+                Result.success(parsedSchedules)
+            } else {
+                val err = resp?.returnCode ?: -1
+                log("Fetch timezones rejected/failed: code=$err")
+                Result.failure(RuntimeException("Fetch failed: $err"))
+            }
+        } catch (e: Exception) {
+            log("Error fetching timezones: ${e.message}")
+            Result.failure(e)
+        } finally {
+            _isLoadingSchedules.value = false
+        }
+    }
+
+    suspend fun saveTimeZone(schedule: ZkProtocol.LockSchedule): Result<Boolean> {
+        val gatt = activeGatt ?: return Result.failure(IllegalStateException("Not connected"))
+        return try {
+            log("Saving timezone ${schedule.timezoneId} to lock...")
+            val payload = ZkProtocol.buildSetTimeZonePayload(schedule)
+            val msg = buildSessionC3Message(command = ZkProtocol.CMD_SET_DATA, data = payload)
+            val resp = sendC3Packet(gatt, msg, timeoutMs = 2500)
+            
+            if (resp != null && resp.isSuccess) {
+                log("Timezone ${schedule.timezoneId} saved successfully!")
+                Result.success(true)
+            } else {
+                val err = resp?.returnCode ?: -1
+                log("Save timezone rejected/failed: code=$err")
+                Result.failure(RuntimeException("Save failed: $err"))
+            }
+        } catch (e: Exception) {
+            log("Error saving timezone: ${e.message}")
+            Result.failure(e)
         }
     }
 

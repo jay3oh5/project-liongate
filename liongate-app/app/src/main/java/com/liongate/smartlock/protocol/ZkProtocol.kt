@@ -232,6 +232,181 @@ object ZkProtocol {
         return "userauthorize\tPin=$pin\tAuthorizeTimezoneId=$timezoneId\n".toByteArray(Charsets.US_ASCII)
     }
 
+    data class LockSchedule(
+        val timezoneId: Int = 1,
+        val startHour: Int = 9,
+        val startMinute: Int = 0,
+        val endHour: Int = 17,
+        val endMinute: Int = 0,
+        val activeDays: List<Boolean> = listOf(false, true, true, true, true, true, false) // Index 0=Sun .. 6=Sat
+    ) {
+        val formattedStartTime: String get() = "%02d:%02d".format(startHour, startMinute)
+        val formattedEndTime: String get() = "%02d:%02d".format(endHour, endMinute)
+    }
+
+    fun encodeTimeNumber(hour: Int, minute: Int): Int = (hour * 100) + minute
+
+    fun encodeDayWindow(startNum: Int, endNum: Int): Long = (startNum.toLong() shl 16) + endNum.toLong()
+
+    fun decodeDayWindow(window: Long): Pair<Pair<Int, Int>, Pair<Int, Int>> {
+        val start = ((window shr 16) and 0xFFFF).toInt()
+        val end = (window and 0xFFFF).toInt()
+        return (start / 100 to start % 100) to (end / 100 to end % 100)
+    }
+
+    fun buildSetTimeZonePayload(schedule: LockSchedule): ByteArray {
+        val startNum = encodeTimeNumber(schedule.startHour, schedule.startMinute)
+        val endNum = encodeTimeNumber(schedule.endHour, schedule.endMinute)
+        val window = encodeDayWindow(startNum, endNum)
+        val sun = if (schedule.activeDays.getOrNull(0) == true) window else 0L
+        val mon = if (schedule.activeDays.getOrNull(1) == true) window else 0L
+        val tue = if (schedule.activeDays.getOrNull(2) == true) window else 0L
+        val wed = if (schedule.activeDays.getOrNull(3) == true) window else 0L
+        val thu = if (schedule.activeDays.getOrNull(4) == true) window else 0L
+        val fri = if (schedule.activeDays.getOrNull(5) == true) window else 0L
+        val sat = if (schedule.activeDays.getOrNull(6) == true) window else 0L
+        return "timezone\tTimezoneId=${schedule.timezoneId}\tSunTime1=$sun\tMonTime1=$mon\tTueTime1=$tue\tWedTime1=$wed\tThuTime1=$thu\tFriTime1=$fri\tSatTime1=$sat\t\n".toByteArray(Charsets.US_ASCII)
+    }
+
+    fun parseTimeZones(rawTableData: String): List<LockSchedule> {
+        val lines = rawTableData.split("\r\n", "\n").map { it.trim() }.filter { it.isNotEmpty() }
+        val schedules = mutableListOf<LockSchedule>()
+
+        for (line in lines) {
+            try {
+                val parts = line.split("\t")
+                var timezoneId = 1
+                val activeDays = mutableListOf(false, false, false, false, false, false, false)
+                var parsedStartHour = 9
+                var parsedStartMinute = 0
+                var parsedEndHour = 17
+                var parsedEndMinute = 0
+                var windowFound = false
+
+                for (part in parts) {
+                    val kv = part.split("=")
+                    if (kv.size == 2) {
+                        val key = kv[0].trim()
+                        val value = kv[1].trim()
+                        when (key) {
+                            "TimezoneId" -> timezoneId = value.toIntOrNull() ?: 1
+                            "SunTime1" -> {
+                                val window = value.toLongOrNull() ?: 0L
+                                if (window > 0L) {
+                                    activeDays[0] = true
+                                    if (!windowFound) {
+                                        val (start, end) = decodeDayWindow(window)
+                                        parsedStartHour = start.first
+                                        parsedStartMinute = start.second
+                                        parsedEndHour = end.first
+                                        parsedEndMinute = end.second
+                                        windowFound = true
+                                    }
+                                }
+                            }
+                            "MonTime1" -> {
+                                val window = value.toLongOrNull() ?: 0L
+                                if (window > 0L) {
+                                    activeDays[1] = true
+                                    if (!windowFound) {
+                                        val (start, end) = decodeDayWindow(window)
+                                        parsedStartHour = start.first
+                                        parsedStartMinute = start.second
+                                        parsedEndHour = end.first
+                                        parsedEndMinute = end.second
+                                        windowFound = true
+                                    }
+                                }
+                            }
+                            "TueTime1" -> {
+                                val window = value.toLongOrNull() ?: 0L
+                                if (window > 0L) {
+                                    activeDays[2] = true
+                                    if (!windowFound) {
+                                        val (start, end) = decodeDayWindow(window)
+                                        parsedStartHour = start.first
+                                        parsedStartMinute = start.second
+                                        parsedEndHour = end.first
+                                        parsedEndMinute = end.second
+                                        windowFound = true
+                                    }
+                                }
+                            }
+                            "WedTime1" -> {
+                                val window = value.toLongOrNull() ?: 0L
+                                if (window > 0L) {
+                                    activeDays[3] = true
+                                    if (!windowFound) {
+                                        val (start, end) = decodeDayWindow(window)
+                                        parsedStartHour = start.first
+                                        parsedStartMinute = start.second
+                                        parsedEndHour = end.first
+                                        parsedEndMinute = end.second
+                                        windowFound = true
+                                    }
+                                }
+                            }
+                            "ThuTime1" -> {
+                                val window = value.toLongOrNull() ?: 0L
+                                if (window > 0L) {
+                                    activeDays[4] = true
+                                    if (!windowFound) {
+                                        val (start, end) = decodeDayWindow(window)
+                                        parsedStartHour = start.first
+                                        parsedStartMinute = start.second
+                                        parsedEndHour = end.first
+                                        parsedEndMinute = end.second
+                                        windowFound = true
+                                    }
+                                }
+                            }
+                            "FriTime1" -> {
+                                val window = value.toLongOrNull() ?: 0L
+                                if (window > 0L) {
+                                    activeDays[5] = true
+                                    if (!windowFound) {
+                                        val (start, end) = decodeDayWindow(window)
+                                        parsedStartHour = start.first
+                                        parsedStartMinute = start.second
+                                        parsedEndHour = end.first
+                                        parsedEndMinute = end.second
+                                        windowFound = true
+                                    }
+                                }
+                            }
+                            "SatTime1" -> {
+                                val window = value.toLongOrNull() ?: 0L
+                                if (window > 0L) {
+                                    activeDays[6] = true
+                                    if (!windowFound) {
+                                        val (start, end) = decodeDayWindow(window)
+                                        parsedStartHour = start.first
+                                        parsedStartMinute = start.second
+                                        parsedEndHour = end.first
+                                        parsedEndMinute = end.second
+                                        windowFound = true
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+                
+                schedules.add(LockSchedule(
+                    timezoneId = timezoneId,
+                    startHour = parsedStartHour,
+                    startMinute = parsedStartMinute,
+                    endHour = parsedEndHour,
+                    endMinute = parsedEndMinute,
+                    activeDays = activeDays.toList()
+                ))
+            } catch (e: Exception) {
+                // Ignore parse errors for individual lines
+            }
+        }
+        return schedules
+    }
+
     fun parseUsers(rawTableData: String): List<LockUser> {
         val lines = rawTableData.split("\r\n", "\n").map { it.trim() }.filter { it.isNotEmpty() }
         val users = mutableListOf<LockUser>()
