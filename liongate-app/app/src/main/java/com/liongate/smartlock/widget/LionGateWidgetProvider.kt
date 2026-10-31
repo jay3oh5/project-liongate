@@ -12,10 +12,13 @@ import android.os.VibratorManager
 import android.widget.RemoteViews
 import com.liongate.smartlock.R
 import com.liongate.smartlock.ble.BioLockBleManager
+import com.liongate.smartlock.ble.LockConnectionState
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.delay
+import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.withTimeoutOrNull
 
 class LionGateWidgetProvider : AppWidgetProvider() {
 
@@ -78,9 +81,13 @@ class LionGateWidgetProvider : AppWidgetProvider() {
         val pin = prefs.getString("key_pin", null) ?: "123456"
 
         val bleManager = BioLockBleManager(context.applicationContext)
-        val result = bleManager.connectAndUnlock(mac, pin)
+        bleManager.connectAndUnlock(mac, pin)
         
-        if (result.isSuccess) {
+        val finalState = withTimeoutOrNull(8000L) {
+            bleManager.connectionState.first { it is LockConnectionState.Unlocked || it is LockConnectionState.Error }
+        }
+        
+        if (finalState is LockConnectionState.Unlocked) {
             // Success Haptic Feedback
             triggerHapticFeedback(context)
             
