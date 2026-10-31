@@ -39,6 +39,10 @@ import androidx.compose.material.icons.filled.Key
 import androidx.compose.material.icons.filled.Lock
 import androidx.compose.material.icons.filled.LockOpen
 import androidx.compose.material.icons.filled.MeetingRoom
+import androidx.compose.material.icons.filled.People
+import androidx.compose.material.icons.filled.Person
+import androidx.compose.material.icons.filled.Badge
+import androidx.compose.material.icons.filled.Delete
 import androidx.compose.material.icons.filled.Refresh
 import androidx.compose.material.icons.filled.Remove
 import androidx.compose.material.icons.filled.Sensors
@@ -126,6 +130,7 @@ fun LockScreen(
     var showDeviceSheet by remember { mutableStateOf(false) }
     var showSettingsSheet by remember { mutableStateOf(false) }
     var showHistorySheet by remember { mutableStateOf(false) }
+    var showUserSheet by remember { mutableStateOf(false) }
 
     val vibrator = remember { context.getSystemService(Vibrator::class.java) }
     val coroutineScope = remember { CoroutineScope(Dispatchers.IO) }
@@ -170,6 +175,13 @@ fun LockScreen(
                             Icons.Default.History,
                             contentDescription = "Audit Logs",
                             tint = Emerald500
+                        )
+                    }
+                    IconButton(onClick = { showUserSheet = true; coroutineScope.launch { bleManager.fetchUsers() } }) {
+                        Icon(
+                            Icons.Default.People,
+                            contentDescription = "User Management",
+                            tint = Amber500
                         )
                     }
                     IconButton(onClick = { showSettingsSheet = true }) {
@@ -478,7 +490,46 @@ fun LockScreen(
     // Bluetooth Devices Bottom Sheet
     if (showDeviceSheet) {
         val sheetState = rememberModalBottomSheetState()
+
+        var userToDelete by remember { mutableStateOf<com.liongate.smartlock.protocol.ZkProtocol.LockUser?>(null) }
+        
+        if (userToDelete != null) {
+            androidx.compose.material3.AlertDialog(
+                onDismissRequest = { userToDelete = null },
+                title = { Text("Delete User", color = Color.White) },
+                text = { Text("Are you sure you want to delete ${userToDelete?.name}?", color = Slate400) },
+                confirmButton = {
+                    Button(
+                        onClick = {
+                            val uid = userToDelete?.uid
+                            userToDelete = null
+                            if (uid != null) {
+                                coroutineScope.launch {
+                                    if (bleManager.deleteUser(uid).isSuccess) {
+                                        bleManager.fetchUsers()
+                                    }
+                                }
+                            }
+                        },
+                        colors = ButtonDefaults.buttonColors(containerColor = Rose500)
+                    ) {
+                        Text("Delete")
+                    }
+                },
+                dismissButton = {
+                    Button(
+                        onClick = { userToDelete = null },
+                        colors = ButtonDefaults.buttonColors(containerColor = Slate700)
+                    ) {
+                        Text("Cancel")
+                    }
+                },
+                containerColor = Slate800
+            )
+        }
+
         ModalBottomSheet(
+
             onDismissRequest = {
                 showDeviceSheet = false
                 bleManager.stopScan()
@@ -563,7 +614,46 @@ fun LockScreen(
     // Lock Hardware Settings Bottom Sheet
     if (showSettingsSheet) {
         val settingsSheetState = rememberModalBottomSheetState(skipPartiallyExpanded = true)
+
+        var userToDelete by remember { mutableStateOf<com.liongate.smartlock.protocol.ZkProtocol.LockUser?>(null) }
+        
+        if (userToDelete != null) {
+            androidx.compose.material3.AlertDialog(
+                onDismissRequest = { userToDelete = null },
+                title = { Text("Delete User", color = Color.White) },
+                text = { Text("Are you sure you want to delete ${userToDelete?.name}?", color = Slate400) },
+                confirmButton = {
+                    Button(
+                        onClick = {
+                            val uid = userToDelete?.uid
+                            userToDelete = null
+                            if (uid != null) {
+                                coroutineScope.launch {
+                                    if (bleManager.deleteUser(uid).isSuccess) {
+                                        bleManager.fetchUsers()
+                                    }
+                                }
+                            }
+                        },
+                        colors = ButtonDefaults.buttonColors(containerColor = Rose500)
+                    ) {
+                        Text("Delete")
+                    }
+                },
+                dismissButton = {
+                    Button(
+                        onClick = { userToDelete = null },
+                        colors = ButtonDefaults.buttonColors(containerColor = Slate700)
+                    ) {
+                        Text("Cancel")
+                    }
+                },
+                containerColor = Slate800
+            )
+        }
+
         ModalBottomSheet(
+
             onDismissRequest = { showSettingsSheet = false },
             sheetState = settingsSheetState,
             containerColor = Slate800
@@ -770,12 +860,276 @@ fun LockScreen(
         }
     }
 
+
+    if (showUserSheet) {
+        val userSheetState = rememberModalBottomSheetState(skipPartiallyExpanded = true)
+        val users by bleManager.users.collectAsState()
+        val isLoadingUsers by bleManager.isLoadingUsers.collectAsState()
+        var showAddUserForm by remember { mutableStateOf(false) }
+
+        var newUserName by remember { mutableStateOf("") }
+        var newUserPin by remember { mutableStateOf("") }
+        var newUserRole by remember { mutableStateOf(0) } // 0=Normal, 14=Admin
+
+
+        var userToDelete by remember { mutableStateOf<com.liongate.smartlock.protocol.ZkProtocol.LockUser?>(null) }
+        
+        if (userToDelete != null) {
+            androidx.compose.material3.AlertDialog(
+                onDismissRequest = { userToDelete = null },
+                title = { Text("Delete User", color = Color.White) },
+                text = { Text("Are you sure you want to delete ${userToDelete?.name}?", color = Slate400) },
+                confirmButton = {
+                    Button(
+                        onClick = {
+                            val uid = userToDelete?.uid
+                            userToDelete = null
+                            if (uid != null) {
+                                coroutineScope.launch {
+                                    if (bleManager.deleteUser(uid).isSuccess) {
+                                        bleManager.fetchUsers()
+                                    }
+                                }
+                            }
+                        },
+                        colors = ButtonDefaults.buttonColors(containerColor = Rose500)
+                    ) {
+                        Text("Delete")
+                    }
+                },
+                dismissButton = {
+                    Button(
+                        onClick = { userToDelete = null },
+                        colors = ButtonDefaults.buttonColors(containerColor = Slate700)
+                    ) {
+                        Text("Cancel")
+                    }
+                },
+                containerColor = Slate800
+            )
+        }
+
+        ModalBottomSheet(
+
+            onDismissRequest = { showUserSheet = false },
+            sheetState = userSheetState,
+            containerColor = Slate800
+        ) {
+            Column(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(20.dp)
+            ) {
+                if (showAddUserForm) {
+                    Row(verticalAlignment = Alignment.CenterVertically) {
+                        IconButton(onClick = { showAddUserForm = false }) {
+                            Icon(Icons.Default.Remove, contentDescription = "Back", tint = Slate400)
+                        }
+                        Text("Add New User", fontWeight = FontWeight.Bold, fontSize = 18.sp, color = Color.White)
+                    }
+                    Spacer(modifier = Modifier.height(16.dp))
+                    
+                    OutlinedTextField(
+                        value = newUserName,
+                        onValueChange = { newUserName = it },
+                        label = { Text("Name", color = Slate400) },
+                        modifier = Modifier.fillMaxWidth(),
+                        colors = OutlinedTextFieldDefaults.colors(
+                            focusedTextColor = Color.White,
+                            unfocusedTextColor = Color.White,
+                            focusedBorderColor = Amber500,
+                            unfocusedBorderColor = Slate700
+                        )
+                    )
+                    Spacer(modifier = Modifier.height(8.dp))
+                    OutlinedTextField(
+                        value = newUserPin,
+                        onValueChange = { newUserPin = it },
+                        label = { Text("PIN (4-6 digits)", color = Slate400) },
+                        keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
+                        modifier = Modifier.fillMaxWidth(),
+                        colors = OutlinedTextFieldDefaults.colors(
+                            focusedTextColor = Color.White,
+                            unfocusedTextColor = Color.White,
+                            focusedBorderColor = Amber500,
+                            unfocusedBorderColor = Slate700
+                        )
+                    )
+                    Spacer(modifier = Modifier.height(16.dp))
+                    Text("Role", color = Color.White, fontSize = 14.sp)
+                    Row(modifier = Modifier.fillMaxWidth().padding(vertical = 8.dp), horizontalArrangement = Arrangement.spacedBy(8.dp)) {
+                        Button(
+                            onClick = { newUserRole = 0 },
+                            colors = ButtonDefaults.buttonColors(containerColor = if (newUserRole == 0) Amber500 else Slate700),
+                            modifier = Modifier.weight(1f)
+                        ) {
+                            Text("Normal")
+                        }
+                        Button(
+                            onClick = { newUserRole = 14 },
+                            colors = ButtonDefaults.buttonColors(containerColor = if (newUserRole == 14) Amber500 else Slate700),
+                            modifier = Modifier.weight(1f)
+                        ) {
+                            Text("Admin")
+                        }
+                    }
+                    Spacer(modifier = Modifier.height(16.dp))
+                    Button(
+                        onClick = {
+                            if (newUserName.isNotBlank() && newUserPin.length in 4..6) {
+                                val user = com.liongate.smartlock.protocol.ZkProtocol.LockUser(
+                                    uid = System.currentTimeMillis() / 1000 % 100000,
+                                    pin = newUserPin.toIntOrNull() ?: 1234,
+                                    name = newUserName,
+                                    privilege = newUserRole
+                                )
+                                coroutineScope.launch {
+                                    val result = bleManager.saveUser(user)
+                                    if (result.isSuccess) {
+                                        showAddUserForm = false
+                                        newUserName = ""
+                                        newUserPin = ""
+                                        bleManager.fetchUsers()
+                                    }
+                                }
+                            }
+                        },
+                        modifier = Modifier.fillMaxWidth(),
+                        colors = ButtonDefaults.buttonColors(containerColor = Amber500)
+                    ) {
+                        Text("Save User")
+                    }
+                } else {
+                    Row(
+                        modifier = Modifier.fillMaxWidth(),
+                        horizontalArrangement = Arrangement.SpaceBetween,
+                        verticalAlignment = Alignment.CenterVertically
+                    ) {
+                        Row(verticalAlignment = Alignment.CenterVertically) {
+                            Icon(Icons.Default.People, contentDescription = null, tint = Amber500)
+                            Spacer(modifier = Modifier.width(8.dp))
+                            Text(
+                                "User Management",
+                                fontWeight = FontWeight.Bold,
+                                fontSize = 18.sp,
+                                color = Color.White
+                            )
+                        }
+                        Row {
+                            IconButton(onClick = { showAddUserForm = true }) {
+                                Icon(Icons.Default.Add, contentDescription = "Add User", tint = Amber500)
+                            }
+                            IconButton(onClick = { coroutineScope.launch { bleManager.fetchUsers() } }) {
+                                Icon(Icons.Default.Refresh, contentDescription = "Refresh", tint = if (isLoadingUsers) Slate400 else Amber500)
+                            }
+                        }
+                    }
+
+                    Spacer(modifier = Modifier.height(16.dp))
+
+                    if (isLoadingUsers && users.isEmpty()) {
+                        Box(
+                            modifier = Modifier.fillMaxWidth().height(200.dp),
+                            contentAlignment = Alignment.Center
+                        ) {
+                            CircularProgressIndicator(color = Amber500)
+                        }
+                    } else if (users.isEmpty()) {
+                        Box(
+                            modifier = Modifier.fillMaxWidth().height(200.dp),
+                            contentAlignment = Alignment.Center
+                        ) {
+                            Text("No users found", color = Slate400)
+                        }
+                    } else {
+                        LazyColumn(modifier = Modifier.heightIn(max = 400.dp)) {
+                            items(users) { user ->
+                                Card(
+                                    modifier = Modifier.fillMaxWidth().padding(vertical = 4.dp),
+                                    colors = CardDefaults.cardColors(containerColor = Slate700)
+                                ) {
+                                    Row(
+                                        modifier = Modifier.padding(12.dp).fillMaxWidth(),
+                                        verticalAlignment = Alignment.CenterVertically,
+                                        horizontalArrangement = Arrangement.SpaceBetween
+                                    ) {
+                                        Row(verticalAlignment = Alignment.CenterVertically) {
+                                            Box(
+                                                modifier = Modifier.size(40.dp).background(Amber500.copy(alpha = 0.2f), CircleShape),
+                                                contentAlignment = Alignment.Center
+                                            ) {
+                                                Icon(Icons.Default.Person, contentDescription = null, tint = Amber500, modifier = Modifier.size(20.dp))
+                                            }
+                                            Spacer(modifier = Modifier.width(12.dp))
+                                            Column {
+                                                Text(user.name.ifEmpty { "User ${user.uid}" }, fontWeight = FontWeight.SemiBold, color = Color.White, fontSize = 14.sp)
+                                                Row(verticalAlignment = Alignment.CenterVertically) {
+                                                    Text(if (user.privilege == 14) "Admin" else "Normal", fontSize = 12.sp, color = Amber500)
+                                                    Text(" • PIN: ${user.pin}", fontSize = 12.sp, color = Slate400)
+                                                    if (user.cardNo.isNotEmpty() && user.cardNo != "0") {
+                                                        Text(" • Card: ${user.cardNo}", fontSize = 12.sp, color = Slate400)
+                                                    }
+                                                }
+                                            }
+                                        }
+                                        IconButton(onClick = { userToDelete = user }) {
+                                            Icon(Icons.Default.Delete, contentDescription = "Delete", tint = Rose500)
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        }
+    }
+
     if (showHistorySheet) {
         val historySheetState = rememberModalBottomSheetState(skipPartiallyExpanded = true)
         val auditLogs by bleManager.auditLogs.collectAsState()
         val isLoadingLogs by bleManager.isLoadingLogs.collectAsState()
 
+
+        var userToDelete by remember { mutableStateOf<com.liongate.smartlock.protocol.ZkProtocol.LockUser?>(null) }
+        
+        if (userToDelete != null) {
+            androidx.compose.material3.AlertDialog(
+                onDismissRequest = { userToDelete = null },
+                title = { Text("Delete User", color = Color.White) },
+                text = { Text("Are you sure you want to delete ${userToDelete?.name}?", color = Slate400) },
+                confirmButton = {
+                    Button(
+                        onClick = {
+                            val uid = userToDelete?.uid
+                            userToDelete = null
+                            if (uid != null) {
+                                coroutineScope.launch {
+                                    if (bleManager.deleteUser(uid).isSuccess) {
+                                        bleManager.fetchUsers()
+                                    }
+                                }
+                            }
+                        },
+                        colors = ButtonDefaults.buttonColors(containerColor = Rose500)
+                    ) {
+                        Text("Delete")
+                    }
+                },
+                dismissButton = {
+                    Button(
+                        onClick = { userToDelete = null },
+                        colors = ButtonDefaults.buttonColors(containerColor = Slate700)
+                    ) {
+                        Text("Cancel")
+                    }
+                },
+                containerColor = Slate800
+            )
+        }
+
         ModalBottomSheet(
+
             onDismissRequest = { showHistorySheet = false },
             sheetState = historySheetState,
             containerColor = Slate800

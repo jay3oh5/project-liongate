@@ -19,6 +19,8 @@ object ZkProtocol {
     const val CMD_GET_TABLE_STRUCT: Byte = 0x06.toByte()
     const val CMD_SET_TABLE_STRUCT: Byte = 0x07.toByte()
     const val CMD_TABLE_DATA: Byte = 0x08.toByte()
+    const val CMD_DELETE_DATA: Byte = 0x0A.toByte()
+    const val CMD_SET_DATA: Byte = 0x0B.toByte()
     const val CMD_CONNECT_SESSION: Byte = 0x76.toByte()
 
     const val CMD_ACK_OK: Int = 200        // 0xC8
@@ -205,6 +207,71 @@ object ZkProtocol {
 
     fun buildGetDeviceParamPayload(paramNames: String): ByteArray {
         return paramNames.toByteArray(Charsets.US_ASCII)
+    }
+
+    data class LockUser(
+        val uid: Long,
+        val pin: Int,
+        val name: String,
+        val privilege: Int = 0, // 0 = Normal User, 14 = Admin
+        val cardNo: String = "0",
+        val password: String = "",
+        val mark: String = "",
+        val timezoneId: Int = 1
+    )
+
+    fun buildSetUserDataPayload(user: LockUser): ByteArray {
+        return "user\tUID=${user.uid}\tPin=${user.pin}\tName=${user.name}\tPassword=${user.password}\tCardNo=${user.cardNo}\tPrivilege=${user.privilege}\tMark=${user.mark}\n".toByteArray(Charsets.US_ASCII)
+    }
+
+    fun buildDeleteUserPayload(uid: Long): ByteArray {
+        return "user\tUID=$uid\n".toByteArray(Charsets.US_ASCII)
+    }
+
+    fun buildSetUserAuthorizePayload(pin: Int, timezoneId: Int): ByteArray {
+        return "userauthorize\tPin=$pin\tAuthorizeTimezoneId=$timezoneId\n".toByteArray(Charsets.US_ASCII)
+    }
+
+    fun parseUsers(rawTableData: String): List<LockUser> {
+        val lines = rawTableData.split("\r\n", "\n").map { it.trim() }.filter { it.isNotEmpty() }
+        val users = mutableListOf<LockUser>()
+        
+        for (line in lines) {
+            try {
+                val parts = line.split("\t")
+                var uid = 0L
+                var pin = 0
+                var name = ""
+                var privilege = 0
+                var cardNo = "0"
+                var password = ""
+                var mark = ""
+                
+                for (part in parts) {
+                    val kv = part.split("=")
+                    if (kv.size == 2) {
+                        val key = kv[0].trim()
+                        val value = kv[1].trim()
+                        when (key) {
+                            "UID" -> uid = value.toLongOrNull() ?: 0L
+                            "Pin" -> pin = value.toIntOrNull() ?: 0
+                            "Name" -> name = value
+                            "Privilege" -> privilege = value.toIntOrNull() ?: 0
+                            "CardNo" -> cardNo = value
+                            "Password" -> password = value
+                            "Mark" -> mark = value
+                        }
+                    }
+                }
+                
+                if (uid > 0) {
+                    users.add(LockUser(uid, pin, name, privilege, cardNo, password, mark))
+                }
+            } catch (e: Exception) {
+                // Ignore parse errors for individual lines
+            }
+        }
+        return users
     }
 
     data class LockAuditRecord(

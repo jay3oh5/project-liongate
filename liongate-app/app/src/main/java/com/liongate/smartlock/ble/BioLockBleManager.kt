@@ -80,6 +80,12 @@ class BioLockBleManager(private val context: Context) {
     private val _isLoadingLogs = MutableStateFlow(false)
     val isLoadingLogs: StateFlow<Boolean> = _isLoadingLogs.asStateFlow()
 
+    private val _users = MutableStateFlow<List<ZkProtocol.LockUser>>(emptyList())
+    val users: StateFlow<List<ZkProtocol.LockUser>> = _users.asStateFlow()
+
+    private val _isLoadingUsers = MutableStateFlow(false)
+    val isLoadingUsers: StateFlow<Boolean> = _isLoadingUsers.asStateFlow()
+
     private var activeGatt: BluetoothGatt? = null
     private var pullChar: BluetoothGattCharacteristic? = null
     private var cmdChar: BluetoothGattCharacteristic? = null
@@ -930,6 +936,104 @@ class BioLockBleManager(private val context: Context) {
             Result.failure(e)
         } finally {
             _isLoadingLogs.value = false
+        }
+    }
+
+    suspend fun fetchUsers(): Result<List<ZkProtocol.LockUser>> {
+        val gatt = activeGatt ?: return Result.failure(IllegalStateException("Not connected"))
+        _isLoadingUsers.value = true
+        
+        return try {
+            log("Fetching users from lock...")
+            
+            pullRxBuffer.reset()
+
+            val payload = ZkProtocol.buildGetDeviceDataPayload("user", "*", "")
+            val msg = buildSessionC3Message(command = ZkProtocol.CMD_TABLE_DATA, data = payload)
+            val resp = sendC3Packet(gatt, msg, timeoutMs = 4000)
+            
+            if (resp != null && resp.isSuccess) {
+                val accumulated = pullRxBuffer.toByteArray()
+                val parsedResp = ZkProtocol.parseC3Response(accumulated)
+                
+                val dataToParse = if (parsedResp != null && parsedResp.isSuccess) {
+                    parsedResp.data
+                } else {
+                    resp.data // Fallback
+                }
+                
+                val rawData = String(dataToParse, Charsets.US_ASCII).trim()
+                log("Users raw response length: ${rawData.length}")
+                
+                val parsedUsers = ZkProtocol.parseUsers(rawData)
+                _users.value = parsedUsers
+                log("Parsed ${parsedUsers.size} users.")
+                Result.success(parsedUsers)
+            } else {
+                val err = resp?.returnCode ?: -1
+                log("Fetch users rejected/failed: code=$err")
+                Result.failure(RuntimeException("Fetch failed: $err"))
+            }
+        } catch (e: Exception) {
+            log("Error fetching users: ${e.message}")
+            Result.failure(e)
+        } finally {
+            _isLoadingUsers.value = false
+        }
+    }
+
+    suspend fun saveUser(user: ZkProtocol.LockUser): Result<Boolean> {
+        val gatt = activeGatt ?: return Result.failure(IllegalStateException("Not connected"))
+        return try {
+            log("Saving user ${user.name} (UID=${user.uid}) to lock...")
+            val userPayload = ZkProtocol.buildSetUserDataPayload(user)
+            val userMsg = buildSessionC3Message(command = ZkProtocol.CMD_SET_DATA, data = userPayload)
+            val userResp = sendC3Packet(gatt, userMsg, timeoutMs = 2500)
+            
+            if (userResp != null && userResp.isSuccess) {
+                log("User data saved successfully. Saving user authorization...")
+                val authPayload = ZkProtocol.buildSetUserAuthorizePayload(user.pin, user.timezoneId)
+                val authMsg = buildSessionC3Message(command = ZkProtocol.CMD_SET_DATA, data = authPayload)
+                val authResp = sendC3Packet(gatt, authMsg, timeoutMs = 2500)
+                
+                if (authResp != null && authResp.isSuccess) {
+                    log("User authorization saved successfully!")
+                    Result.success(true)
+                } else {
+                    val err = authResp?.returnCode ?: -1
+                    log("Save user authorization failed: code=$err")
+                    Result.failure(RuntimeException("Auth save failed: $err"))
+                }
+            } else {
+                val err = userResp?.returnCode ?: -1
+                log("Save user data failed: code=$err")
+                Result.failure(RuntimeException("Data save failed: $err"))
+            }
+        } catch (e: Exception) {
+            log("Error saving user: ${e.message}")
+            Result.failure(e)
+        }
+    }
+
+    suspend fun deleteUser(uid: Long): Result<Boolean> {
+        val gatt = activeGatt ?: return Result.failure(IllegalStateException("Not connected"))
+        return try {
+            log("Deleting user (UID=$uid) from lock...")
+            val payload = ZkProtocol.buildDeleteUserPayload(uid)
+            val msg = buildSessionC3Message(command = ZkProtocol.CMD_DELETE_DATA, data = payload)
+            val resp = sendC3Packet(gatt, msg, timeoutMs = 2500)
+            
+            if (resp != null && resp.isSuccess) {
+                log("User $uid deleted successfully!")
+                Result.success(true)
+            } else {
+                val err = resp?.returnCode ?: -1
+                log("Delete user rejected/failed: code=$err")
+                Result.failure(RuntimeException("Delete failed: $err"))
+            }
+        } catch (e: Exception) {
+            log("Error deleting user: ${e.message}")
+            Result.failure(e)
         }
     }
 
