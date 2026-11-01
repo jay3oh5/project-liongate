@@ -1,0 +1,519 @@
+<!DOCTYPE html>
+
+<html class="dark" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>LionGate - Access Audit Logs &amp; Security History</title>
+<!-- Material Symbols Outlined -->
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<!-- Google Fonts: Space Grotesk & JetBrains Mono & Geist -->
+<link href="https://fonts.googleapis.com" rel="preconnect"/>
+<link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect"/>
+<link href="https://fonts.googleapis.com/css2?family=Geist:wght@400;500;600&amp;family=JetBrains+Mono:wght@400;500;600;700&amp;family=Space+Grotesk:wght@500;600;700&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<!-- Tailwind CSS -->
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<script id="tailwind-config">
+    tailwind.config = {
+      darkMode: "class",
+      theme: {
+        extend: {
+          "colors": {
+            "secondary-fixed": "#6ffbbe",
+            "on-primary": "#00363d",
+            "primary": "#c3f5ff",
+            "tertiary-container": "#ffc1c4",
+            "tertiary": "#ffe7e8",
+            "on-error": "#690005",
+            "on-primary-fixed": "#001f24",
+            "surface-container": "#1b202b",
+            "error-container": "#93000a",
+            "primary-fixed": "#9cf0ff",
+            "on-primary-fixed-variant": "#004f58",
+            "on-secondary-fixed": "#002113",
+            "inverse-primary": "#006875",
+            "outline-variant": "#3b494c",
+            "secondary-container": "#00a572",
+            "on-error-container": "#ffdad6",
+            "surface-container-high": "#252a36",
+            "inverse-on-surface": "#2b303c",
+            "on-secondary": "#003824",
+            "inverse-surface": "#dee2f2",
+            "secondary": "#4edea3",
+            "background": "#0e131e",
+            "tertiary-fixed-dim": "#ffb2b7",
+            "on-tertiary-fixed": "#40000d",
+            "on-tertiary-fixed-variant": "#92002a",
+            "outline": "#849396",
+            "on-tertiary-container": "#b40036",
+            "surface-container-highest": "#303541",
+            "on-secondary-container": "#00311f",
+            "surface-dim": "#0e131e",
+            "on-surface-variant": "#bac9cc",
+            "on-secondary-fixed-variant": "#005236",
+            "tertiary-fixed": "#ffdadb",
+            "secondary-fixed-dim": "#4edea3",
+            "primary-container": "#00e5ff",
+            "on-primary-container": "#00626e",
+            "on-tertiary": "#67001b",
+            "on-surface": "#dee2f2",
+            "surface-tint": "#00daf3",
+            "error": "#ffb4ab",
+            "surface-container-lowest": "#090e19",
+            "primary-fixed-dim": "#00daf3",
+            "surface-bright": "#343945",
+            "surface-container-low": "#171b27",
+            "surface-variant": "#303541",
+            "surface": "#0e131e",
+            "on-background": "#dee2f2"
+          },
+          "borderRadius": {
+            "DEFAULT": "0.25rem",
+            "lg": "0.5rem",
+            "xl": "0.75rem",
+            "full": "9999px"
+          },
+          "spacing": {
+            "space-xs": "0.25rem",
+            "space-xl": "2.5rem",
+            "space-sm": "0.5rem",
+            "margin-tablet": "2rem",
+            "margin": "1rem",
+            "gutter-tablet": "1.25rem",
+            "gutter-desktop": "1.5rem",
+            "gutter": "1rem",
+            "space-lg": "1.5rem",
+            "margin-desktop": "3rem",
+            "space-md": "1rem"
+          },
+          "fontFamily": {
+            "headline-xl-mobile": ["Space Grotesk"],
+            "headline-lg-mobile": ["Space Grotesk"],
+            "telemetry-md": ["JetBrains Mono"],
+            "body-md": ["Geist"],
+            "headline-sm": ["Space Grotesk"],
+            "headline-xl": ["Space Grotesk"],
+            "body-sm": ["Geist"],
+            "label-caps": ["JetBrains Mono"],
+            "headline-lg": ["Space Grotesk"],
+            "telemetry-sm": ["JetBrains Mono"],
+            "telemetry-lg": ["JetBrains Mono"],
+            "headline-md": ["Space Grotesk"],
+            "body-lg": ["Geist"]
+          },
+          "fontSize": {
+            "headline-xl-mobile": ["30px", {"lineHeight": "36px", "letterSpacing": "-0.02em", "fontWeight": "700"}],
+            "headline-lg-mobile": ["24px", {"lineHeight": "32px", "letterSpacing": "-0.01em", "fontWeight": "600"}],
+            "telemetry-md": ["16px", {"lineHeight": "22px", "letterSpacing": "-0.01em", "fontWeight": "500"}],
+            "body-md": ["14px", {"lineHeight": "20px", "letterSpacing": "0.005em", "fontWeight": "400"}],
+            "headline-sm": ["18px", {"lineHeight": "24px", "letterSpacing": "0em", "fontWeight": "600"}],
+            "headline-xl": ["40px", {"lineHeight": "48px", "letterSpacing": "-0.02em", "fontWeight": "700"}],
+            "body-sm": ["12px", {"lineHeight": "16px", "letterSpacing": "0.01em", "fontWeight": "400"}],
+            "label-caps": ["10px", {"lineHeight": "14px", "letterSpacing": "0.12em", "fontWeight": "700"}],
+            "headline-lg": ["32px", {"lineHeight": "40px", "letterSpacing": "-0.015em", "fontWeight": "600"}],
+            "telemetry-sm": ["12px", {"lineHeight": "16px", "letterSpacing": "0.02em", "fontWeight": "500"}],
+            "telemetry-lg": ["28px", {"lineHeight": "32px", "letterSpacing": "-0.03em", "fontWeight": "600"}],
+            "headline-md": ["22px", {"lineHeight": "28px", "letterSpacing": "-0.01em", "fontWeight": "600"}],
+            "body-lg": ["16px", {"lineHeight": "24px", "letterSpacing": "0em", "fontWeight": "400"}]
+          }
+        }
+      }
+    }
+  </script>
+<style>
+    .material-symbols-outlined {
+      font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+      line-height: 1;
+      display: inline-block;
+    }
+    .scrollbar-none::-webkit-scrollbar {
+      display: none;
+    }
+    .scrollbar-none {
+      -ms-overflow-style: none;
+      scrollbar-width: none;
+    }
+  </style>
+<style>
+    body {
+      min-height: max(884px, 100dvh);
+    }
+  </style>
+  </head>
+<body class="bg-surface-container-lowest text-on-surface antialiased select-none min-h-screen pb-44 flex justify-center">
+<!-- Mobile Frame Container (Fluid Handheld Target) -->
+<main class="w-full max-w-md min-h-screen bg-surface-container-lowest flex flex-col relative shadow-2xl">
+<!-- 1. Android Status Bar -->
+<header class="w-full bg-surface-container-lowest px-4 pt-2 pb-1 flex justify-between items-center text-on-surface-variant font-telemetry-sm text-telemetry-sm z-50">
+<div class="flex items-center gap-1.5 font-semibold text-primary">
+<span>09:41</span>
+</div>
+<div class="flex items-center gap-2 text-on-surface-variant">
+<span class="text-primary-container text-xs flex items-center font-label-caps text-label-caps font-bold">BLE 5.2</span>
+<span class="material-symbols-outlined text-sm text-on-surface-variant" data-icon="wifi">wifi</span>
+<span class="material-symbols-outlined text-sm text-on-surface-variant" data-icon="signal_cellular_alt">signal_cellular_alt</span>
+<span class="material-symbols-outlined text-base text-secondary" data-icon="battery_full">battery_full</span>
+</div>
+</header>
+<!-- TopAppBar (Anchor Compliant) -->
+<section class="flex justify-between items-center w-full px-margin h-14 bg-surface-container-low/90 backdrop-blur-md sticky top-0 z-40">
+<div class="flex items-center gap-2.5">
+<div class="w-8 h-8 rounded bg-surface-container-high border border-outline-variant flex items-center justify-center text-primary-container shadow-inner">
+<span class="material-symbols-outlined text-lg" data-icon="shield">shield</span>
+</div>
+<div>
+<div class="text-headline-sm font-headline-sm uppercase tracking-wider text-primary">
+            LIONGATE // PL10B
+          </div>
+<div class="text-label-caps font-label-caps text-on-surface-variant tracking-wider">
+            AUDIT LOGS &amp; EVENT TELEMETRY
+          </div>
+</div>
+</div>
+<div class="flex items-center gap-1.5">
+<!-- Export CSV Pill Button -->
+<button class="flex items-center gap-1 bg-surface-container px-2.5 py-1 rounded border border-outline-variant hover:border-primary-container transition-colors active:scale-95 group">
+<span class="material-symbols-outlined text-sm text-primary-container group-hover:text-primary transition-colors" data-icon="download">download</span>
+<span class="text-label-caps font-label-caps text-primary tracking-wider">CSV</span>
+</button>
+<!-- Sync Button with Indicator -->
+<button class="flex items-center gap-1 bg-surface-container-high px-2 py-1 rounded border border-outline-variant hover:border-primary-container transition-colors active:scale-95">
+<span class="w-1.5 h-1.5 rounded-full bg-secondary animate-pulse"></span>
+<span class="material-symbols-outlined text-sm text-primary-container" data-icon="sync">sync</span>
+</button>
+</div>
+</section>
+<!-- Sub-status Telemetry Strip -->
+<div class="px-margin py-1.5 bg-surface-container-low border-b border-outline-variant/60 flex items-center justify-between font-telemetry-sm text-telemetry-sm">
+<div class="flex items-center gap-2">
+<span class="text-on-surface-variant font-label-caps text-label-caps">BLE LINK:</span>
+<span class="text-primary font-telemetry-sm">SYNCED 14:32</span>
+</div>
+<div class="flex items-center gap-2">
+<span class="text-on-surface-variant font-label-caps text-label-caps">CRYPTO NONCE:</span>
+<span class="text-secondary font-telemetry-sm">AES-128 GCM</span>
+</div>
+</div>
+<!-- 2. Device & Sync Diagnostic Banner -->
+<section class="mx-margin mt-3 p-3 bg-surface-container rounded-lg border border-outline-variant shadow-sm relative overflow-hidden">
+<div class="absolute -right-6 -bottom-6 w-24 h-24 bg-primary-container/5 rounded-full pointer-events-none blur-xl"></div>
+<div class="flex items-center justify-between pb-2 border-b border-outline-variant/60 font-telemetry-sm text-telemetry-sm">
+<div class="flex items-center gap-1.5">
+<span class="material-symbols-outlined text-primary-container text-base" data-icon="bluetooth_connected">bluetooth_connected</span>
+<span class="text-primary font-bold">ZKBioLock_PL10B</span>
+</div>
+<div class="flex items-center gap-1 bg-surface-container-high px-2 py-0.5 rounded border border-outline-variant">
+<span class="text-on-surface-variant font-label-caps text-label-caps">RSSI:</span>
+<span class="text-secondary font-telemetry-sm font-semibold">-56 dBm</span>
+</div>
+</div>
+<div class="grid grid-cols-2 gap-2 pt-2.5 font-telemetry-sm text-telemetry-sm">
+<div class="flex flex-col">
+<span class="text-on-surface-variant font-label-caps text-label-caps">BUFFER CAPACITY</span>
+<div class="flex items-center gap-2 mt-0.5">
+<div class="w-16 h-1.5 bg-surface-container-high rounded-full overflow-hidden">
+<div class="w-[12.5%] h-full bg-primary-container"></div>
+</div>
+<span class="text-on-surface font-telemetry-sm font-medium">128/1024 Evt</span>
+</div>
+</div>
+<div class="flex flex-col items-end">
+<span class="text-on-surface-variant font-label-caps text-label-caps">FLASH STORAGE</span>
+<span class="text-secondary-fixed flex items-center gap-1 mt-0.5 font-medium">
+<span class="w-1.5 h-1.5 rounded-full bg-secondary"></span>
+            OFFLINE CACHE OK
+          </span>
+</div>
+</div>
+</section>
+<!-- 3. Filter & Query Controls -->
+<section class="mt-3 px-margin space-y-2">
+<!-- Date Range Selector Pill with rapid pagers -->
+<div class="flex items-center justify-between gap-1.5">
+<button class="flex-1 flex items-center justify-between bg-surface-container-low px-3 py-2 rounded-lg border border-outline-variant hover:border-primary transition-colors">
+<div class="flex items-center gap-2">
+<span class="material-symbols-outlined text-primary text-base" data-icon="calendar_today">calendar_today</span>
+<span class="font-telemetry-sm text-telemetry-sm font-semibold text-primary tracking-wide">TODAY (OCT 31, 2026)</span>
+</div>
+<span class="material-symbols-outlined text-on-surface-variant text-sm" data-icon="expand_more">expand_more</span>
+</button>
+<div class="flex items-center gap-1">
+<button class="bg-surface-container-low px-2 py-2 rounded-lg border border-outline-variant hover:border-primary active:scale-95 text-on-surface-variant hover:text-primary transition-colors">
+<span class="material-symbols-outlined text-sm font-bold" data-icon="chevron_left">chevron_left</span>
+</button>
+<button class="bg-surface-container-low px-2 py-2 rounded-lg border border-outline-variant hover:border-primary active:scale-95 text-on-surface-variant hover:text-primary transition-colors">
+<span class="material-symbols-outlined text-sm font-bold" data-icon="chevron_right">chevron_right</span>
+</button>
+</div>
+</div>
+<!-- Horizontal scrolling filter chips -->
+<div class="flex items-center gap-2 overflow-x-auto scrollbar-none py-1">
+<!-- ALL EVENTS (Active Cyan) -->
+<button class="whitespace-nowrap px-3 py-1.5 rounded bg-primary-container/15 text-primary-container border border-primary-container shadow-[0_0_12px_rgba(0,229,255,0.25)] flex items-center gap-1.5 font-label-caps text-label-caps">
+<span class="material-symbols-outlined text-xs" data-icon="dataset">dataset</span>
+<span>ALL EVENTS (128)</span>
+</button>
+<!-- FINGERPRINT -->
+<button class="whitespace-nowrap px-3 py-1.5 rounded bg-surface-container text-on-surface-variant border border-outline-variant hover:border-outline hover:text-primary transition-colors flex items-center gap-1.5 font-label-caps text-label-caps">
+<span class="material-symbols-outlined text-xs text-primary" data-icon="fingerprint">fingerprint</span>
+<span>FINGERPRINT (86)</span>
+</button>
+<!-- BLE APP -->
+<button class="whitespace-nowrap px-3 py-1.5 rounded bg-surface-container text-on-surface-variant border border-outline-variant hover:border-outline hover:text-primary transition-colors flex items-center gap-1.5 font-label-caps text-label-caps">
+<span class="material-symbols-outlined text-xs text-primary-container" data-icon="bluetooth">bluetooth</span>
+<span>BLE APP (32)</span>
+</button>
+<!-- ALERTS & DENIED -->
+<button class="whitespace-nowrap px-3 py-1.5 rounded bg-surface-container text-tertiary-fixed-dim border border-outline-variant hover:border-error-container hover:text-error transition-colors flex items-center gap-1.5 font-label-caps text-label-caps">
+<span class="material-symbols-outlined text-xs text-error" data-icon="warning">warning</span>
+<span>ALERTS &amp; DENIED (10)</span>
+</button>
+<!-- SYSTEM / SENSORS -->
+<button class="whitespace-nowrap px-3 py-1.5 rounded bg-surface-container text-on-surface-variant border border-outline-variant hover:border-outline hover:text-primary transition-colors flex items-center gap-1.5 font-label-caps text-label-caps">
+<span class="material-symbols-outlined text-xs text-on-surface-variant" data-icon="tune">tune</span>
+<span>SYSTEM / SENSORS (0)</span>
+</button>
+</div>
+</section>
+<!-- 4. Chronological Event Feed -->
+<section class="mt-3 px-margin space-y-2.5">
+<div class="flex items-center justify-between font-label-caps text-label-caps text-on-surface-variant tracking-wider uppercase px-1">
+<span>Timeline Stream</span>
+<span>Hardware Log Sync: Active</span>
+</div>
+<!-- EVENT 1 -->
+<article class="bg-surface-container-low rounded-lg p-3 border border-outline-variant hover:border-secondary transition-colors relative">
+<div class="flex items-start justify-between">
+<div class="flex items-start gap-2.5">
+<div class="w-8 h-8 rounded bg-surface-container-high border border-outline-variant flex items-center justify-center text-secondary mt-0.5">
+<span class="material-symbols-outlined text-base" data-icon="fingerprint">fingerprint</span>
+</div>
+<div>
+<div class="flex items-center gap-2">
+<span class="font-headline-sm text-body-md font-semibold text-on-surface">User #02 Alice</span>
+<span class="bg-surface-container-high px-1.5 py-0.2 rounded font-label-caps text-label-caps text-primary border border-outline-variant">ADMIN</span>
+</div>
+<div class="font-body-sm text-body-sm text-on-surface-variant mt-0.5">
+                Biometric Fingerprint (Sensor #01)
+              </div>
+</div>
+</div>
+<div class="flex flex-col items-end">
+<span class="px-2 py-0.5 rounded font-label-caps text-label-caps bg-secondary-container/20 text-secondary border border-secondary shadow-[0_0_8px_rgba(78,222,163,0.3)]">
+              ACCESS GRANTED
+            </span>
+<span class="font-telemetry-sm text-telemetry-sm text-on-surface-variant mt-1">14:29:12 | Today</span>
+</div>
+</div>
+<!-- Micro-telemetry Data Strip -->
+<div class="mt-2.5 pt-2 border-t border-outline-variant/60 flex items-center gap-1.5 font-telemetry-sm text-telemetry-sm text-on-surface-variant">
+<span class="material-symbols-outlined text-xs text-primary-container" data-icon="memory">memory</span>
+<span class="truncate">Relay Clutch: Motor Pulse 5.0s -&gt; Auto-Relocked | Auth Latency: 320ms</span>
+</div>
+</article>
+<!-- EVENT 2 -->
+<article class="bg-surface-container-low rounded-lg p-3 border border-outline-variant hover:border-secondary transition-colors relative">
+<div class="flex items-start justify-between">
+<div class="flex items-start gap-2.5">
+<div class="w-8 h-8 rounded bg-surface-container-high border border-outline-variant flex items-center justify-center text-primary-container mt-0.5">
+<span class="material-symbols-outlined text-base" data-icon="bluetooth">bluetooth</span>
+</div>
+<div>
+<div class="flex items-center gap-2">
+<span class="font-headline-sm text-body-md font-semibold text-on-surface">User #01 Admin Master</span>
+<span class="bg-surface-container-high px-1.5 py-0.2 rounded font-label-caps text-label-caps text-primary border border-outline-variant">ADMIN</span>
+</div>
+<div class="font-body-sm text-body-sm text-on-surface-variant mt-0.5">
+                BLE App Unlock (Encrypted Handshake)
+              </div>
+</div>
+</div>
+<div class="flex flex-col items-end">
+<span class="px-2 py-0.5 rounded font-label-caps text-label-caps bg-secondary-container/20 text-secondary border border-secondary shadow-[0_0_8px_rgba(78,222,163,0.3)]">
+              ACCESS GRANTED
+            </span>
+<span class="font-telemetry-sm text-telemetry-sm text-on-surface-variant mt-1">13:45:00 | Today</span>
+</div>
+</div>
+<!-- Micro-telemetry Data Strip -->
+<div class="mt-2.5 pt-2 border-t border-outline-variant/60 flex items-center gap-1.5 font-telemetry-sm text-telemetry-sm text-on-surface-variant">
+<span class="material-symbols-outlined text-xs text-primary-container" data-icon="key">key</span>
+<span class="truncate">Packet: 0x8F AUTH_TOKEN_VALID | BLE RSSI: -48 dBm</span>
+</div>
+</article>
+<!-- EVENT 3 -->
+<article class="bg-surface-container-low rounded-lg p-3 border border-error-container/60 hover:border-error transition-colors relative">
+<div class="flex items-start justify-between">
+<div class="flex items-start gap-2.5">
+<div class="w-8 h-8 rounded bg-error-container/30 border border-error/40 flex items-center justify-center text-error mt-0.5">
+<span class="material-symbols-outlined text-base" data-icon="gpp_bad">gpp_bad</span>
+</div>
+<div>
+<div class="flex items-center gap-2">
+<span class="font-headline-sm text-body-md font-semibold text-error">Unknown / Unregistered</span>
+<span class="bg-error-container/40 px-1.5 py-0.2 rounded font-label-caps text-label-caps text-tertiary border border-error">SECURITY WARNING</span>
+</div>
+<div class="font-body-sm text-body-sm text-on-surface-variant mt-0.5">
+                Unrecognized Fingerprint (Attempt 1/5)
+              </div>
+</div>
+</div>
+<div class="flex flex-col items-end">
+<span class="px-2 py-0.5 rounded font-label-caps text-label-caps bg-error-container text-error border border-error shadow-[0_0_8px_rgba(255,23,68,0.35)]">
+              ACCESS DENIED
+            </span>
+<span class="font-telemetry-sm text-telemetry-sm text-on-surface-variant mt-1">11:15:30 | Today</span>
+</div>
+</div>
+<!-- Micro-telemetry Data Strip -->
+<div class="mt-2.5 pt-2 border-t border-outline-variant/60 flex items-center gap-1.5 font-telemetry-sm text-telemetry-sm text-error">
+<span class="material-symbols-outlined text-xs text-error" data-icon="warning">warning</span>
+<span class="truncate">Buzzer: 2 Short Beeps | LED: Red Flash | Solenoid: Inhibited</span>
+</div>
+</article>
+<!-- EVENT 4 -->
+<article class="bg-surface-container-low rounded-lg p-3 border border-outline-variant hover:border-primary-fixed transition-colors relative">
+<div class="flex items-start justify-between">
+<div class="flex items-start gap-2.5">
+<div class="w-8 h-8 rounded bg-surface-container-high border border-outline-variant flex items-center justify-center text-primary-fixed-dim mt-0.5">
+<span class="material-symbols-outlined text-base" data-icon="schedule">schedule</span>
+</div>
+<div>
+<div class="flex items-center gap-2">
+<span class="font-headline-sm text-body-md font-semibold text-on-surface">System Hardware Scheduler</span>
+<span class="bg-surface-container-high px-1.5 py-0.2 rounded font-label-caps text-label-caps text-on-surface-variant border border-outline-variant">SYSTEM</span>
+</div>
+<div class="font-body-sm text-body-sm text-on-surface-variant mt-0.5">
+                Passage Mode Started (Timetable Slot #01)
+              </div>
+</div>
+</div>
+<div class="flex flex-col items-end">
+<span class="px-2 py-0.5 rounded font-label-caps text-label-caps bg-surface-container-highest text-primary-fixed border border-primary-fixed">
+              PASSAGE MODE ON
+            </span>
+<span class="font-telemetry-sm text-telemetry-sm text-on-surface-variant mt-1">09:00:00 | Today</span>
+</div>
+</div>
+<!-- Micro-telemetry Data Strip -->
+<div class="mt-2.5 pt-2 border-t border-outline-variant/60 flex items-center gap-1.5 font-telemetry-sm text-telemetry-sm text-on-surface-variant">
+<span class="material-symbols-outlined text-xs text-primary-fixed-dim" data-icon="lock_open_right">lock_open_right</span>
+<span class="truncate">Clutch Free-Turn Engaged | Auto-lock suspended until 17:00</span>
+</div>
+</article>
+<!-- EVENT 5 -->
+<article class="bg-surface-container-low rounded-lg p-3 border border-outline-variant hover:border-secondary transition-colors relative">
+<div class="flex items-start justify-between">
+<div class="flex items-start gap-2.5">
+<div class="w-8 h-8 rounded bg-surface-container-high border border-outline-variant flex items-center justify-center text-secondary mt-0.5">
+<span class="material-symbols-outlined text-base" data-icon="badge">badge</span>
+</div>
+<div>
+<div class="flex items-center gap-2">
+<span class="font-headline-sm text-body-md font-semibold text-on-surface">User #11 Clean Team</span>
+<span class="bg-surface-container-high px-1.5 py-0.2 rounded font-label-caps text-label-caps text-secondary-fixed border border-outline-variant">TEMPORARY</span>
+</div>
+<div class="font-body-sm text-body-sm text-on-surface-variant mt-0.5">
+                Temporary Fingerprint (Slot #11)
+              </div>
+</div>
+</div>
+<div class="flex flex-col items-end">
+<span class="px-2 py-0.5 rounded font-label-caps text-label-caps bg-secondary-container/20 text-secondary border border-secondary">
+              ACCESS GRANTED
+            </span>
+<span class="font-telemetry-sm text-telemetry-sm text-on-surface-variant mt-1">Oct 30, 22:15:40</span>
+</div>
+</div>
+<!-- Micro-telemetry Data Strip -->
+<div class="mt-2.5 pt-2 border-t border-outline-variant/60 flex items-center gap-1.5 font-telemetry-sm text-telemetry-sm text-on-surface-variant">
+<span class="material-symbols-outlined text-xs text-primary-container" data-icon="timer">timer</span>
+<span class="truncate">Window Match: 20:00-22:00 Slot #02 | Auth Validated</span>
+</div>
+</article>
+<!-- EVENT 6 -->
+<article class="bg-surface-container-low rounded-lg p-3 border border-outline-variant hover:border-tertiary transition-colors relative">
+<div class="flex items-start justify-between">
+<div class="flex items-start gap-2.5">
+<div class="w-8 h-8 rounded bg-surface-container-high border border-outline-variant flex items-center justify-center text-tertiary mt-0.5">
+<span class="material-symbols-outlined text-base" data-icon="battery_alert">battery_alert</span>
+</div>
+<div>
+<div class="flex items-center gap-2">
+<span class="font-headline-sm text-body-md font-semibold text-on-surface">Hardware Power Monitor</span>
+<span class="bg-surface-container-high px-1.5 py-0.2 rounded font-label-caps text-label-caps text-on-surface-variant border border-outline-variant">SENSOR</span>
+</div>
+<div class="font-body-sm text-body-sm text-on-surface-variant mt-0.5">
+                Low Voltage ADC Sensor
+              </div>
+</div>
+</div>
+<div class="flex flex-col items-end">
+<span class="px-2 py-0.5 rounded font-label-caps text-label-caps bg-surface-container text-tertiary border border-outline">
+              VOLTAGE WARNING
+            </span>
+<span class="font-telemetry-sm text-telemetry-sm text-on-surface-variant mt-1">Oct 30, 18:02:11</span>
+</div>
+</div>
+<!-- Micro-telemetry Data Strip -->
+<div class="mt-2.5 pt-2 border-t border-outline-variant/60 flex items-center gap-1.5 font-telemetry-sm text-telemetry-sm text-on-surface-variant">
+<span class="material-symbols-outlined text-xs text-error" data-icon="bolt">bolt</span>
+<span class="truncate">Battery 4.78V (&lt;4.80V Threshold) | 4 AA Alkaline Cell Alert</span>
+</div>
+</article>
+</section>
+<!-- 5. Telemetry Metric Summary (Pinned above bottom nav) -->
+<footer class="fixed bottom-16 left-0 right-0 max-w-md mx-auto z-40 px-margin pb-2 bg-gradient-to-t from-surface-container-lowest via-surface-container-lowest/95 to-transparent pt-3 pointer-events-auto">
+<div class="bg-surface-container rounded-lg border border-outline-variant p-2.5 shadow-xl">
+<div class="grid grid-cols-3 gap-2 text-center pb-2 border-b border-outline-variant/60 font-telemetry-sm text-telemetry-sm">
+<div class="flex flex-col items-center">
+<span class="font-label-caps text-label-caps text-on-surface-variant">Unlocks Today</span>
+<span class="font-telemetry-md text-telemetry-md font-bold text-secondary mt-0.5">42</span>
+</div>
+<div class="flex flex-col items-center border-x border-outline-variant/60">
+<span class="font-label-caps text-label-caps text-on-surface-variant">Tamper / Denials</span>
+<span class="font-telemetry-md text-telemetry-md font-bold text-error mt-0.5">1</span>
+</div>
+<div class="flex flex-col items-center">
+<span class="font-label-caps text-label-caps text-on-surface-variant">Battery Status</span>
+<span class="font-telemetry-md text-telemetry-md font-bold text-primary mt-0.5">5.9V Optimal</span>
+</div>
+</div>
+<button class="w-full mt-2 py-2 px-3 rounded bg-surface-container-high border border-primary-container text-primary-container hover:bg-primary-container hover:text-on-primary font-label-caps text-label-caps transition-all flex items-center justify-center gap-1.5 active:scale-95 shadow-[0_0_12px_rgba(0,229,255,0.15)]">
+<span class="material-symbols-outlined text-sm" data-icon="file_download">file_download</span>
+<span>EXPORT COMPLETE AUDIT LOG (CSV / ENCRYPTED SYNC)</span>
+</button>
+</div>
+</footer>
+<!-- 6. Bottom Navigation Bar (Matched Shared Components JSON with 'History' Active) -->
+<nav class="fixed bottom-0 left-0 w-full z-50 flex justify-around items-center px-space-sm h-16 bg-surface-container-lowest/95 backdrop-blur-lg">
+<div class="max-w-md w-full flex justify-around items-center h-full">
+<!-- Control -->
+<a class="flex flex-col items-center justify-center text-on-surface-variant hover:text-primary transition-colors duration-150 active:scale-95 pt-1 pb-2 flex-1" href="#control">
+<span class="material-symbols-outlined text-lg" data-icon="lock_open">lock_open</span>
+<span class="text-label-caps font-label-caps mt-1">Control</span>
+</a>
+<!-- Users -->
+<a class="flex flex-col items-center justify-center text-on-surface-variant hover:text-primary transition-colors duration-150 active:scale-95 pt-1 pb-2 flex-1" href="#users">
+<span class="material-symbols-outlined text-lg" data-icon="group">group</span>
+<span class="text-label-caps font-label-caps mt-1">Users</span>
+</a>
+<!-- Schedules -->
+<a class="flex flex-col items-center justify-center text-on-surface-variant hover:text-primary transition-colors duration-150 active:scale-95 pt-1 pb-2 flex-1" href="#schedules">
+<span class="material-symbols-outlined text-lg" data-icon="schedule">schedule</span>
+<span class="text-label-caps font-label-caps mt-1">Schedules</span>
+</a>
+<!-- History [ACTIVE TAB] -->
+<a class="flex flex-col items-center justify-center text-primary-container border-t-2 border-primary-container pt-1 pb-2 flex-1 shadow-[0_-4px_12px_rgba(0,229,255,0.2)]" href="#history">
+<span class="material-symbols-outlined text-lg" data-icon="receipt_long">receipt_long</span>
+<span class="text-label-caps font-label-caps mt-1">History</span>
+</a>
+<!-- Settings -->
+<a class="flex flex-col items-center justify-center text-on-surface-variant hover:text-primary transition-colors duration-150 active:scale-95 pt-1 pb-2 flex-1" href="#settings">
+<span class="material-symbols-outlined text-lg" data-icon="settings">settings</span>
+<span class="text-label-caps font-label-caps mt-1">Settings</span>
+</a>
+</div>
+</nav>
+</main>
+</body></html>

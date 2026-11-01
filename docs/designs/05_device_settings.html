@@ -1,0 +1,472 @@
+<!DOCTYPE html>
+
+<html class="dark" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>LionGate - Lock Settings &amp; Emergency Procedures</title>
+<!-- Google Fonts: Space Grotesk & JetBrains Mono -->
+<link href="https://fonts.googleapis.com" rel="preconnect"/>
+<link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect"/>
+<link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;600;700&amp;family=Space+Grotesk:wght@500;600;700&amp;display=swap" rel="stylesheet"/>
+<!-- Material Symbols Outlined -->
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<!-- Tailwind CSS CDN -->
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<script id="tailwind-config">
+    tailwind.config = {
+      darkMode: "class",
+      theme: {
+        extend: {
+          "colors": {
+            "tertiary-container": "#ffc1c4",
+            "tertiary-fixed-dim": "#ffb2b7",
+            "on-secondary-container": "#00311f",
+            "secondary": "#4edea3",
+            "on-tertiary-fixed-variant": "#92002a",
+            "primary-fixed-dim": "#00daf3",
+            "primary-container": "#00e5ff",
+            "primary-fixed": "#9cf0ff",
+            "on-primary-container": "#00626e",
+            "on-secondary-fixed-variant": "#005236",
+            "error": "#ffb4ab",
+            "on-surface-variant": "#bac9cc",
+            "surface-variant": "#303541",
+            "on-secondary": "#003824",
+            "inverse-primary": "#006875",
+            "inverse-on-surface": "#2b303c",
+            "surface-tint": "#00daf3",
+            "tertiary-fixed": "#ffdadb",
+            "on-tertiary": "#67001b",
+            "on-error-container": "#ffdad6",
+            "on-secondary-fixed": "#002113",
+            "inverse-surface": "#dee2f2",
+            "on-primary-fixed": "#001f24",
+            "surface-container-high": "#252a36",
+            "on-tertiary-fixed": "#40000d",
+            "outline": "#849396",
+            "background": "#0e131e",
+            "on-primary-fixed-variant": "#004f58",
+            "surface-container-lowest": "#090e19",
+            "surface-container": "#1b202b",
+            "on-error": "#690005",
+            "surface-bright": "#343945",
+            "on-primary": "#00363d",
+            "error-container": "#93000a",
+            "surface-container-highest": "#303541",
+            "on-tertiary-container": "#b40036",
+            "on-surface": "#dee2f2",
+            "surface-container-low": "#171b27",
+            "on-background": "#dee2f2",
+            "secondary-fixed": "#6ffbbe",
+            "surface-dim": "#0e131e",
+            "secondary-fixed-dim": "#4edea3",
+            "primary": "#c3f5ff",
+            "outline-variant": "#3b494c",
+            "tertiary": "#ffe7e8",
+            "secondary-container": "#00a572",
+            "surface": "#0e131e"
+          },
+          "borderRadius": {
+            "DEFAULT": "0.25rem",
+            "lg": "0.5rem",
+            "xl": "0.75rem",
+            "full": "9999px"
+          },
+          "spacing": {
+            "margin-tablet": "2rem",
+            "space-xl": "2.5rem",
+            "margin-desktop": "3rem",
+            "space-md": "1rem",
+            "space-xs": "0.25rem",
+            "space-sm": "0.5rem",
+            "space-lg": "1.5rem",
+            "margin": "1rem",
+            "gutter-desktop": "1.5rem",
+            "gutter": "1rem",
+            "gutter-tablet": "1.25rem"
+          },
+          "fontFamily": {
+            "body-lg": ["Geist", "sans-serif"],
+            "headline-lg-mobile": ["Space Grotesk", "sans-serif"],
+            "headline-lg": ["Space Grotesk", "sans-serif"],
+            "telemetry-md": ["JetBrains Mono", "monospace"],
+            "headline-xl": ["Space Grotesk", "sans-serif"],
+            "body-sm": ["Geist", "sans-serif"],
+            "headline-sm": ["Space Grotesk", "sans-serif"],
+            "label-caps": ["JetBrains Mono", "monospace"],
+            "headline-xl-mobile": ["Space Grotesk", "sans-serif"],
+            "body-md": ["Geist", "sans-serif"],
+            "telemetry-lg": ["JetBrains Mono", "monospace"],
+            "headline-md": ["Space Grotesk", "sans-serif"],
+            "telemetry-sm": ["JetBrains Mono", "monospace"]
+          },
+          "fontSize": {
+            "body-lg": ["16px", { "lineHeight": "24px", "letterSpacing": "0em", "fontWeight": "400" }],
+            "headline-lg-mobile": ["24px", { "lineHeight": "32px", "letterSpacing": "-0.01em", "fontWeight": "600" }],
+            "headline-lg": ["32px", { "lineHeight": "40px", "letterSpacing": "-0.015em", "fontWeight": "600" }],
+            "telemetry-md": ["16px", { "lineHeight": "22px", "letterSpacing": "-0.01em", "fontWeight": "500" }],
+            "headline-xl": ["40px", { "lineHeight": "48px", "letterSpacing": "-0.02em", "fontWeight": "700" }],
+            "body-sm": ["12px", { "lineHeight": "16px", "letterSpacing": "0.01em", "fontWeight": "400" }],
+            "headline-sm": ["18px", { "lineHeight": "24px", "letterSpacing": "0em", "fontWeight": "600" }],
+            "label-caps": ["10px", { "lineHeight": "14px", "letterSpacing": "0.12em", "fontWeight": "700" }],
+            "headline-xl-mobile": ["30px", { "lineHeight": "36px", "letterSpacing": "-0.02em", "fontWeight": "700" }],
+            "body-md": ["14px", { "lineHeight": "20px", "letterSpacing": "0.005em", "fontWeight": "400" }],
+            "telemetry-lg": ["28px", { "lineHeight": "32px", "letterSpacing": "-0.03em", "fontWeight": "600" }],
+            "headline-md": ["22px", { "lineHeight": "28px", "letterSpacing": "-0.01em", "fontWeight": "600" }],
+            "telemetry-sm": ["12px", { "lineHeight": "16px", "letterSpacing": "0.02em", "fontWeight": "500" }]
+          }
+        }
+      }
+    }
+  </script>
+<style>
+    .material-symbols-outlined {
+      font-family: 'Material Symbols Outlined';
+      font-weight: normal;
+      font-style: normal;
+      font-size: 20px;
+      line-height: 1;
+      letter-spacing: normal;
+      text-transform: none;
+      display: inline-block;
+      white-space: nowrap;
+      word-wrap: normal;
+      direction: ltr;
+      -webkit-font-smoothing: antialiased;
+    }
+    /* Subtle grid overlay for high-tech industrial aesthetic */
+    .bg-cyber-grid {
+      background-image: linear-gradient(to right, rgba(59, 73, 76, 0.15) 1px, transparent 1px),
+                        linear-gradient(to bottom, rgba(59, 73, 76, 0.15) 1px, transparent 1px);
+      background-size: 24px 24px;
+    }
+  </style>
+<style>
+    body {
+      min-height: max(884px, 100dvh);
+    }
+  </style>
+  </head>
+<body class="bg-background text-on-surface antialiased selection:bg-primary-container selection:text-surface-container-lowest min-h-screen pb-20">
+<!-- Android OS Status Bar Simulation -->
+<div class="w-full h-8 bg-surface-container-lowest flex justify-between items-center px-4 pt-1 select-none border-b border-outline-variant/30">
+<div class="flex items-center space-x-2">
+<span class="font-telemetry-sm text-telemetry-sm text-on-surface font-semibold">09:41</span>
+<span class="flex h-1.5 w-1.5 relative">
+<span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-primary-container opacity-75"></span>
+<span class="relative inline-flex rounded-full h-1.5 w-1.5 bg-primary-container"></span>
+</span>
+</div>
+<div class="flex items-center space-x-3 text-on-surface-variant">
+<div class="flex items-center space-x-1">
+<span class="font-label-caps text-label-caps text-secondary">BLE 5.2</span>
+<span class="material-symbols-outlined text-[14px] text-secondary" data-icon="bluetooth_connected">bluetooth_connected</span>
+</div>
+<span class="material-symbols-outlined text-[15px]" data-icon="wifi">wifi</span>
+<div class="flex items-center space-x-1">
+<span class="font-telemetry-sm text-telemetry-sm text-on-surface">94%</span>
+<span class="material-symbols-outlined text-[16px] text-primary" data-icon="battery_full">battery_full</span>
+</div>
+</div>
+</div>
+<!-- Shared TopAppBar Component Logic -->
+<header class="flex justify-between items-center w-full px-margin h-14 bg-surface-container-low/90 backdrop-blur-md sticky top-0 z-40 shadow-sm">
+<div class="flex items-center space-x-2">
+<button class="w-8 h-8 rounded flex items-center justify-center text-on-surface-variant hover:text-primary transition-colors">
+<span class="material-symbols-outlined" data-icon="shield">shield</span>
+</button>
+<div>
+<h1 class="text-headline-sm font-headline-sm uppercase tracking-wider text-primary">LIONGATE // PL10B</h1>
+<p class="font-label-caps text-label-caps text-outline leading-none">NODE ADDR :: D0:B5:C2</p>
+</div>
+</div>
+<div class="flex items-center space-x-2">
+<button class="px-2.5 py-1 rounded border border-primary-container/80 text-primary-container font-label-caps text-label-caps hover:bg-primary-container/10 active:scale-95 transition-all flex items-center space-x-1">
+<span class="material-symbols-outlined text-[14px]" data-icon="save">save</span>
+<span>SAVE CHANGES</span>
+</button>
+<span class="material-symbols-outlined text-primary-container" data-icon="bluetooth_connected">bluetooth_connected</span>
+</div>
+</header>
+<!-- Sub-Header Status Ribbon -->
+<div class="px-margin py-2.5 bg-surface-container border-b border-outline-variant/40 flex justify-between items-center">
+<div class="flex items-center space-x-2">
+<span class="material-symbols-outlined text-secondary text-[18px]" data-icon="tune">tune</span>
+<div>
+<h2 class="font-headline-sm text-body-md text-on-surface font-semibold">Device Settings</h2>
+<p class="font-telemetry-sm text-body-sm text-outline">Hardware Config &amp; Security</p>
+</div>
+</div>
+<div class="flex items-center space-x-1 px-2 py-0.5 rounded bg-surface-container-lowest border border-outline-variant">
+<span class="w-1.5 h-1.5 rounded-full bg-secondary"></span>
+<span class="font-label-caps text-label-caps text-secondary">ACTUATOR_ONLINE</span>
+</div>
+</div>
+<!-- Primary Main View Canvas -->
+<main class="px-margin py-space-md space-y-space-md bg-cyber-grid">
+<!-- Section 1: Hardware Profile Card -->
+<section class="bg-surface-container-low rounded-xl border border-outline-variant p-space-md shadow-sm">
+<div class="flex items-center justify-between pb-3 border-b border-outline-variant/40 mb-3">
+<div class="flex items-center space-x-2">
+<span class="material-symbols-outlined text-primary-container" data-icon="developer_board">developer_board</span>
+<span class="font-label-caps text-label-caps text-primary tracking-widest">HARDWARE PROFILE</span>
+</div>
+<span class="font-label-caps text-label-caps text-secondary border border-secondary/30 bg-secondary/10 px-2 py-0.5 rounded">UP TO DATE</span>
+</div>
+<div class="space-y-3">
+<!-- Device Name Input -->
+<div>
+<label class="block font-label-caps text-label-caps text-outline mb-1">BROADCAST IDENTIFIER</label>
+<div class="flex items-center bg-surface-container-lowest border border-outline-variant rounded-lg px-3 py-2 focus-within:border-primary-container">
+<span class="material-symbols-outlined text-outline text-[18px] mr-2" data-icon="badge">badge</span>
+<input class="bg-transparent border-none text-primary font-telemetry-md text-telemetry-md p-0 focus:ring-0 w-full tracking-wider" type="text" value="ZKBioLock_PL10B"/>
+<button class="p-1 text-on-surface-variant hover:text-primary transition-colors">
+<span class="material-symbols-outlined text-[16px]" data-icon="edit">edit</span>
+</button>
+</div>
+</div>
+<!-- MAC Address -->
+<div class="flex justify-between items-center bg-surface-container-lowest/60 border border-outline-variant/60 rounded-lg p-2.5">
+<div>
+<div class="font-label-caps text-label-caps text-outline">MAC ADDRESS (BLE PHY)</div>
+<div class="font-telemetry-md text-telemetry-md text-on-surface font-semibold tracking-wider">D0:B5:C2:8A:1E:09</div>
+</div>
+<button class="p-1.5 rounded hover:bg-surface-variant text-on-surface-variant hover:text-primary transition-colors active:scale-95" title="Copy MAC">
+<span class="material-symbols-outlined text-[18px]" data-icon="content_copy">content_copy</span>
+</button>
+</div>
+<!-- Firmware Info -->
+<div class="grid grid-cols-2 gap-2">
+<div class="bg-surface-container-lowest/60 border border-outline-variant/60 rounded-lg p-2.5">
+<div class="font-label-caps text-label-caps text-outline">PROTOCOL ENGINE</div>
+<div class="font-telemetry-sm text-telemetry-sm text-on-surface font-medium">ZKTeco C3 Pull</div>
+</div>
+<div class="bg-surface-container-lowest/60 border border-outline-variant/60 rounded-lg p-2.5">
+<div class="font-label-caps text-label-caps text-outline">FIRMWARE REVISION</div>
+<div class="font-telemetry-sm text-telemetry-sm text-primary-container font-medium">v1.4.2-SEC</div>
+</div>
+</div>
+<!-- Real-Time Clock Telemetry -->
+<div class="bg-surface-container-lowest border border-outline-variant rounded-lg p-3">
+<div class="flex justify-between items-start mb-2">
+<div>
+<div class="font-label-caps text-label-caps text-outline">INTERNAL RTC SYNCHRONIZATION</div>
+<div class="font-telemetry-md text-telemetry-md text-primary font-bold">2026-10-31 14:32:00</div>
+</div>
+<span class="font-label-caps text-label-caps text-secondary bg-secondary/10 border border-secondary/20 px-1.5 py-0.5 rounded">0.00s DRIFT</span>
+</div>
+<button class="w-full py-1.5 px-3 rounded bg-surface-variant hover:bg-outline-variant/50 border border-outline-variant text-on-surface font-label-caps text-label-caps flex items-center justify-center space-x-1.5 transition-colors">
+<span class="material-symbols-outlined text-[16px] text-primary" data-icon="update">update</span>
+<span>SYNC PHONE TIME</span>
+</button>
+</div>
+</div>
+</section>
+<!-- Section 2: Security Credentials Card -->
+<section class="bg-surface-container-low rounded-xl border border-outline-variant p-space-md shadow-sm">
+<div class="flex items-center space-x-2 pb-3 border-b border-outline-variant/40 mb-3">
+<span class="material-symbols-outlined text-primary-container" data-icon="key">key</span>
+<span class="font-label-caps text-label-caps text-primary tracking-widest">SECURITY CREDENTIALS</span>
+</div>
+<div class="space-y-3.5">
+<!-- BLE Pairing Password -->
+<div class="bg-surface-container-lowest border border-outline-variant rounded-lg p-3">
+<div class="flex justify-between items-center mb-1">
+<span class="font-label-caps text-label-caps text-outline">BLE PAIRING PASSWORD</span>
+<span class="font-label-caps text-label-caps text-primary-container cursor-pointer hover:underline">EDIT KEY</span>
+</div>
+<div class="flex items-center justify-between">
+<div class="flex items-center space-x-2">
+<span class="material-symbols-outlined text-outline text-[18px]" data-icon="lock">lock</span>
+<span class="font-telemetry-md text-telemetry-md text-on-surface tracking-widest font-bold">•••••• (888888)</span>
+</div>
+<button class="text-on-surface-variant hover:text-primary transition-colors">
+<span class="material-symbols-outlined text-[18px]" data-icon="visibility">visibility</span>
+</button>
+</div>
+</div>
+<!-- Supervisor Password Mode Toggle -->
+<div class="flex items-start justify-between bg-surface-container-lowest/60 border border-outline-variant/60 rounded-lg p-3">
+<div class="pr-2">
+<div class="font-telemetry-sm text-telemetry-sm text-on-surface font-semibold">Supervisor Password Mode</div>
+<div class="font-body-sm text-body-sm text-outline mt-0.5 leading-tight">Enforce admin PIN challenge for config writes and parameter mutation</div>
+</div>
+<!-- Cyber Toggle Active -->
+<div class="relative inline-flex items-center cursor-pointer mt-1">
+<div class="w-10 h-5 bg-primary-container/20 border border-primary-container rounded-full relative transition-colors">
+<div class="absolute right-0.5 top-0.5 w-4 h-4 rounded-full bg-primary-container shadow-sm"></div>
+</div>
+</div>
+</div>
+<!-- App Biometric Gate Toggle -->
+<div class="flex items-start justify-between bg-surface-container-lowest/60 border border-outline-variant/60 rounded-lg p-3">
+<div class="pr-2">
+<div class="font-telemetry-sm text-telemetry-sm text-on-surface font-semibold">App Biometric Gate</div>
+<div class="font-body-sm text-body-sm text-outline mt-0.5 leading-tight">Require phone biometric fingerprint to unlock app operational console</div>
+</div>
+<!-- Cyber Toggle Active -->
+<div class="relative inline-flex items-center cursor-pointer mt-1">
+<div class="w-10 h-5 bg-primary-container/20 border border-primary-container rounded-full relative transition-colors">
+<div class="absolute right-0.5 top-0.5 w-4 h-4 rounded-full bg-primary-container shadow-sm"></div>
+</div>
+</div>
+</div>
+</div>
+</section>
+<!-- Section 3: Actuator & Sensor Parameters Card -->
+<section class="bg-surface-container-low rounded-xl border border-outline-variant p-space-md shadow-sm">
+<div class="flex items-center space-x-2 pb-3 border-b border-outline-variant/40 mb-3">
+<span class="material-symbols-outlined text-primary-container" data-icon="settings_remote">settings_remote</span>
+<span class="font-label-caps text-label-caps text-primary tracking-widest">ACTUATOR &amp; SENSORS</span>
+</div>
+<div class="space-y-3.5">
+<!-- Motor Pulse Duration -->
+<div class="bg-surface-container-lowest border border-outline-variant rounded-lg p-3">
+<div class="flex justify-between items-center mb-2">
+<span class="font-label-caps text-label-caps text-outline">MOTOR PULSE DURATION (RELOCK)</span>
+<span class="font-telemetry-sm text-telemetry-sm text-primary font-bold">5.0 SECONDS</span>
+</div>
+<!-- Visual Segment Indicator -->
+<div class="grid grid-cols-6 gap-1 mb-2">
+<div class="h-2 rounded-xs bg-primary-container"></div>
+<div class="h-2 rounded-xs bg-primary-container"></div>
+<div class="h-2 rounded-xs bg-primary-container"></div>
+<div class="h-2 rounded-xs bg-primary-container"></div>
+<div class="h-2 rounded-xs bg-primary-container"></div>
+<div class="h-2 rounded-xs bg-surface-variant"></div>
+</div>
+<div class="flex justify-between font-label-caps text-label-caps text-outline text-[9px]">
+<span>1.0s</span>
+<span>CLUTCH AUTO-RELOCK</span>
+<span>10.0s</span>
+</div>
+</div>
+<!-- Door Sensor Mode Segmented -->
+<div class="bg-surface-container-lowest border border-outline-variant rounded-lg p-3">
+<span class="block font-label-caps text-label-caps text-outline mb-2">DOOR SENSOR POLARITY MODE</span>
+<div class="grid grid-cols-2 p-1 bg-surface-container rounded border border-outline-variant/60 gap-1">
+<button class="py-1.5 font-label-caps text-label-caps rounded bg-primary-container text-on-primary-container font-bold shadow-sm">
+              AUTO-DETECT
+            </button>
+<button class="py-1.5 font-label-caps text-label-caps rounded text-on-surface-variant hover:text-on-surface">
+              NORMAL NC
+            </button>
+</div>
+</div>
+<!-- One Touch to Open Proximity -->
+<div class="bg-surface-container-lowest/60 border border-outline-variant/60 rounded-lg p-3">
+<div class="flex justify-between items-center mb-1">
+<div>
+<div class="font-telemetry-sm text-telemetry-sm text-on-surface font-semibold">One-Touch Tap / Proximity Shake</div>
+<div class="font-body-sm text-body-sm text-outline">RSSI trigger threshold: -65 dBm</div>
+</div>
+<!-- Cyber Toggle Active -->
+<div class="w-10 h-5 bg-primary-container/20 border border-primary-container rounded-full relative transition-colors cursor-pointer">
+<div class="absolute right-0.5 top-0.5 w-4 h-4 rounded-full bg-primary-container"></div>
+</div>
+</div>
+</div>
+</div>
+</section>
+<!-- Section 4: Hardware Emergency Reference Guide -->
+<section class="bg-surface-container-low rounded-xl border border-error/40 p-space-md shadow-sm relative overflow-hidden">
+<!-- Glow ambient corner accent -->
+<div class="absolute top-0 right-0 w-24 h-24 bg-error/10 rounded-full blur-xl pointer-events-none"></div>
+<div class="flex items-center space-x-2 pb-3 border-b border-error/30 mb-3">
+<span class="material-symbols-outlined text-error" data-icon="emergency_home">emergency_home</span>
+<span class="font-label-caps text-label-caps text-error tracking-widest font-bold">EMERGENCY BYPASS PROTOCOLS</span>
+</div>
+<div class="space-y-3">
+<!-- 9V Battery Terminal Guide -->
+<div class="bg-surface-container-lowest border border-outline-variant/70 rounded-lg p-3">
+<div class="flex items-start space-x-3">
+<div class="p-2 rounded bg-surface-container border border-outline-variant text-primary-container shrink-0">
+<span class="material-symbols-outlined text-[24px]" data-icon="bolt">bolt</span>
+</div>
+<div class="flex-1">
+<div class="flex items-center justify-between">
+<span class="font-telemetry-sm text-telemetry-sm text-on-surface font-semibold">External 9V Battery Power Port</span>
+<span class="font-label-caps text-label-caps text-primary border border-primary-container/30 px-1 rounded">PORT 9V DC</span>
+</div>
+<p class="font-body-sm text-body-sm text-on-surface-variant mt-1">
+                If the internal 4× AA cells are fully depleted: Touch standard 9V alkaline battery terminals firmly against the dual contact nubs beneath the front escutcheon handle. Maintain contact while scanning RFID or entering emergency key code.
+              </p>
+<div class="mt-2 flex items-center space-x-2 font-label-caps text-label-caps text-outline">
+<span class="material-symbols-outlined text-[14px] text-secondary" data-icon="check_circle">check_circle</span>
+<span>NO RESIDUAL DATA LOSS ON POWER DRAIN</span>
+</div>
+</div>
+</div>
+</div>
+<!-- Mechanical Key Override -->
+<div class="bg-surface-container-lowest border border-outline-variant/70 rounded-lg p-3">
+<div class="flex items-start space-x-3">
+<div class="p-2 rounded bg-surface-container border border-outline-variant text-tertiary-fixed-dim shrink-0">
+<span class="material-symbols-outlined text-[24px]" data-icon="vpn_key">vpn_key</span>
+</div>
+<div class="flex-1">
+<div class="flex items-center justify-between">
+<span class="font-telemetry-sm text-telemetry-sm text-on-surface font-semibold">Mechanical Key Cylinder Slot</span>
+<span class="font-label-caps text-label-caps text-outline border border-outline-variant px-1 rounded">CYL-S3</span>
+</div>
+<p class="font-body-sm text-body-sm text-on-surface-variant mt-1">
+                A magnetic circular dust plate is located at the lowest bottom contour of the outer lock housing. Pry with fingernail or knife edge to expose mechanical keyhole. Rotate key 90° clockwise and depress lever down.
+              </p>
+</div>
+</div>
+</div>
+<!-- Hardware Factory Reset Sequence -->
+<div class="bg-error-container/20 border border-error/50 rounded-lg p-3">
+<div class="flex items-center space-x-2 mb-1.5">
+<span class="material-symbols-outlined text-error text-[18px]" data-icon="warning">warning</span>
+<span class="font-label-caps text-label-caps text-error font-bold tracking-wide">HARDWARE REINITIALIZE (FACTORY RESET)</span>
+</div>
+<p class="font-body-sm text-body-sm text-on-surface-variant mb-2">
+            Remove battery cover. Insert pin tool into the recessed reset button for 5 seconds until dual beeps sound, then press:
+          </p>
+<div class="flex items-center justify-center space-x-2 bg-surface-container-lowest py-2 rounded border border-outline-variant">
+<span class="px-2 py-0.5 bg-surface-variant rounded font-telemetry-md text-telemetry-md text-primary font-bold">+</span>
+<span class="text-outline">→</span>
+<span class="px-2 py-0.5 bg-surface-variant rounded font-telemetry-md text-telemetry-md text-primary font-bold">1</span>
+<span class="text-outline">→</span>
+<span class="px-2 py-0.5 bg-surface-variant rounded font-telemetry-md text-telemetry-md text-primary font-bold">2</span>
+<span class="text-outline">→</span>
+<span class="px-2 py-0.5 bg-surface-variant rounded font-telemetry-md text-telemetry-md text-primary font-bold">3</span>
+<span class="text-outline">→</span>
+<span class="px-2 py-0.5 bg-surface-variant rounded font-telemetry-md text-telemetry-md text-primary font-bold">-</span>
+</div>
+<div class="font-label-caps text-label-caps text-error mt-2 text-center">WARNING: CLEARS ALL ADMIN &amp; USER CREDENTIALS</div>
+</div>
+</div>
+</section>
+</main>
+<!-- Shared BottomNavBar Component Execution -->
+<nav class="fixed bottom-0 left-0 w-full z-50 flex justify-around items-center px-space-sm h-16 bg-surface-container-lowest/95 backdrop-blur-lg">
+<!-- Item 0: Control -->
+<a class="flex flex-col items-center justify-center text-on-surface-variant dark:text-on-surface-variant pt-1 pb-2 hover:text-primary dark:hover:text-primary transition-colors duration-150 active:scale-95" href="#">
+<span class="material-symbols-outlined text-[20px]" data-icon="lock_open">lock_open</span>
+<span class="text-label-caps font-label-caps mt-1">Control</span>
+</a>
+<!-- Item 1: Users -->
+<a class="flex flex-col items-center justify-center text-on-surface-variant dark:text-on-surface-variant pt-1 pb-2 hover:text-primary dark:hover:text-primary transition-colors duration-150 active:scale-95" href="#">
+<span class="material-symbols-outlined text-[20px]" data-icon="group">group</span>
+<span class="text-label-caps font-label-caps mt-1">Users</span>
+</a>
+<!-- Item 2: Schedules -->
+<a class="flex flex-col items-center justify-center text-on-surface-variant dark:text-on-surface-variant pt-1 pb-2 hover:text-primary dark:hover:text-primary transition-colors duration-150 active:scale-95" href="#">
+<span class="material-symbols-outlined text-[20px]" data-icon="schedule">schedule</span>
+<span class="text-label-caps font-label-caps mt-1">Schedules</span>
+</a>
+<!-- Item 3: History -->
+<a class="flex flex-col items-center justify-center text-on-surface-variant dark:text-on-surface-variant pt-1 pb-2 hover:text-primary dark:hover:text-primary transition-colors duration-150 active:scale-95" href="#">
+<span class="material-symbols-outlined text-[20px]" data-icon="receipt_long">receipt_long</span>
+<span class="text-label-caps font-label-caps mt-1">History</span>
+</a>
+<!-- Item 4: Settings (ACTIVE STATE STRICT MAPPING) -->
+<a class="flex flex-col items-center justify-center text-primary-container dark:text-primary-container border-t-2 border-primary-container dark:border-primary-container pt-1 pb-2 hover:text-primary dark:hover:text-primary transition-colors duration-150 active:scale-95" href="#">
+<span class="material-symbols-outlined text-[20px]" data-icon="settings">settings</span>
+<span class="text-label-caps font-label-caps mt-1">Settings</span>
+</a>
+</nav>
+</body></html>

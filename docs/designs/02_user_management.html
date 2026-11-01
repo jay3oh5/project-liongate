@@ -1,0 +1,629 @@
+<!DOCTYPE html>
+
+<html class="dark" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" name="viewport"/>
+<title>LionGate - User Access &amp; Biometric Directory</title>
+<!-- Google Fonts: Space Grotesk & JetBrains Mono & Geist -->
+<link href="https://fonts.googleapis.com" rel="preconnect"/>
+<link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect"/>
+<link href="https://fonts.googleapis.com/css2?family=Geist:wght@300;400;500;600;700&amp;family=JetBrains+Mono:wght@400;500;600;700&amp;family=Space+Grotesk:wght@500;600;700&amp;display=swap" rel="stylesheet"/>
+<!-- Material Symbols Outlined -->
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<!-- Tailwind CSS CDN -->
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<!-- Tailwind Custom Config -->
+<script id="tailwind-config">
+    tailwind.config = {
+      darkMode: "class",
+      theme: {
+        extend: {
+          "colors": {
+            "on-primary-fixed-variant": "#004f58",
+            "surface-bright": "#343945",
+            "secondary-container": "#00a572",
+            "secondary-fixed": "#6ffbbe",
+            "outline-variant": "#3b494c",
+            "surface-variant": "#303541",
+            "surface-container-highest": "#303541",
+            "on-error-container": "#ffdad6",
+            "on-secondary-fixed-variant": "#005236",
+            "surface": "#0e131e",
+            "on-tertiary-container": "#b40036",
+            "tertiary": "#ffe7e8",
+            "error": "#ffb4ab",
+            "on-tertiary-fixed-variant": "#92002a",
+            "on-secondary": "#003824",
+            "error-container": "#93000a",
+            "on-primary": "#00363d",
+            "primary-fixed-dim": "#00daf3",
+            "surface-tint": "#00daf3",
+            "inverse-surface": "#dee2f2",
+            "inverse-on-surface": "#2b303c",
+            "surface-container-lowest": "#090e19",
+            "secondary": "#4edea3",
+            "surface-container-low": "#171b27",
+            "on-secondary-fixed": "#002113",
+            "inverse-primary": "#006875",
+            "tertiary-fixed-dim": "#ffb2b7",
+            "on-primary-container": "#00626e",
+            "surface-container-high": "#252a36",
+            "on-surface-variant": "#bac9cc",
+            "on-error": "#690005",
+            "surface-container": "#1b202b",
+            "outline": "#849396",
+            "on-tertiary-fixed": "#40000d",
+            "tertiary-fixed": "#ffdadb",
+            "on-surface": "#dee2f2",
+            "on-tertiary": "#67001b",
+            "on-secondary-container": "#00311f",
+            "tertiary-container": "#ffc1c4",
+            "primary-container": "#00e5ff",
+            "background": "#0e131e",
+            "primary": "#c3f5ff",
+            "surface-dim": "#0e131e",
+            "secondary-fixed-dim": "#4edea3",
+            "primary-fixed": "#9cf0ff",
+            "on-primary-fixed": "#001f24",
+            "on-background": "#dee2f2"
+          },
+          "borderRadius": {
+            "DEFAULT": "0.25rem",
+            "lg": "0.5rem",
+            "xl": "0.75rem",
+            "full": "9999px"
+          },
+          "spacing": {
+            "gutter-tablet": "1.25rem",
+            "margin": "1rem",
+            "margin-desktop": "3rem",
+            "space-lg": "1.5rem",
+            "gutter-desktop": "1.5rem",
+            "space-xl": "2.5rem",
+            "space-md": "1rem",
+            "space-xs": "0.25rem",
+            "gutter": "1rem",
+            "margin-tablet": "2rem",
+            "space-sm": "0.5rem"
+          },
+          "fontFamily": {
+            "headline-md": ["Space Grotesk"],
+            "headline-lg": ["Space Grotesk"],
+            "telemetry-sm": ["JetBrains Mono"],
+            "headline-lg-mobile": ["Space Grotesk"],
+            "telemetry-md": ["JetBrains Mono"],
+            "headline-xl": ["Space Grotesk"],
+            "headline-xl-mobile": ["Space Grotesk"],
+            "body-sm": ["Geist"],
+            "headline-sm": ["Space Grotesk"],
+            "label-caps": ["JetBrains Mono"],
+            "body-md": ["Geist"],
+            "telemetry-lg": ["JetBrains Mono"],
+            "body-lg": ["Geist"]
+          },
+          "fontSize": {
+            "headline-md": ["22px", { "lineHeight": "28px", "letterSpacing": "-0.01em", "fontWeight": "600" }],
+            "headline-lg": ["32px", { "lineHeight": "40px", "letterSpacing": "-0.015em", "fontWeight": "600" }],
+            "telemetry-sm": ["12px", { "lineHeight": "16px", "letterSpacing": "0.02em", "fontWeight": "500" }],
+            "headline-lg-mobile": ["24px", { "lineHeight": "32px", "letterSpacing": "-0.01em", "fontWeight": "600" }],
+            "telemetry-md": ["16px", { "lineHeight": "22px", "letterSpacing": "-0.01em", "fontWeight": "500" }],
+            "headline-xl": ["40px", { "lineHeight": "48px", "letterSpacing": "-0.02em", "fontWeight": "700" }],
+            "headline-xl-mobile": ["30px", { "lineHeight": "36px", "letterSpacing": "-0.02em", "fontWeight": "700" }],
+            "body-sm": ["12px", { "lineHeight": "16px", "letterSpacing": "0.01em", "fontWeight": "400" }],
+            "headline-sm": ["18px", { "lineHeight": "24px", "letterSpacing": "0em", "fontWeight": "600" }],
+            "label-caps": ["10px", { "lineHeight": "14px", "letterSpacing": "0.12em", "fontWeight": "700" }],
+            "body-md": ["14px", { "lineHeight": "20px", "letterSpacing": "0.005em", "fontWeight": "400" }],
+            "telemetry-lg": ["28px", { "lineHeight": "32px", "letterSpacing": "-0.03em", "fontWeight": "600" }],
+            "body-lg": ["16px", { "lineHeight": "24px", "letterSpacing": "0em", "fontWeight": "400" }]
+          }
+        }
+      }
+    }
+  </script>
+<style>
+    .material-symbols-outlined {
+      font-family: 'Material Symbols Outlined';
+      font-weight: normal;
+      font-style: normal;
+      font-size: 20px;
+      line-height: 1;
+      letter-spacing: normal;
+      text-transform: none;
+      display: inline-block;
+      white-space: nowrap;
+      word-wrap: normal;
+      direction: ltr;
+      -webkit-font-smoothing: antialiased;
+    }
+    
+    /* Cyber-Industrial custom hairline & glow accents */
+    .hud-edge-glow {
+      box-shadow: 0 0 20px -5px rgba(0, 229, 255, 0.25), inset 0 1px 0 0 rgba(255, 255, 255, 0.08);
+    }
+    .hud-amber-glow {
+      box-shadow: 0 0 16px -4px rgba(245, 158, 11, 0.2);
+    }
+    .hud-emerald-glow {
+      box-shadow: 0 0 16px -4px rgba(16, 185, 129, 0.2);
+    }
+    .hud-pulse {
+      animation: hud-ping 2s cubic-bezier(0, 0, 0.2, 1) infinite;
+    }
+    @keyframes hud-ping {
+      0% { opacity: 0.8; transform: scale(0.95); }
+      50% { opacity: 1; transform: scale(1.05); }
+      100% { opacity: 0.8; transform: scale(0.95); }
+    }
+    /* Hide scrollbars for slick telemetry carousel */
+    .no-scrollbar::-webkit-scrollbar {
+      display: none;
+    }
+    .no-scrollbar {
+      -ms-overflow-style: none;
+      scrollbar-width: none;
+    }
+  </style>
+<style>
+    body {
+      min-height: max(884px, 100dvh);
+    }
+  </style>
+  </head>
+<body class="bg-background text-on-surface antialiased font-body-md selection:bg-primary-container selection:text-surface-container-lowest">
+<!-- Mobile Viewport Shell (Max-w ~390-420px mobile centered container) -->
+<div class="relative mx-auto flex min-h-screen w-full max-w-md flex-col bg-surface-container-lowest shadow-2xl pb-24 overflow-x-hidden">
+<!-- Top App Bar (Shared Components Anchor execution) -->
+<header class="sticky top-0 z-40 w-full flex justify-between items-center px-margin h-14 bg-surface-container-low/90 backdrop-blur-md border-b border-outline-variant">
+<div class="flex items-center space-x-2">
+<button aria-label="Navigate back" class="flex h-9 w-9 items-center justify-center rounded bg-surface-container text-on-surface-variant hover:text-primary active:opacity-80 transition-opacity" type="button">
+<span class="material-symbols-outlined" data-icon="shield">shield</span>
+</button>
+<div class="flex flex-col">
+<div class="flex items-center space-x-1.5">
+<span class="text-headline-sm font-headline-sm uppercase tracking-wider text-primary">LIONGATE // PL10B</span>
+</div>
+<span class="text-label-caps font-label-caps text-on-surface-variant leading-none">ROSTER CONTROL UNIT</span>
+</div>
+</div>
+<!-- Right cluster: BLE Status Pill & Sync Hardware action -->
+<div class="flex items-center space-x-2">
+<div class="flex items-center space-x-1 rounded bg-surface-container px-2 py-1 border border-outline-variant/60">
+<span class="h-1.5 w-1.5 rounded-full bg-primary-container hud-pulse"></span>
+<span class="text-label-caps font-label-caps text-primary-container">BLE LIVE</span>
+</div>
+<button class="flex h-8 w-8 items-center justify-center rounded bg-surface-container text-primary-container hover:text-primary active:opacity-80 transition-opacity" title="Sync Hardware Data" type="button">
+<span class="material-symbols-outlined text-primary-container" data-icon="bluetooth_connected">bluetooth_connected</span>
+</button>
+</div>
+</header>
+<!-- Sub-header Breadcrumb / Hardware Status strip -->
+<div class="w-full bg-surface-container px-margin py-1.5 flex items-center justify-between border-b border-outline-variant/40">
+<div class="flex items-center space-x-1.5">
+<span class="text-label-caps font-label-caps text-on-surface-variant">DEVICE:</span>
+<span class="text-telemetry-sm font-telemetry-sm text-primary">ZKBioLock_PL10B</span>
+</div>
+<div class="flex items-center space-x-2">
+<span class="text-label-caps font-label-caps text-secondary font-semibold">SIGNAL: -54 dBm</span>
+<span class="material-symbols-outlined text-secondary" data-icon="signal_cellular_alt" style="font-size: 14px;">signal_cellular_alt</span>
+</div>
+</div>
+<!-- Main Content Canvas Container -->
+<main class="flex-1 px-margin pt-3 space-y-3.5">
+<!-- Section: Capacity Overview Header Card (Cyber-Industrial Bento HUD) -->
+<section class="rounded-lg bg-surface-container-low p-3.5 border border-outline-variant hud-edge-glow">
+<div class="flex items-start justify-between">
+<div>
+<div class="flex items-center space-x-1.5">
+<span class="material-symbols-outlined text-primary-container" data-icon="memory">memory</span>
+<span class="text-label-caps font-label-caps text-on-surface-variant">BIOMETRIC SLOTS CAPACITY</span>
+</div>
+<div class="mt-1 flex items-baseline space-x-2">
+<h2 class="text-headline-lg-mobile font-headline-lg-mobile text-primary">14 <span class="text-on-surface-variant text-headline-sm font-headline-sm">/ 90</span></h2>
+<span class="text-telemetry-sm font-telemetry-sm text-primary-container font-semibold">15.5% ALLOCATED</span>
+</div>
+</div>
+<button class="flex items-center space-x-1 rounded bg-surface-container px-2 py-1 text-label-caps font-label-caps text-on-surface-variant border border-outline-variant hover:text-primary transition-colors" type="button">
+<span class="material-symbols-outlined" data-icon="refresh" style="font-size: 14px;">refresh</span>
+<span>AUDIT</span>
+</button>
+</div>
+<!-- Segmented Multi-Color Capacity Progress Bar -->
+<div class="mt-3">
+<div class="flex h-2.5 w-full overflow-hidden rounded bg-surface-container-lowest p-0.5 border border-outline-variant/60">
+<!-- Admins (2/90 ~ 2.2%) -->
+<div class="h-full bg-primary-container rounded-l" style="width: 5%;"></div>
+<div class="w-0.5 h-full bg-surface-container-lowest"></div>
+<!-- Normal (9/90 ~ 10%) -->
+<div class="h-full bg-secondary-fixed-dim" style="width: 12%;"></div>
+<div class="w-0.5 h-full bg-surface-container-lowest"></div>
+<!-- Temporary (3/90 ~ 3.3%) -->
+<div class="h-full bg-tertiary-fixed-dim" style="width: 4%;"></div>
+<!-- Vacant space (Remaining) -->
+<div class="h-full flex-1 bg-surface-variant/40"></div>
+</div>
+</div>
+<!-- Breakdown Telemetry Badges Grid -->
+<div class="mt-3.5 grid grid-cols-2 gap-2">
+<!-- Admins Badge -->
+<div class="flex items-center justify-between rounded bg-surface-container px-2.5 py-1.5 border border-outline-variant/50">
+<div class="flex items-center space-x-1.5">
+<span class="h-2 w-2 rounded-full bg-primary-container shadow-sm shadow-primary-container"></span>
+<span class="text-label-caps font-label-caps text-on-surface">Admins</span>
+</div>
+<span class="text-telemetry-sm font-telemetry-sm text-primary-container font-bold">2/10</span>
+</div>
+<!-- Normal Users Badge -->
+<div class="flex items-center justify-between rounded bg-surface-container px-2.5 py-1.5 border border-outline-variant/50">
+<div class="flex items-center space-x-1.5">
+<span class="h-2 w-2 rounded-full bg-secondary shadow-sm shadow-secondary"></span>
+<span class="text-label-caps font-label-caps text-on-surface">Normal</span>
+</div>
+<span class="text-telemetry-sm font-telemetry-sm text-secondary font-bold">9/60</span>
+</div>
+<!-- Temporary Badge -->
+<div class="flex items-center justify-between rounded bg-surface-container px-2.5 py-1.5 border border-outline-variant/50">
+<div class="flex items-center space-x-1.5">
+<span class="h-2 w-2 rounded-full bg-tertiary-fixed-dim shadow-sm"></span>
+<span class="text-label-caps font-label-caps text-on-surface">Temporary</span>
+</div>
+<span class="text-telemetry-sm font-telemetry-sm text-tertiary-fixed-dim font-bold">3/20</span>
+</div>
+<!-- Vacant Slots Tag -->
+<div class="flex items-center justify-between rounded bg-surface-container px-2.5 py-1.5 border border-outline-variant/50">
+<div class="flex items-center space-x-1.5">
+<span class="h-2 w-2 rounded-full bg-outline"></span>
+<span class="text-label-caps font-label-caps text-on-surface-variant">Vacant</span>
+</div>
+<span class="text-telemetry-sm font-telemetry-sm text-outline font-semibold">76 Free</span>
+</div>
+</div>
+</section>
+<!-- Section: Search & Category Filter Navigation Bar -->
+<section class="space-y-2.5">
+<!-- Input Search Bar -->
+<div class="relative w-full">
+<div class="pointer-events-none absolute inset-y-0 left-0 flex items-center pl-3">
+<span class="material-symbols-outlined text-outline" data-icon="search">search</span>
+</div>
+<input class="w-full rounded-lg bg-surface-container-low py-2 pl-9 pr-8 text-body-md font-telemetry-sm text-primary placeholder-on-surface-variant/60 border border-outline-variant focus:border-primary-container focus:outline-none focus:ring-1 focus:ring-primary-container" placeholder="Search user alias or slot (#01-#90)..." type="search"/>
+<button aria-label="Filter parameters" class="absolute inset-y-0 right-0 flex items-center pr-3 text-outline hover:text-primary" type="button">
+<span class="material-symbols-outlined text-outline" data-icon="tune" style="font-size: 18px;">tune</span>
+</button>
+</div>
+<!-- Filter Horizontal Tabs -->
+<div class="flex items-center space-x-2 overflow-x-auto no-scrollbar pb-1 pt-0.5">
+<!-- Active Tab: All Users (14) -->
+<button class="shrink-0 flex items-center space-x-1 rounded bg-surface-container-high px-3 py-1.5 text-label-caps font-label-caps text-primary border-b-2 border-primary-container hud-edge-glow" type="button">
+<span>All Users</span>
+<span class="rounded bg-primary-container/20 px-1 py-0.2 text-primary-container font-semibold">14</span>
+</button>
+<!-- Tab: Administrators (2) -->
+<button class="shrink-0 flex items-center space-x-1 rounded bg-surface-container px-3 py-1.5 text-label-caps font-label-caps text-on-surface-variant border border-outline-variant/60 hover:text-primary hover:border-outline transition-colors" type="button">
+<span>Administrators</span>
+<span class="rounded bg-surface-variant px-1 py-0.2 text-outline">2</span>
+</button>
+<!-- Tab: Normal Users (9) -->
+<button class="shrink-0 flex items-center space-x-1 rounded bg-surface-container px-3 py-1.5 text-label-caps font-label-caps text-on-surface-variant border border-outline-variant/60 hover:text-primary hover:border-outline transition-colors" type="button">
+<span>Normal Users</span>
+<span class="rounded bg-surface-variant px-1 py-0.2 text-outline">9</span>
+</button>
+<!-- Tab: Temporary (3) -->
+<button class="shrink-0 flex items-center space-x-1 rounded bg-surface-container px-3 py-1.5 text-label-caps font-label-caps text-on-surface-variant border border-outline-variant/60 hover:text-primary hover:border-outline transition-colors" type="button">
+<span>Temporary</span>
+<span class="rounded bg-surface-variant px-1 py-0.2 text-outline">3</span>
+</button>
+</div>
+</section>
+<!-- Section: User Roster List (Scrollable cybernetic telemetry cards) -->
+<section class="space-y-2.5 pb-2">
+<div class="flex items-center justify-between px-0.5">
+<span class="text-label-caps font-label-caps text-on-surface-variant">REGISTERED ROSTER RECORDS</span>
+<span class="text-telemetry-sm font-telemetry-sm text-outline">SORT: SLOT_ASC</span>
+</div>
+<!-- Card 1: Slot #01 | Admin Master (You) -->
+<article class="relative rounded-lg bg-surface-container-low p-3 border border-outline-variant hover:border-primary-container/60 transition-colors">
+<div class="flex items-start justify-between">
+<div class="flex items-start space-x-2.5">
+<!-- Slot Index Monospace Token -->
+<div class="flex h-10 w-10 flex-col items-center justify-center rounded bg-surface-container border border-primary-container/40">
+<span class="text-label-caps font-label-caps text-primary-container">#01</span>
+<span class="text-label-caps font-label-caps text-outline text-[8px]">SLOT</span>
+</div>
+<div>
+<div class="flex items-center space-x-2">
+<h3 class="text-headline-sm font-headline-sm text-primary">Admin Master (You)</h3>
+<!-- Role Pill: ADMIN -->
+<span class="rounded bg-primary-container/15 px-1.5 py-0.5 text-label-caps font-label-caps text-primary-container border border-primary-container/40">
+                    ADMIN
+                  </span>
+</div>
+<div class="mt-1 flex items-center space-x-3 text-telemetry-sm font-telemetry-sm text-on-surface-variant">
+<span class="flex items-center space-x-1">
+<span class="material-symbols-outlined text-outline" data-icon="history" style="font-size: 13px;">history</span>
+<span>REG: 2026-09-12 10:14</span>
+</span>
+</div>
+</div>
+</div>
+<!-- Action / Context Trigger -->
+<button aria-label="User Options" class="text-outline hover:text-primary p-1" type="button">
+<span class="material-symbols-outlined" data-icon="more_vert">more_vert</span>
+</button>
+</div>
+<!-- Bottom Telemetry Tray -->
+<div class="mt-2.5 flex items-center justify-between border-t border-outline-variant/40 pt-2 text-telemetry-sm font-telemetry-sm">
+<div class="flex items-center space-x-1 text-secondary">
+<span class="material-symbols-outlined" data-icon="lock_open" style="font-size: 14px;">lock_open</span>
+<span>24/7 Full Access</span>
+</div>
+<div class="flex items-center space-x-2">
+<span class="inline-flex items-center space-x-0.5 text-primary-container bg-surface-container px-1.5 py-0.5 rounded border border-outline-variant/60" title="Fingerprint 1 Enrolled">
+<span class="material-symbols-outlined" data-icon="fingerprint" style="font-size: 13px;">fingerprint</span>
+<span class="text-label-caps font-label-caps">FP-1</span>
+</span>
+<span class="inline-flex items-center space-x-0.5 text-primary-container bg-surface-container px-1.5 py-0.5 rounded border border-outline-variant/60" title="PIN Passcode Set">
+<span class="material-symbols-outlined" data-icon="password" style="font-size: 13px;">password</span>
+<span class="text-label-caps font-label-caps">PIN</span>
+</span>
+</div>
+</div>
+</article>
+<!-- Card 2: Slot #02 | Alice M. -->
+<article class="relative rounded-lg bg-surface-container-low p-3 border border-outline-variant hover:border-primary-container/60 transition-colors">
+<div class="flex items-start justify-between">
+<div class="flex items-start space-x-2.5">
+<div class="flex h-10 w-10 flex-col items-center justify-center rounded bg-surface-container border border-outline-variant">
+<span class="text-label-caps font-label-caps text-on-surface">#02</span>
+<span class="text-label-caps font-label-caps text-outline text-[8px]">SLOT</span>
+</div>
+<div>
+<div class="flex items-center space-x-2">
+<h3 class="text-headline-sm font-headline-sm text-primary">Alice M.</h3>
+<span class="rounded bg-primary-container/15 px-1.5 py-0.5 text-label-caps font-label-caps text-primary-container border border-primary-container/40">
+                    ADMIN
+                  </span>
+</div>
+<div class="mt-1 flex items-center space-x-3 text-telemetry-sm font-telemetry-sm text-on-surface-variant">
+<span class="flex items-center space-x-1">
+<span class="material-symbols-outlined text-outline" data-icon="history" style="font-size: 13px;">history</span>
+<span>REG: 2026-10-15 14:22</span>
+</span>
+</div>
+</div>
+</div>
+<button aria-label="User Options" class="text-outline hover:text-primary p-1" type="button">
+<span class="material-symbols-outlined" data-icon="more_vert">more_vert</span>
+</button>
+</div>
+<div class="mt-2.5 flex items-center justify-between border-t border-outline-variant/40 pt-2 text-telemetry-sm font-telemetry-sm">
+<div class="flex items-center space-x-1 text-secondary">
+<span class="material-symbols-outlined" data-icon="lock_open" style="font-size: 14px;">lock_open</span>
+<span>24/7 Full Access</span>
+</div>
+<div class="flex items-center space-x-1.5">
+<span class="inline-flex items-center space-x-0.5 text-primary-container bg-surface-container px-1.5 py-0.5 rounded border border-outline-variant/60" title="Fingerprint 1 Enrolled">
+<span class="material-symbols-outlined" data-icon="fingerprint" style="font-size: 13px;">fingerprint</span>
+<span class="text-label-caps font-label-caps">FP-1</span>
+</span>
+</div>
+</div>
+</article>
+<!-- Card 3: Slot #03 | Operations Office -->
+<article class="relative rounded-lg bg-surface-container-low p-3 border border-outline-variant hover:border-secondary/60 transition-colors">
+<div class="flex items-start justify-between">
+<div class="flex items-start space-x-2.5">
+<div class="flex h-10 w-10 flex-col items-center justify-center rounded bg-surface-container border border-outline-variant">
+<span class="text-label-caps font-label-caps text-on-surface">#03</span>
+<span class="text-label-caps font-label-caps text-outline text-[8px]">SLOT</span>
+</div>
+<div>
+<div class="flex items-center space-x-2">
+<h3 class="text-headline-sm font-headline-sm text-on-surface">Operations Office</h3>
+<span class="rounded bg-secondary/15 px-1.5 py-0.5 text-label-caps font-label-caps text-secondary border border-secondary/40">
+                    NORMAL
+                  </span>
+</div>
+<div class="mt-1 flex items-center space-x-3 text-telemetry-sm font-telemetry-sm text-on-surface-variant">
+<span class="flex items-center space-x-1">
+<span class="material-symbols-outlined text-outline" data-icon="history" style="font-size: 13px;">history</span>
+<span>REG: 2026-10-18 09:00</span>
+</span>
+</div>
+</div>
+</div>
+<button aria-label="User Options" class="text-outline hover:text-primary p-1" type="button">
+<span class="material-symbols-outlined" data-icon="more_vert">more_vert</span>
+</button>
+</div>
+<div class="mt-2.5 flex items-center justify-between border-t border-outline-variant/40 pt-2 text-telemetry-sm font-telemetry-sm">
+<div class="flex items-center space-x-1 text-on-surface-variant">
+<span class="material-symbols-outlined" data-icon="schedule" style="font-size: 14px;">schedule</span>
+<span>Mon-Fri 08:00-18:00</span>
+</div>
+<div class="flex items-center space-x-1.5">
+<span class="inline-flex items-center space-x-0.5 text-secondary bg-surface-container px-1.5 py-0.5 rounded border border-outline-variant/60" title="Fingerprint 1 Enrolled">
+<span class="material-symbols-outlined" data-icon="fingerprint" style="font-size: 13px;">fingerprint</span>
+<span class="text-label-caps font-label-caps">FP-1</span>
+</span>
+</div>
+</div>
+</article>
+<!-- Card 4: Slot #04 | Jack (Facilities) -->
+<article class="relative rounded-lg bg-surface-container-low p-3 border border-outline-variant hover:border-secondary/60 transition-colors">
+<div class="flex items-start justify-between">
+<div class="flex items-start space-x-2.5">
+<div class="flex h-10 w-10 flex-col items-center justify-center rounded bg-surface-container border border-outline-variant">
+<span class="text-label-caps font-label-caps text-on-surface">#04</span>
+<span class="text-label-caps font-label-caps text-outline text-[8px]">SLOT</span>
+</div>
+<div>
+<div class="flex items-center space-x-2">
+<h3 class="text-headline-sm font-headline-sm text-on-surface">Jack (Facilities)</h3>
+<span class="rounded bg-secondary/15 px-1.5 py-0.5 text-label-caps font-label-caps text-secondary border border-secondary/40">
+                    NORMAL
+                  </span>
+</div>
+<div class="mt-1 flex items-center space-x-3 text-telemetry-sm font-telemetry-sm text-on-surface-variant">
+<span class="flex items-center space-x-1">
+<span class="material-symbols-outlined text-outline" data-icon="history" style="font-size: 13px;">history</span>
+<span>REG: 2026-10-20 11:30</span>
+</span>
+</div>
+</div>
+</div>
+<button aria-label="User Options" class="text-outline hover:text-primary p-1" type="button">
+<span class="material-symbols-outlined" data-icon="more_vert">more_vert</span>
+</button>
+</div>
+<div class="mt-2.5 flex items-center justify-between border-t border-outline-variant/40 pt-2 text-telemetry-sm font-telemetry-sm">
+<div class="flex items-center space-x-1 text-on-surface-variant">
+<span class="material-symbols-outlined" data-icon="schedule" style="font-size: 14px;">schedule</span>
+<span>Mon-Fri 08:00-18:00</span>
+</div>
+<div class="flex items-center space-x-1.5">
+<span class="inline-flex items-center space-x-0.5 text-secondary bg-surface-container px-1.5 py-0.5 rounded border border-outline-variant/60" title="Fingerprint 2 Enrolled">
+<span class="material-symbols-outlined" data-icon="fingerprint" style="font-size: 13px;">fingerprint</span>
+<span class="text-label-caps font-label-caps">FP-2</span>
+</span>
+</div>
+</div>
+</article>
+<!-- Card 5: Slot #11 | Clean Team Night -->
+<article class="relative rounded-lg bg-surface-container-low p-3 border border-outline-variant hover:border-tertiary-fixed-dim/60 transition-colors">
+<div class="flex items-start justify-between">
+<div class="flex items-start space-x-2.5">
+<div class="flex h-10 w-10 flex-col items-center justify-center rounded bg-surface-container border border-outline-variant">
+<span class="text-label-caps font-label-caps text-on-surface">#11</span>
+<span class="text-label-caps font-label-caps text-outline text-[8px]">SLOT</span>
+</div>
+<div>
+<div class="flex items-center space-x-2">
+<h3 class="text-headline-sm font-headline-sm text-on-surface">Clean Team Night</h3>
+<span class="rounded bg-tertiary-fixed-dim/15 px-1.5 py-0.5 text-label-caps font-label-caps text-tertiary-fixed-dim border border-tertiary-fixed-dim/40">
+                    TEMPORARY
+                  </span>
+</div>
+<div class="mt-1 flex items-center space-x-3 text-telemetry-sm font-telemetry-sm text-on-surface-variant">
+<span class="flex items-center space-x-1">
+<span class="material-symbols-outlined text-outline" data-icon="history" style="font-size: 13px;">history</span>
+<span>REG: 2026-10-28 20:15</span>
+</span>
+</div>
+</div>
+</div>
+<button aria-label="User Options" class="text-outline hover:text-primary p-1" type="button">
+<span class="material-symbols-outlined" data-icon="more_vert">more_vert</span>
+</button>
+</div>
+<div class="mt-2.5 flex items-center justify-between border-t border-outline-variant/40 pt-2 text-telemetry-sm font-telemetry-sm">
+<div class="flex items-center space-x-1 text-tertiary-fixed-dim">
+<span class="material-symbols-outlined" data-icon="nest_clock_farsight_analog" style="font-size: 14px;">nest_clock_farsight_analog</span>
+<span>Tue/Thu 20:00-22:00</span>
+</div>
+<div class="flex items-center space-x-1.5">
+<span class="inline-flex items-center space-x-0.5 text-tertiary-fixed-dim bg-surface-container px-1.5 py-0.5 rounded border border-outline-variant/60" title="Temp PIN">
+<span class="material-symbols-outlined" data-icon="key" style="font-size: 13px;">key</span>
+<span class="text-label-caps font-label-caps">PIN</span>
+</span>
+<span class="inline-flex items-center space-x-0.5 text-tertiary-fixed-dim bg-surface-container px-1.5 py-0.5 rounded border border-outline-variant/60" title="Biometric Backup">
+<span class="material-symbols-outlined" data-icon="fingerprint" style="font-size: 13px;">fingerprint</span>
+<span class="text-label-caps font-label-caps">FP-1</span>
+</span>
+</div>
+</div>
+</article>
+<!-- Card 6: Slot #12 | Contractor - HVAC -->
+<article class="relative rounded-lg bg-surface-container-low p-3 border border-outline-variant hover:border-tertiary-fixed-dim/60 transition-colors">
+<div class="flex items-start justify-between">
+<div class="flex items-start space-x-2.5">
+<div class="flex h-10 w-10 flex-col items-center justify-center rounded bg-surface-container border border-outline-variant">
+<span class="text-label-caps font-label-caps text-on-surface">#12</span>
+<span class="text-label-caps font-label-caps text-outline text-[8px]">SLOT</span>
+</div>
+<div>
+<div class="flex items-center space-x-2">
+<h3 class="text-headline-sm font-headline-sm text-on-surface">Contractor - HVAC</h3>
+<span class="rounded bg-tertiary-fixed-dim/15 px-1.5 py-0.5 text-label-caps font-label-caps text-tertiary-fixed-dim border border-tertiary-fixed-dim/40">
+                    TEMPORARY
+                  </span>
+</div>
+<div class="mt-1 flex items-center space-x-3 text-telemetry-sm font-telemetry-sm text-on-surface-variant">
+<span class="flex items-center space-x-1">
+<span class="material-symbols-outlined text-outline" data-icon="history" style="font-size: 13px;">history</span>
+<span>REG: 2026-10-30 08:30</span>
+</span>
+</div>
+</div>
+</div>
+<button aria-label="User Options" class="text-outline hover:text-primary p-1" type="button">
+<span class="material-symbols-outlined" data-icon="more_vert">more_vert</span>
+</button>
+</div>
+<div class="mt-2.5 flex items-center justify-between border-t border-outline-variant/40 pt-2 text-telemetry-sm font-telemetry-sm">
+<div class="flex items-center space-x-1 text-error">
+<span class="material-symbols-outlined" data-icon="warning" style="font-size: 14px;">warning</span>
+<span>Expires Nov 02 (2d left)</span>
+</div>
+<div class="flex items-center space-x-1.5">
+<span class="inline-flex items-center space-x-0.5 text-tertiary-fixed-dim bg-surface-container px-1.5 py-0.5 rounded border border-outline-variant/60" title="Temp PIN active">
+<span class="material-symbols-outlined" data-icon="password" style="font-size: 13px;">password</span>
+<span class="text-label-caps font-label-caps">PIN</span>
+</span>
+</div>
+</div>
+</article>
+</section>
+<!-- Section: Hardware Action Banner / Floating Enroll Action Button -->
+<section class="pt-1 pb-4">
+<button class="w-full group relative flex flex-col items-center justify-center rounded-lg bg-surface-container-low p-3.5 border border-primary-container text-primary-container hud-edge-glow hover:bg-surface-container transition-all active:scale-[0.99]" type="button">
+<div class="flex items-center space-x-2">
+<span class="material-symbols-outlined text-primary-container text-xl" data-icon="fingerprint">fingerprint</span>
+<span class="text-headline-sm font-headline-sm font-bold text-primary tracking-wide">+ ENROLL NEW FINGERPRINT</span>
+</div>
+<span class="mt-1 text-label-caps font-label-caps text-on-surface-variant uppercase tracking-widest text-[9px]">
+            Initiates lock hardware BLE pairing sequence
+          </span>
+</button>
+</section>
+</main>
+<!-- Bottom Navigation Bar (Mandatory Shared Component: Users Active Tab) -->
+<!-- Destination count: 5 | Labels: Control, Users, Schedules, History, Settings -->
+<nav class="fixed bottom-0 left-0 w-full z-50 flex justify-around items-center px-space-sm h-16 bg-surface-container-lowest/95 backdrop-blur-lg border-t border-outline-variant dark:border-outline-variant">
+<!-- Nav Item 1: Control (Inactive) -->
+<a class="flex flex-col items-center justify-center text-on-surface-variant dark:text-on-surface-variant pt-1 pb-2 hover:text-primary dark:hover:text-primary transition-colors duration-150 active:scale-95 transition-transform" href="#control">
+<span class="material-symbols-outlined" data-icon="lock_open">lock_open</span>
+<span class="text-label-caps font-label-caps mt-0.5">Control</span>
+</a>
+<!-- Nav Item 2: Users (ACTIVE MATCH FOR THIS SCREEN) -->
+<a class="flex flex-col items-center justify-center text-primary-container dark:text-primary-container border-t-2 border-primary-container dark:border-primary-container pt-1 pb-2 hover:text-primary dark:hover:text-primary transition-colors duration-150 active:scale-95 transition-transform" href="#users">
+<span class="material-symbols-outlined" data-icon="group" style="font-variation-settings: 'FILL' 1;">group</span>
+<span class="text-label-caps font-label-caps mt-0.5">Users</span>
+</a>
+<!-- Nav Item 3: Schedules (Inactive) -->
+<a class="flex flex-col items-center justify-center text-on-surface-variant dark:text-on-surface-variant pt-1 pb-2 hover:text-primary dark:hover:text-primary transition-colors duration-150 active:scale-95 transition-transform" href="#schedules">
+<span class="material-symbols-outlined" data-icon="schedule">schedule</span>
+<span class="text-label-caps font-label-caps mt-0.5">Schedules</span>
+</a>
+<!-- Nav Item 4: History (Inactive) -->
+<a class="flex flex-col items-center justify-center text-on-surface-variant dark:text-on-surface-variant pt-1 pb-2 hover:text-primary dark:hover:text-primary transition-colors duration-150 active:scale-95 transition-transform" href="#history">
+<span class="material-symbols-outlined" data-icon="receipt_long">receipt_long</span>
+<span class="text-label-caps font-label-caps mt-0.5">History</span>
+</a>
+<!-- Nav Item 5: Settings (Inactive) -->
+<a class="flex flex-col items-center justify-center text-on-surface-variant dark:text-on-surface-variant pt-1 pb-2 hover:text-primary dark:hover:text-primary transition-colors duration-150 active:scale-95 transition-transform" href="#settings">
+<span class="material-symbols-outlined" data-icon="settings">settings</span>
+<span class="text-label-caps font-label-caps mt-0.5">Settings</span>
+</a>
+</nav>
+</div>
+<script>
+    // Lightweight micro-interaction for tab switching feedback
+    document.querySelectorAll('nav a').forEach(item => {
+      item.addEventListener('click', (e) => {
+        // Keeps user experience fluid for mobile prototype preview
+        console.log('Navigated to:', item.textContent.trim());
+      });
+    });
+  </script>
+</body></html>

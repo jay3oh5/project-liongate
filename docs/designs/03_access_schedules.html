@@ -1,0 +1,523 @@
+<!DOCTYPE html>
+
+<html class="dark" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>LionGate - Access Schedules &amp; Timetable Matrix</title>
+<!-- Google Fonts: Space Grotesk & JetBrains Mono & Geist -->
+<link href="https://fonts.googleapis.com" rel="preconnect"/>
+<link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect"/>
+<link href="https://fonts.googleapis.com/css2?family=Geist:wght@300;400;500;600&amp;family=JetBrains+Mono:wght@400;500;600;700&amp;family=Space+Grotesk:wght@500;600;700&amp;display=swap" rel="stylesheet"/>
+<!-- Material Symbols Outlined -->
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<!-- Tailwind CSS -->
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<script id="tailwind-config">
+    tailwind.config = {
+      darkMode: "class",
+      theme: {
+        extend: {
+          "colors": {
+            "surface-dim": "#0e131e",
+            "primary": "#c3f5ff",
+            "tertiary-fixed-dim": "#ffb2b7",
+            "tertiary": "#ffe7e8",
+            "surface-container-high": "#252a36",
+            "inverse-surface": "#dee2f2",
+            "tertiary-container": "#ffc1c4",
+            "secondary": "#4edea3",
+            "on-primary": "#00363d",
+            "surface-container-low": "#171b27",
+            "surface-container-highest": "#303541",
+            "on-background": "#dee2f2",
+            "outline-variant": "#3b494c",
+            "on-primary-fixed": "#001f24",
+            "error": "#ffb4ab",
+            "surface-variant": "#303541",
+            "surface": "#0e131e",
+            "inverse-on-surface": "#2b303c",
+            "outline": "#849396",
+            "on-primary-fixed-variant": "#004f58",
+            "tertiary-fixed": "#ffdadb",
+            "on-secondary-container": "#00311f",
+            "surface-container": "#1b202b",
+            "on-surface": "#dee2f2",
+            "error-container": "#93000a",
+            "primary-fixed-dim": "#00daf3",
+            "on-surface-variant": "#bac9cc",
+            "secondary-fixed": "#6ffbbe",
+            "on-tertiary-fixed-variant": "#92002a",
+            "on-tertiary": "#67001b",
+            "on-primary-container": "#00626e",
+            "on-secondary-fixed-variant": "#005236",
+            "secondary-fixed-dim": "#4edea3",
+            "secondary-container": "#00a572",
+            "surface-bright": "#343945",
+            "on-secondary-fixed": "#002113",
+            "primary-fixed": "#9cf0ff",
+            "on-tertiary-container": "#b40036",
+            "inverse-primary": "#006875",
+            "surface-container-lowest": "#090e19",
+            "background": "#0e131e",
+            "on-error-container": "#ffdad6",
+            "on-error": "#690005",
+            "surface-tint": "#00daf3",
+            "primary-container": "#00e5ff",
+            "on-tertiary-fixed": "#40000d",
+            "on-secondary": "#003824"
+          },
+          "borderRadius": {
+            "DEFAULT": "0.25rem",
+            "lg": "0.5rem",
+            "xl": "0.75rem",
+            "full": "9999px"
+          },
+          "spacing": {
+            "gutter": "1rem",
+            "space-xl": "2.5rem",
+            "margin": "1rem",
+            "space-xs": "0.25rem",
+            "space-lg": "1.5rem",
+            "margin-tablet": "2rem",
+            "space-sm": "0.5rem",
+            "margin-desktop": "3rem",
+            "gutter-desktop": "1.5rem",
+            "space-md": "1rem",
+            "gutter-tablet": "1.25rem"
+          },
+          "fontFamily": {
+            "label-caps": ["JetBrains Mono"],
+            "body-sm": ["Geist"],
+            "body-md": ["Geist"],
+            "headline-md": ["Space Grotesk"],
+            "body-lg": ["Geist"],
+            "headline-lg-mobile": ["Space Grotesk"],
+            "telemetry-md": ["JetBrains Mono"],
+            "telemetry-lg": ["JetBrains Mono"],
+            "headline-sm": ["Space Grotesk"],
+            "telemetry-sm": ["JetBrains Mono"],
+            "headline-xl": ["Space Grotesk"],
+            "headline-lg": ["Space Grotesk"],
+            "headline-xl-mobile": ["Space Grotesk"]
+          },
+          "fontSize": {
+            "label-caps": ["10px", { "lineHeight": "14px", "letterSpacing": "0.12em", "fontWeight": "700" }],
+            "body-sm": ["12px", { "lineHeight": "16px", "letterSpacing": "0.01em", "fontWeight": "400" }],
+            "body-md": ["14px", { "lineHeight": "20px", "letterSpacing": "0.005em", "fontWeight": "400" }],
+            "headline-md": ["22px", { "lineHeight": "28px", "letterSpacing": "-0.01em", "fontWeight": "600" }],
+            "body-lg": ["16px", { "lineHeight": "24px", "letterSpacing": "0em", "fontWeight": "400" }],
+            "headline-lg-mobile": ["24px", { "lineHeight": "32px", "letterSpacing": "-0.01em", "fontWeight": "600" }],
+            "telemetry-md": ["16px", { "lineHeight": "22px", "letterSpacing": "-0.01em", "fontWeight": "500" }],
+            "telemetry-lg": ["28px", { "lineHeight": "32px", "letterSpacing": "-0.03em", "fontWeight": "600" }],
+            "headline-sm": ["18px", { "lineHeight": "24px", "letterSpacing": "0em", "fontWeight": "600" }],
+            "telemetry-sm": ["12px", { "lineHeight": "16px", "letterSpacing": "0.02em", "fontWeight": "500" }],
+            "headline-xl": ["40px", { "lineHeight": "48px", "letterSpacing": "-0.02em", "fontWeight": "700" }],
+            "headline-lg": ["32px", { "lineHeight": "40px", "letterSpacing": "-0.015em", "fontWeight": "600" }],
+            "headline-xl-mobile": ["30px", { "lineHeight": "36px", "letterSpacing": "-0.02em", "fontWeight": "700" }]
+          }
+        }
+      }
+    }
+  </script>
+<style>
+    .material-symbols-outlined {
+      font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+      display: inline-block;
+      vertical-align: middle;
+      line-height: 1;
+    }
+    /* Cyber grid overlay background */
+    .cyber-grid {
+      background-image: linear-gradient(rgba(59, 73, 76, 0.08) 1px, transparent 1px),
+                        linear-gradient(90deg, rgba(59, 73, 76, 0.08) 1px, transparent 1px);
+      background-size: 24px 24px;
+    }
+    /* Hairline top glow */
+    .inset-glow {
+      box-shadow: inset 0 1px 0 0 rgba(255, 255, 255, 0.06);
+    }
+    .neon-pulse {
+      animation: neonPulse 2.5s infinite alternate;
+    }
+    @keyframes neonPulse {
+      0% { box-shadow: 0 0 10px rgba(0, 229, 255, 0.15), inset 0 0 8px rgba(0, 229, 255, 0.05); }
+      100% { box-shadow: 0 0 20px rgba(0, 229, 255, 0.35), inset 0 0 14px rgba(0, 229, 255, 0.12); }
+    }
+  </style>
+<style>
+    body {
+      min-height: max(884px, 100dvh);
+    }
+  </style>
+  </head>
+<body class="bg-surface-container-lowest text-on-surface font-body-md antialiased min-h-screen selection:bg-primary-container selection:text-surface-container-lowest">
+<!-- Mobile Container Shell -->
+<div class="mx-auto w-full max-w-[420px] min-h-screen bg-surface-container-lowest flex flex-col relative cyber-grid pb-24 shadow-2xl">
+<!-- Top Status Bar & TopAppBar (Shared Anchor Component) -->
+<header class="sticky top-0 z-40 bg-surface-container-low/90 backdrop-blur-md border-b border-outline-variant">
+<!-- Android Hardware Status Notch Bar -->
+<div class="flex justify-between items-center px-4 pt-1.5 pb-0.5 text-on-surface-variant font-telemetry-sm text-telemetry-sm">
+<span class="tracking-wider">09:41</span>
+<div class="flex items-center space-x-1.5">
+<span class="font-label-caps text-label-caps text-primary-container">BLE 5.2</span>
+<span class="material-symbols-outlined text-sm">wifi</span>
+<span class="material-symbols-outlined text-sm">battery_charging_90</span>
+</div>
+</div>
+<!-- JSON TopAppBar Injected Shell -->
+<div class="flex justify-between items-center w-full px-margin h-14 bg-surface-container-low/90 backdrop-blur-md">
+<!-- Leading Icon -->
+<div class="flex items-center gap-2">
+<button aria-label="Security Status" class="w-8 h-8 rounded flex items-center justify-center text-primary-container hover:text-primary active:opacity-80 transition-opacity">
+<span class="material-symbols-outlined text-xl" style="font-variation-settings: 'FILL' 1;">shield</span>
+</button>
+<div>
+<h1 class="text-headline-sm font-headline-sm uppercase tracking-wider text-primary">LIONGATE // PL10B</h1>
+<p class="text-label-caps font-label-caps text-on-surface-variant">ACCESS SCHEDULES &amp; TIMETABLE MATRIX</p>
+</div>
+</div>
+<!-- Trailing Action -->
+<div class="flex items-center gap-1.5">
+<button aria-label="Bluetooth Status" class="w-8 h-8 rounded border border-outline-variant bg-surface-container flex items-center justify-center text-primary hover:text-primary-container active:opacity-80 transition-opacity">
+<span class="material-symbols-outlined text-lg">bluetooth_connected</span>
+</button>
+</div>
+</div>
+</header>
+<!-- Main Content Canvas -->
+<main class="flex-1 px-4 pt-3 space-y-4">
+<!-- 1. Telemetry HUD Hardware Strip -->
+<section class="bg-surface-container-low border border-outline-variant rounded-lg p-2.5 inset-glow">
+<div class="flex items-center justify-between gap-2">
+<div class="grid grid-cols-3 gap-2 flex-1">
+<div class="flex flex-col">
+<span class="text-label-caps font-label-caps text-on-surface-variant">DEVICE</span>
+<span class="text-telemetry-sm font-telemetry-sm text-on-surface font-semibold truncate">PL10B_v2.4</span>
+</div>
+<div class="flex flex-col">
+<span class="text-label-caps font-label-caps text-on-surface-variant">BLE RSSI</span>
+<div class="flex items-center gap-1">
+<span class="w-1.5 h-1.5 rounded-full bg-secondary animate-pulse"></span>
+<span class="text-telemetry-sm font-telemetry-sm text-secondary font-semibold">-58 dBm</span>
+</div>
+</div>
+<div class="flex flex-col">
+<span class="text-label-caps font-label-caps text-on-surface-variant">SYNC RTC</span>
+<span class="text-telemetry-sm font-telemetry-sm text-primary-container font-semibold">SYNCHRONIZED</span>
+</div>
+</div>
+<button class="flex items-center gap-1 px-2.5 py-1.5 bg-surface-container-high border border-primary-container/40 rounded text-primary-container font-label-caps text-label-caps hover:bg-primary-container/10 active:scale-95 transition-all" title="Upload Schedule Sync">
+<span class="material-symbols-outlined text-xs">sync</span>
+<span>UPLOAD SYNC</span>
+</button>
+</div>
+</section>
+<!-- 2. Weekly Access Overview & Day Matrix -->
+<section class="bg-surface-container-low border border-outline-variant rounded-lg p-3.5 inset-glow space-y-3">
+<div class="flex items-center justify-between">
+<div class="flex items-center gap-2">
+<span class="w-2 h-2 rounded-full bg-primary-container"></span>
+<h2 class="text-label-caps font-label-caps text-on-surface uppercase tracking-wider">7-DAY MATRIX SELECTOR</h2>
+</div>
+<span class="font-telemetry-sm text-telemetry-sm text-secondary bg-secondary/10 px-2 py-0.5 rounded border border-secondary/30">RTC LIVE: MON 09:41</span>
+</div>
+<!-- 7-Day Matrix Pills -->
+<div class="grid grid-cols-7 gap-1">
+<!-- Mon: Active Focused -->
+<button class="flex flex-col items-center py-2 px-0.5 rounded border border-primary-container bg-primary-container/15 text-primary-container shadow-[0_0_10px_rgba(0,229,255,0.25)] transition-all">
+<span class="text-label-caps font-label-caps font-bold">MON</span>
+<span class="w-1.5 h-1.5 rounded-full bg-primary-container mt-1"></span>
+<span class="text-[9px] font-telemetry-sm mt-0.5 text-primary">2 WND</span>
+</button>
+<!-- Tue -->
+<button class="flex flex-col items-center py-2 px-0.5 rounded border border-outline-variant bg-surface-container text-on-surface hover:border-primary-container/50 transition-all">
+<span class="text-label-caps font-label-caps font-semibold">TUE</span>
+<span class="w-1.5 h-1.5 rounded-full bg-secondary mt-1"></span>
+<span class="text-[9px] font-telemetry-sm mt-0.5 text-on-surface-variant">2 WND</span>
+</button>
+<!-- Wed -->
+<button class="flex flex-col items-center py-2 px-0.5 rounded border border-outline-variant bg-surface-container text-on-surface hover:border-primary-container/50 transition-all">
+<span class="text-label-caps font-label-caps font-semibold">WED</span>
+<span class="w-1.5 h-1.5 rounded-full bg-secondary mt-1"></span>
+<span class="text-[9px] font-telemetry-sm mt-0.5 text-on-surface-variant">2 WND</span>
+</button>
+<!-- Thu -->
+<button class="flex flex-col items-center py-2 px-0.5 rounded border border-outline-variant bg-surface-container text-on-surface hover:border-primary-container/50 transition-all">
+<span class="text-label-caps font-label-caps font-semibold">THU</span>
+<span class="w-1.5 h-1.5 rounded-full bg-secondary mt-1"></span>
+<span class="text-[9px] font-telemetry-sm mt-0.5 text-on-surface-variant">2 WND</span>
+</button>
+<!-- Fri -->
+<button class="flex flex-col items-center py-2 px-0.5 rounded border border-outline-variant bg-surface-container text-on-surface hover:border-primary-container/50 transition-all">
+<span class="text-label-caps font-label-caps font-semibold">FRI</span>
+<span class="w-1.5 h-1.5 rounded-full bg-secondary mt-1"></span>
+<span class="text-[9px] font-telemetry-sm mt-0.5 text-on-surface-variant">2 WND</span>
+</button>
+<!-- Sat (Dim / Restricted) -->
+<button class="flex flex-col items-center py-2 px-0.5 rounded border border-outline-variant/40 bg-surface-container-lowest/60 text-outline opacity-60">
+<span class="text-label-caps font-label-caps">SAT</span>
+<span class="w-1.5 h-1.5 rounded-full bg-outline-variant mt-1"></span>
+<span class="text-[9px] font-telemetry-sm mt-0.5 text-outline">LOCKED</span>
+</button>
+<!-- Sun (Dim / Restricted) -->
+<button class="flex flex-col items-center py-2 px-0.5 rounded border border-outline-variant/40 bg-surface-container-lowest/60 text-outline opacity-60">
+<span class="text-label-caps font-label-caps">SUN</span>
+<span class="w-1.5 h-1.5 rounded-full bg-outline-variant mt-1"></span>
+<span class="text-[9px] font-telemetry-sm mt-0.5 text-outline">LOCKED</span>
+</button>
+</div>
+<!-- 24-Hour Horizon Bar Diagram -->
+<div class="pt-2">
+<div class="flex justify-between items-center text-label-caps font-label-caps text-on-surface-variant mb-1">
+<span>24H HORIZON TIMELINE</span>
+<span class="text-primary-container">12.0H PERMITTED TOTAL</span>
+</div>
+<!-- Horizon timeline bar -->
+<div class="relative w-full h-7 bg-surface-container-lowest border border-outline-variant rounded overflow-hidden flex items-center">
+<!-- Grid tick markers every 4 hours -->
+<div class="absolute inset-0 flex justify-between px-1 pointer-events-none opacity-20">
+<div class="w-px h-full bg-outline"></div>
+<div class="w-px h-full bg-outline"></div>
+<div class="w-px h-full bg-outline"></div>
+<div class="w-px h-full bg-outline"></div>
+<div class="w-px h-full bg-outline"></div>
+<div class="w-px h-full bg-outline"></div>
+</div>
+<!-- Window 1: 08:00 to 18:00 (33.3% to 75.0%) -->
+<div class="absolute left-[33.33%] w-[41.67%] h-5 bg-primary-container/25 border-y border-x border-primary-container rounded-sm flex items-center justify-center">
+<span class="text-[9px] font-telemetry-sm text-primary font-bold tracking-tight">08:00 - 18:00 (NORMAL)</span>
+</div>
+<!-- Window 2: 20:00 to 22:00 (83.3% to 91.6%) -->
+<div class="absolute left-[83.33%] w-[8.33%] h-5 bg-secondary/20 border-y border-x border-secondary rounded-sm flex items-center justify-center">
+<span class="text-[8px] font-telemetry-sm text-secondary font-bold">20-22</span>
+</div>
+<!-- Current time indicator pin (09:41 ~ 40.3%) -->
+<div class="absolute left-[40.3%] top-0 bottom-0 w-0.5 bg-error z-10">
+<div class="w-2 h-2 -ml-[3px] bg-error rounded-full"></div>
+</div>
+</div>
+<div class="flex justify-between text-[9px] font-telemetry-sm text-outline-variant pt-1 px-0.5">
+<span>00:00</span>
+<span>04:00</span>
+<span>08:00</span>
+<span>12:00</span>
+<span>16:00</span>
+<span>20:00</span>
+<span>24:00</span>
+</div>
+</div>
+<!-- Active Day Schedule Windows -->
+<div class="space-y-2 pt-1">
+<!-- Window 01 Card -->
+<div class="p-2.5 rounded bg-surface-container border border-primary-container/40 flex items-center justify-between">
+<div class="flex items-center gap-2.5">
+<div class="w-7 h-7 rounded bg-primary-container/10 border border-primary-container flex items-center justify-center text-primary-container">
+<span class="material-symbols-outlined text-base">schedule</span>
+</div>
+<div>
+<div class="flex items-center gap-1.5">
+<span class="text-label-caps font-label-caps text-primary-container">SLOT #01</span>
+<span class="text-body-sm font-telemetry-sm text-on-surface font-semibold">08:00 - 18:00</span>
+</div>
+<span class="text-label-caps font-label-caps text-on-surface-variant">DURATION: 10H 00M</span>
+</div>
+</div>
+<div class="flex items-center gap-2">
+<span class="text-label-caps font-label-caps text-primary-container bg-primary-container/10 border border-primary-container/40 px-2 py-0.5 rounded">NORMAL USERS</span>
+<button aria-label="Edit window 1" class="text-on-surface-variant hover:text-primary transition-colors">
+<span class="material-symbols-outlined text-base">edit</span>
+</button>
+</div>
+</div>
+<!-- Window 02 Card -->
+<div class="p-2.5 rounded bg-surface-container border border-outline-variant flex items-center justify-between">
+<div class="flex items-center gap-2.5">
+<div class="w-7 h-7 rounded bg-secondary/10 border border-secondary/50 flex items-center justify-center text-secondary">
+<span class="material-symbols-outlined text-base">history_toggle_off</span>
+</div>
+<div>
+<div class="flex items-center gap-1.5">
+<span class="text-label-caps font-label-caps text-secondary">SLOT #02</span>
+<span class="text-body-sm font-telemetry-sm text-on-surface font-semibold">20:00 - 22:00</span>
+</div>
+<span class="text-label-caps font-label-caps text-on-surface-variant">DURATION: 02H 00M</span>
+</div>
+</div>
+<div class="flex items-center gap-2">
+<span class="text-label-caps font-label-caps text-secondary bg-secondary/10 border border-secondary/40 px-2 py-0.5 rounded">CLEANING / TEMP</span>
+<button aria-label="Edit window 2" class="text-on-surface-variant hover:text-primary transition-colors">
+<span class="material-symbols-outlined text-base">edit</span>
+</button>
+</div>
+</div>
+</div>
+</section>
+<!-- 3. Time Window Configurator Card (Slot 1 Editing) -->
+<section class="bg-surface-container-low border border-primary-container/50 rounded-lg p-3.5 inset-glow space-y-3.5 relative overflow-hidden neon-pulse">
+<div class="flex items-center justify-between">
+<div class="flex items-center gap-2">
+<span class="material-symbols-outlined text-primary-container text-base">tune</span>
+<h2 class="text-label-caps font-label-caps text-primary tracking-wider">CONFIGURATOR // SLOT #01</h2>
+</div>
+<span class="text-label-caps font-label-caps text-primary-container bg-primary-container/20 border border-primary-container px-2 py-0.5 rounded animate-pulse">ACTIVE EDIT</span>
+</div>
+<!-- Interactive Digital Clock Displays -->
+<div class="grid grid-cols-2 gap-3">
+<!-- Start Time Stepper Box -->
+<div class="bg-surface-container-lowest border border-outline-variant rounded p-2.5 flex flex-col justify-between">
+<div class="flex justify-between items-center text-label-caps font-label-caps text-on-surface-variant">
+<span>START TIME</span>
+<span class="text-primary-container font-telemetry-sm">AM</span>
+</div>
+<div class="my-2 flex items-center justify-between">
+<button aria-label="Decrease start time" class="w-7 h-7 rounded border border-outline-variant bg-surface-container flex items-center justify-center text-on-surface hover:text-primary active:bg-primary-container/20">
+<span class="material-symbols-outlined text-sm">remove</span>
+</button>
+<div class="text-center">
+<span class="text-telemetry-lg font-telemetry-lg text-primary tracking-wider">08:00</span>
+</div>
+<button aria-label="Increase start time" class="w-7 h-7 rounded border border-outline-variant bg-surface-container flex items-center justify-center text-on-surface hover:text-primary active:bg-primary-container/20">
+<span class="material-symbols-outlined text-sm">add</span>
+</button>
+</div>
+<div class="text-[10px] font-telemetry-sm text-center text-on-surface-variant flex items-center justify-center gap-1">
+<span class="material-symbols-outlined text-xs text-primary-container">alarm_on</span>
+<span>SLOT ONSET</span>
+</div>
+</div>
+<!-- End Time Stepper Box -->
+<div class="bg-surface-container-lowest border border-outline-variant rounded p-2.5 flex flex-col justify-between">
+<div class="flex justify-between items-center text-label-caps font-label-caps text-on-surface-variant">
+<span>END TIME</span>
+<span class="text-primary-container font-telemetry-sm">PM</span>
+</div>
+<div class="my-2 flex items-center justify-between">
+<button aria-label="Decrease end time" class="w-7 h-7 rounded border border-outline-variant bg-surface-container flex items-center justify-center text-on-surface hover:text-primary active:bg-primary-container/20">
+<span class="material-symbols-outlined text-sm">remove</span>
+</button>
+<div class="text-center">
+<span class="text-telemetry-lg font-telemetry-lg text-primary tracking-wider">18:00</span>
+</div>
+<button aria-label="Increase end time" class="w-7 h-7 rounded border border-outline-variant bg-surface-container flex items-center justify-center text-on-surface hover:text-primary active:bg-primary-container/20">
+<span class="material-symbols-outlined text-sm">add</span>
+</button>
+</div>
+<div class="text-[10px] font-telemetry-sm text-center text-secondary flex items-center justify-center gap-1">
+<span class="material-symbols-outlined text-xs">timelapse</span>
+<span>10H 00M SPAN</span>
+</div>
+</div>
+</div>
+<!-- Target User Group Selector -->
+<div>
+<label class="text-label-caps font-label-caps text-on-surface-variant block mb-1.5">CREDENTIAL PERMISSION GROUP</label>
+<div class="grid grid-cols-3 gap-1.5">
+<!-- Normal Users (Active) -->
+<button class="py-2 px-1 text-center rounded border border-primary-container bg-primary-container/20 text-primary font-label-caps text-[10px] font-bold tracking-tight">
+              NORMAL USERS
+            </button>
+<!-- Temporary Users -->
+<button class="py-2 px-1 text-center rounded border border-outline-variant bg-surface-container text-on-surface-variant font-label-caps text-[10px] hover:border-outline">
+              TEMP USERS
+            </button>
+<!-- All Non-Admins -->
+<button class="py-2 px-1 text-center rounded border border-outline-variant bg-surface-container text-on-surface-variant font-label-caps text-[10px] hover:border-outline">
+              NON-ADMINS
+            </button>
+</div>
+</div>
+<!-- Days Applied Multi-Select Matrix -->
+<div>
+<label class="text-label-caps font-label-caps text-on-surface-variant block mb-1.5">RECURRENCE RULES (DAYS ASSIGNED)</label>
+<div class="flex gap-1.5">
+<button class="flex-1 py-1.5 rounded bg-primary-container text-on-primary-fixed font-telemetry-sm text-telemetry-sm font-bold text-center">M</button>
+<button class="flex-1 py-1.5 rounded bg-primary-container text-on-primary-fixed font-telemetry-sm text-telemetry-sm font-bold text-center">T</button>
+<button class="flex-1 py-1.5 rounded bg-primary-container text-on-primary-fixed font-telemetry-sm text-telemetry-sm font-bold text-center">W</button>
+<button class="flex-1 py-1.5 rounded bg-primary-container text-on-primary-fixed font-telemetry-sm text-telemetry-sm font-bold text-center">T</button>
+<button class="flex-1 py-1.5 rounded bg-primary-container text-on-primary-fixed font-telemetry-sm text-telemetry-sm font-bold text-center">F</button>
+<button class="flex-1 py-1.5 rounded bg-surface-container border border-outline-variant text-outline font-telemetry-sm text-telemetry-sm text-center">S</button>
+<button class="flex-1 py-1.5 rounded bg-surface-container border border-outline-variant text-outline font-telemetry-sm text-telemetry-sm text-center">S</button>
+</div>
+</div>
+</section>
+<!-- 4. Passage Mode (Normally Open) Window Schedule Card -->
+<section class="bg-surface-container-low border border-outline-variant rounded-lg p-3.5 inset-glow space-y-3">
+<div class="flex items-center justify-between">
+<div class="flex items-center gap-2">
+<span class="material-symbols-outlined text-secondary text-lg">door_open</span>
+<div>
+<h2 class="text-label-caps font-label-caps text-on-surface tracking-wider">PASSAGE MODE // NORMALLY OPEN</h2>
+<span class="text-[10px] font-telemetry-sm text-on-surface-variant">AUTO CLUTCH ENGAGEMENT</span>
+</div>
+</div>
+<!-- Toggle Pill -->
+<label class="relative inline-flex items-center cursor-pointer">
+<input checked="" class="sr-only peer" type="checkbox"/>
+<div class="w-11 h-6 bg-surface-container-highest peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-secondary after:border-outline after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-secondary/30 peer-checked:border peer-checked:border-secondary"></div>
+</label>
+</div>
+<div class="p-2.5 rounded bg-surface-container-lowest border border-secondary/30">
+<div class="flex items-center justify-between mb-1">
+<span class="text-label-caps font-label-caps text-secondary font-bold">MON - FRI // 09:00 - 17:00</span>
+<span class="text-[10px] font-telemetry-sm text-secondary bg-secondary/15 px-1.5 py-0.5 rounded">ENGAGED</span>
+</div>
+<p class="text-body-sm font-body-sm text-on-surface-variant leading-relaxed">
+            Mechanical handle free-turns without BLE/biometric authentication during designated office hours. Auto-locks promptly at 17:00:00.
+          </p>
+</div>
+<!-- Security Override Warning -->
+<div class="flex items-start gap-2 p-2 bg-error-container/20 border border-error/30 rounded text-error text-[11px] font-body-sm">
+<span class="material-symbols-outlined text-base shrink-0 text-error">warning</span>
+<span>Emergency Lockdown via BLE master key overrides passage mode instantaneously.</span>
+</div>
+</section>
+<!-- 5. Primary Action Button (Cyber-Industrial CTA) -->
+<section class="pt-1 pb-3 space-y-2">
+<button class="w-full py-3.5 px-4 bg-surface-container-high border-2 border-primary-container rounded-lg text-primary-container font-label-caps text-telemetry-md flex flex-col items-center justify-center gap-0.5 shadow-[0_0_24px_rgba(0,229,255,0.25)] hover:bg-primary-container hover:text-surface-container-lowest active:scale-[0.98] transition-all">
+<div class="flex items-center gap-2">
+<span class="material-symbols-outlined text-lg">cloud_upload</span>
+<span class="tracking-widest font-bold">UPLOAD TIMETABLE TO LOCK</span>
+</div>
+<span class="text-[10px] font-telemetry-sm text-primary tracking-normal opacity-80">INITIATES BLE 128-BIT ENCRYPTED PACKET TRANSMISSION</span>
+</button>
+<div class="flex justify-between items-center px-1 text-[10px] font-telemetry-sm text-on-surface-variant">
+<span class="flex items-center gap-1">
+<span class="w-1.5 h-1.5 rounded-full bg-secondary"></span>
+            RTC DRIFT: 0.00s
+          </span>
+<span class="text-primary-container font-semibold">4 PACKETS STAGED &amp; SIGNED</span>
+</div>
+</section>
+</main>
+<!-- Bottom Navigation Bar (Shared Component Anchor) -->
+<!-- Destination count: 5. Active: Schedules (index 2 / Schedules tab) -->
+<nav class="fixed bottom-0 left-0 w-full z-50 flex justify-around items-center px-space-sm h-16 bg-surface-container-lowest/95 backdrop-blur-lg border-t border-outline-variant">
+<!-- Destination 1: Control -->
+<button class="flex flex-col items-center justify-center text-on-surface-variant pt-1 pb-2 hover:text-primary transition-colors duration-150 active:scale-95">
+<span class="material-symbols-outlined text-xl">lock_open</span>
+<span class="text-label-caps font-label-caps text-[10px] mt-0.5">Control</span>
+</button>
+<!-- Destination 2: Users -->
+<button class="flex flex-col items-center justify-center text-on-surface-variant pt-1 pb-2 hover:text-primary transition-colors duration-150 active:scale-95">
+<span class="material-symbols-outlined text-xl">group</span>
+<span class="text-label-caps font-label-caps text-[10px] mt-0.5">Users</span>
+</button>
+<!-- Destination 3: Schedules [ACTIVE - Closest match to current page] -->
+<button class="flex flex-col items-center justify-center text-primary-container border-t-2 border-primary-container pt-1 pb-2 active:scale-95 transition-transform duration-100">
+<span class="material-symbols-outlined text-xl" style="font-variation-settings: 'FILL' 1;">schedule</span>
+<span class="text-label-caps font-label-caps text-[10px] font-bold mt-0.5 text-primary-container">Schedules</span>
+</button>
+<!-- Destination 4: History -->
+<button class="flex flex-col items-center justify-center text-on-surface-variant pt-1 pb-2 hover:text-primary transition-colors duration-150 active:scale-95">
+<span class="material-symbols-outlined text-xl">receipt_long</span>
+<span class="text-label-caps font-label-caps text-[10px] mt-0.5">History</span>
+</button>
+<!-- Destination 5: Settings -->
+<button class="flex flex-col items-center justify-center text-on-surface-variant pt-1 pb-2 hover:text-primary transition-colors duration-150 active:scale-95">
+<span class="material-symbols-outlined text-xl">settings</span>
+<span class="text-label-caps font-label-caps text-[10px] mt-0.5">Settings</span>
+</button>
+</nav>
+</div>
+</body></html>
