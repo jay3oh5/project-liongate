@@ -1,48 +1,49 @@
 {
-  "projectId": "12863245899233476956",
-  "title": "LionGate - Minimal Luxury SmartLock",
-  "designSystem": "assets/feeebab3e77849b7bbd496661d3b5acc",
+  "projectId": "272627489238079212",
+  "title": "LionGate - Apple Glass SmartLock",
+  "designSystem": "assets/11818643585476070468",
+  "aesthetic": "Apple iOS 18 / visionOS Liquid Glass with Floating Capsule Tab Dock",
   "deviceType": "MOBILE",
   "screens": [
     {
       "tabIndex": 0,
       "tabName": "Activity",
-      "screenId": "70280c161b584c278e4fe638c3cee068",
+      "screenId": "6bcf6c64e5574326a018e194c8009cd5",
       "title": "LionGate - Activity Journal",
-      "html": ".stitch/designs/minimal_01_activity.html",
-      "image": ".stitch/designs/minimal_01_activity.png"
+      "html": ".stitch/designs/apple_01_activity.html",
+      "image": ".stitch/designs/apple_01_activity.png"
     },
     {
       "tabIndex": 1,
-      "tabName": "Members",
-      "screenId": "59429164e2214458ad6dc75a8f6cdee2",
-      "title": "LionGate - Access & Members",
-      "html": ".stitch/designs/minimal_02_members.html",
-      "image": ".stitch/designs/minimal_02_members.png"
+      "tabName": "Keys",
+      "screenId": "158266068cf24d1286ba108cd9b459d6",
+      "title": "LionGate - Keys & Access",
+      "html": ".stitch/designs/apple_02_keys.html",
+      "image": ".stitch/designs/apple_02_keys.png"
     },
     {
       "tabIndex": 2,
-      "tabName": "Unlock (Center)",
-      "screenId": "703c76215fb84b7a8802ffd1ae3187b3",
+      "tabName": "Unlock (Center Starting Tab)",
+      "screenId": "5a60947b77f649c1ab877f0706879b58",
       "title": "LionGate - Sanctuary Unlock",
-      "html": ".stitch/designs/minimal_03_unlock.html",
-      "image": ".stitch/designs/minimal_03_unlock.png"
+      "html": ".stitch/designs/apple_03_unlock.html",
+      "image": ".stitch/designs/apple_03_unlock.png"
     },
     {
       "tabIndex": 3,
-      "tabName": "Schedules",
-      "screenId": "13ae44fe6c6a43e3bfb08cfe80111549",
-      "title": "LionGate - Schedules & Automation",
-      "html": ".stitch/designs/minimal_04_schedules.html",
-      "image": ".stitch/designs/minimal_04_schedules.png"
+      "tabName": "Automations",
+      "screenId": "92beff36bde244acabc5db1cbb28c161",
+      "title": "LionGate - Automations & Schedules",
+      "html": ".stitch/designs/apple_04_automations.html",
+      "image": ".stitch/designs/apple_04_automations.png"
     },
     {
       "tabIndex": 4,
       "tabName": "Settings",
-      "screenId": "6b599be23d0646b185eba83448c21cf4",
-      "title": "LionGate - Lock Preferences & Settings",
-      "html": ".stitch/designs/minimal_05_settings.html",
-      "image": ".stitch/designs/minimal_05_settings.png"
+      "screenId": "38a207daff544dcfad51a91f37e96e0d",
+      "title": "LionGate - Lock Settings & Hardware",
+      "html": ".stitch/designs/apple_05_settings.html",
+      "image": ".stitch/designs/apple_05_settings.png"
     }
   ]
 }

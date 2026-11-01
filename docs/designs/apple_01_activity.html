@@ -1,0 +1,408 @@
+<!DOCTYPE html>
+
+<html class="dark" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0, viewport-fit=cover" name="viewport"/>
+<title>Activity Journal - Smart Lock</title>
+<!-- Tailwind CSS -->
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<!-- Google Fonts: Plus Jakarta Sans & Public Sans -->
+<link href="https://fonts.googleapis.com" rel="preconnect"/>
+<link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect"/>
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&amp;family=Public+Sans:wght@400;500;600;700&amp;display=swap" rel="stylesheet"/>
+<!-- Material Symbols Outlined -->
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<!-- Mandatory Tailwind Config -->
+<script id="tailwind-config">
+    tailwind.config = {
+      darkMode: "class",
+      theme: {
+        extend: {
+          "colors": {
+            "on-surface": "#e2e2e2",
+            "surface": "#131313",
+            "outline-variant": "#414754",
+            "surface-container-lowest": "#0e0e0e",
+            "on-surface-variant": "#c0c6d6",
+            "on-background": "#e2e2e2",
+            "outline": "#8b91a0",
+            "inverse-primary": "#005db8",
+            "surface-container-low": "#1b1b1b",
+            "secondary": "#ffc07a",
+            "primary-fixed-dim": "#aac7ff",
+            "tertiary-fixed-dim": "#ffb691",
+            "on-error-container": "#ffdad6",
+            "error": "#ffb4ab",
+            "primary-fixed": "#d6e3ff",
+            "on-secondary": "#482900",
+            "on-primary-fixed-variant": "#00468d",
+            "inverse-surface": "#e2e2e2",
+            "error-container": "#93000a",
+            "background": "#131313",
+            "surface-tint": "#aac7ff",
+            "tertiary-fixed": "#ffdbcb",
+            "primary-container": "#3e90ff",
+            "on-error": "#690005",
+            "on-tertiary-fixed-variant": "#793100",
+            "tertiary-container": "#eb6a12",
+            "on-primary-container": "#002957",
+            "on-secondary-fixed-variant": "#673d00",
+            "surface-variant": "#353535",
+            "inverse-on-surface": "#303030",
+            "surface-dim": "#131313",
+            "surface-container-high": "#2a2a2a",
+            "on-secondary-fixed": "#2b1700",
+            "on-secondary-container": "#623a00",
+            "secondary-fixed-dim": "#ffb868",
+            "surface-container-highest": "#353535",
+            "surface-bright": "#393939",
+            "surface-container": "#1f1f1f",
+            "primary": "#aac7ff",
+            "on-primary-fixed": "#001b3e",
+            "secondary-container": "#fa9b00",
+            "tertiary": "#ffb691",
+            "on-tertiary": "#552000",
+            "secondary-fixed": "#ffddbb",
+            "on-tertiary-fixed": "#341100",
+            "on-tertiary-container": "#4a1b00",
+            "on-primary": "#003064"
+          },
+          "borderRadius": {
+            "DEFAULT": "1rem",
+            "lg": "2rem",
+            "xl": "3rem",
+            "full": "9999px"
+          },
+          "fontFamily": {
+            "headline": ["Plus Jakarta Sans"],
+            "display": ["Plus Jakarta Sans"],
+            "body": ["Plus Jakarta Sans"],
+            "label": ["Public Sans"]
+          }
+        },
+      },
+    }
+  </script>
+<style>
+    body {
+      background-color: #000000;
+      font-family: 'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, sans-serif;
+      -webkit-font-smoothing: antialiased;
+      -moz-osx-font-smoothing: grayscale;
+      selection-background-color: #3e90ff;
+    }
+    
+    /* Apple Liquid Glass spec & custom highlights */
+    .liquid-glass-card {
+      background: radial-gradient(120% 120% at 50% 0%, rgba(255, 255, 255, 0.07) 0%, rgba(255, 255, 255, 0.02) 100%), rgba(20, 20, 22, 0.65);
+      border: 1px solid rgba(255, 255, 255, 0.12);
+      box-shadow: 0 20px 40px -15px rgba(0, 0, 0, 0.7), inset 0 1px 1px 0 rgba(255, 255, 255, 0.15);
+    }
+    
+    .liquid-pill-active {
+      background: radial-gradient(100% 100% at 50% 0%, rgba(255, 255, 255, 0.22) 0%, rgba(255, 255, 255, 0.08) 100%);
+      border: 1px solid rgba(255, 255, 255, 0.28);
+      box-shadow: inset 0 1px 1px 0 rgba(255, 255, 255, 0.3), 0 4px 12px rgba(0, 0, 0, 0.4);
+    }
+
+    .liquid-pill-inactive {
+      background: rgba(255, 255, 255, 0.04);
+      border: 1px solid rgba(255, 255, 255, 0.06);
+    }
+
+    /* Ambient atmospheric glow */
+    .ambient-glow {
+      position: fixed;
+      top: -120px;
+      right: -80px;
+      width: 320px;
+      height: 320px;
+      background: radial-gradient(circle, rgba(62, 144, 255, 0.12) 0%, rgba(0, 0, 0, 0) 70%);
+      pointer-events: none;
+      z-index: 0;
+    }
+
+    .ambient-glow-bottom {
+      position: fixed;
+      bottom: 40px;
+      left: -60px;
+      width: 280px;
+      height: 280px;
+      background: radial-gradient(circle, rgba(250, 155, 0, 0.06) 0%, rgba(0, 0, 0, 0) 70%);
+      pointer-events: none;
+      z-index: 0;
+    }
+
+    /* Hide standard scrollbars for native app fluid feel */
+    ::-webkit-scrollbar {
+      display: none;
+    }
+    * {
+      -ms-overflow-style: none;
+      scrollbar-width: none;
+    }
+  </style>
+<style>
+    body {
+      min-height: max(884px, 100dvh);
+    }
+  </style>
+  </head>
+<body class="bg-black text-on-surface flex justify-center min-h-screen antialiased selection:bg-primary-container selection:text-on-primary-container overflow-x-hidden">
+<!-- Subtle Spatial Lighting -->
+<div class="ambient-glow"></div>
+<div class="ambient-glow-bottom"></div>
+<!-- Mobile Viewport Frame (390px iPhone Width) -->
+<div class="relative w-full max-w-[390px] min-h-screen flex flex-col justify-between overflow-x-hidden pb-32">
+<!-- TOP APP BAR (from Shared Components JSON with Apple Liquid Glass Integration) -->
+<header class="fixed top-0 inset-x-0 z-40 bg-surface-container/60 dark:bg-surface-container/60 backdrop-blur-xl shadow-none">
+<div class="flex justify-between items-center w-full px-6 py-4 max-w-md mx-auto">
+<!-- Leading Icon & Label -->
+<div class="flex items-center space-x-2">
+<div class="w-8 h-8 rounded-full bg-white/[0.06] border border-white/10 flex items-center justify-center text-primary active:scale-95 transition-transform duration-150">
+<span class="material-symbols-outlined text-lg leading-none" data-icon="door_front">door_front</span>
+</div>
+<span class="font-headline text-lg font-semibold tracking-tight text-on-surface dark:text-on-surface">Front Entry</span>
+</div>
+<!-- Trailing Battery / Connection Status Pill -->
+<div class="flex items-center space-x-1.5 px-3 py-1 rounded-full bg-white/[0.05] border border-white/10 active:scale-95 transition-transform duration-150">
+<span class="material-symbols-outlined text-xs text-primary leading-none" data-icon="battery_charging_full" data-weight="fill" style="font-variation-settings: 'FILL' 1;">battery_charging_full</span>
+<span class="font-label text-[11px] font-medium tracking-tight text-on-surface-variant">94%</span>
+</div>
+</div>
+</header>
+<!-- MAIN SCROLL CONTENT CANVAS -->
+<main class="w-full px-5 pt-20 flex-1 z-10 flex flex-col space-y-6">
+<!-- iOS Native Title Header Area -->
+<section class="pt-3 pb-1 flex items-end justify-between">
+<div>
+<p class="text-xs uppercase tracking-wider font-semibold text-primary/80 mb-0.5">Hardware Log</p>
+<h1 class="text-3xl font-extrabold tracking-tight text-white font-headline">Activity</h1>
+<p class="text-xs text-on-surface-variant font-medium mt-0.5">Front Door Lock · Ultrawide Band</p>
+</div>
+<!-- Search / Calendar Action Icon -->
+<button aria-label="Search and filter events" class="w-10 h-10 rounded-full liquid-pill-inactive flex items-center justify-center text-on-surface hover:text-white hover:bg-white/10 active:scale-90 transition-all duration-150 shadow-sm">
+<span class="material-symbols-outlined text-xl" data-icon="calendar_month">calendar_month</span>
+</button>
+</section>
+<!-- Horizontal Pill Filter Bar -->
+<section class="flex items-center space-x-2 overflow-x-auto py-1 no-scrollbar">
+<!-- All (Active with glowing glass fill) -->
+<button class="liquid-pill-active px-4 py-1.5 rounded-full text-xs font-semibold text-white tracking-tight flex items-center space-x-1.5 active:scale-95 transition-all">
+<span>All</span>
+<span class="w-1.5 h-1.5 rounded-full bg-primary inline-block"></span>
+</button>
+<!-- Family -->
+<button class="liquid-pill-inactive px-4 py-1.5 rounded-full text-xs font-medium text-on-surface-variant hover:text-white hover:bg-white/[0.08] tracking-tight active:scale-95 transition-all">
+          Family
+        </button>
+<!-- Guests -->
+<button class="liquid-pill-inactive px-4 py-1.5 rounded-full text-xs font-medium text-on-surface-variant hover:text-white hover:bg-white/[0.08] tracking-tight active:scale-95 transition-all">
+          Guests
+        </button>
+<!-- Security -->
+<button class="liquid-pill-inactive px-4 py-1.5 rounded-full text-xs font-medium text-on-surface-variant hover:text-white hover:bg-white/[0.08] tracking-tight active:scale-95 transition-all">
+          Security
+        </button>
+</section>
+<!-- Lock Live State Micro-Banner Bento -->
+<section class="liquid-glass-card rounded-2xl p-4 flex items-center justify-between">
+<div class="flex items-center space-x-3.5">
+<div class="relative flex items-center justify-center w-11 h-11 rounded-xl bg-white/[0.08] border border-white/15">
+<span class="material-symbols-outlined text-primary text-2xl" data-icon="lock" data-weight="fill" style="font-variation-settings: 'FILL' 1;">lock</span>
+<span class="absolute -top-0.5 -right-0.5 w-2.5 h-2.5 rounded-full bg-primary-container ring-2 ring-black"></span>
+</div>
+<div>
+<div class="flex items-center space-x-2">
+<span class="text-sm font-bold text-white font-headline">Door Secured</span>
+<span class="text-[10px] px-2 py-0.5 rounded-full font-label font-medium bg-white/10 text-primary border border-primary/20">Matter 1.3</span>
+</div>
+<p class="text-xs text-on-surface-variant font-normal">Last confirmed locked 45m ago</p>
+</div>
+</div>
+<button class="text-xs font-semibold text-primary px-3 py-1.5 rounded-lg bg-primary-container/20 border border-primary/30 active:scale-95 transition-all">
+          Status
+        </button>
+</section>
+<!-- TIMELINE GROUPS -->
+<!-- SECTION 1: TODAY -->
+<section class="space-y-2.5">
+<div class="flex items-center justify-between px-1">
+<h2 class="text-xs font-bold uppercase tracking-wider text-on-surface-variant font-label">Today</h2>
+<span class="text-[11px] text-outline font-medium">3 Events</span>
+</div>
+<div class="liquid-glass-card rounded-3xl p-3.5 flex flex-col divide-y divide-white/[0.07]">
+<!-- Event 1: Julian David -->
+<div class="py-3 first:pt-1 last:pb-1 flex items-center justify-between group">
+<div class="flex items-center space-x-3">
+<div class="relative w-10 h-10 rounded-full bg-primary-container/25 border border-primary/30 flex items-center justify-center text-primary font-bold text-sm">
+                JD
+                <div class="absolute -bottom-0.5 -right-0.5 w-4 h-4 rounded-full bg-surface-container-low border border-white/20 flex items-center justify-center">
+<span class="material-symbols-outlined text-[10px] text-primary" data-icon="fingerprint">fingerprint</span>
+</div>
+</div>
+<div class="flex flex-col">
+<div class="flex items-center space-x-1.5">
+<span class="text-sm font-semibold text-white tracking-tight">Julian David</span>
+</div>
+<span class="text-xs text-on-surface-variant">Biometric Touch ID</span>
+</div>
+</div>
+<div class="flex flex-col items-end space-y-1">
+<span class="text-xs font-medium text-on-surface-variant">2:45 PM</span>
+<span class="inline-flex items-center px-2 py-0.5 rounded-full text-[10px] font-semibold bg-primary/10 text-primary border border-primary/25">
+                Verified
+              </span>
+</div>
+</div>
+<!-- Event 2: Auto-Lock -->
+<div class="py-3 flex items-center justify-between group">
+<div class="flex items-center space-x-3">
+<div class="w-10 h-10 rounded-full bg-white/[0.05] border border-white/10 flex items-center justify-center text-on-surface">
+<span class="material-symbols-outlined text-lg" data-icon="lock">lock</span>
+</div>
+<div class="flex flex-col">
+<span class="text-sm font-semibold text-white tracking-tight">Auto-Lock</span>
+<span class="text-xs text-on-surface-variant">Door secured automatically</span>
+</div>
+</div>
+<div class="flex flex-col items-end space-y-1">
+<span class="text-xs font-medium text-on-surface-variant">1:15 PM</span>
+<span class="inline-flex items-center px-2 py-0.5 rounded-full text-[10px] font-medium bg-white/[0.06] text-on-surface-variant border border-white/10">
+                Secured
+              </span>
+</div>
+</div>
+<!-- Event 3: Elena Vance -->
+<div class="py-3 last:pb-1 flex items-center justify-between group">
+<div class="flex items-center space-x-3">
+<div class="relative w-10 h-10 rounded-full bg-secondary-container/20 border border-secondary/30 flex items-center justify-center text-secondary font-bold text-sm">
+                EV
+                <div class="absolute -bottom-0.5 -right-0.5 w-4 h-4 rounded-full bg-surface-container-low border border-white/20 flex items-center justify-center">
+<span class="material-symbols-outlined text-[10px] text-secondary" data-icon="contactless">contactless</span>
+</div>
+</div>
+<div class="flex flex-col">
+<span class="text-sm font-semibold text-white tracking-tight">Elena Vance</span>
+<span class="text-xs text-on-surface-variant">Digital Key · Apple Home Key</span>
+</div>
+</div>
+<div class="flex flex-col items-end space-y-1">
+<span class="text-xs font-medium text-on-surface-variant">11:20 AM</span>
+<span class="inline-flex items-center px-2 py-0.5 rounded-full text-[10px] font-semibold bg-primary/10 text-primary border border-primary/25">
+                Verified
+              </span>
+</div>
+</div>
+</div>
+</section>
+<!-- SECTION 2: YESTERDAY -->
+<section class="space-y-2.5">
+<div class="flex items-center justify-between px-1">
+<h2 class="text-xs font-bold uppercase tracking-wider text-on-surface-variant font-label">Yesterday</h2>
+<span class="text-[11px] text-outline font-medium">2 Events</span>
+</div>
+<div class="liquid-glass-card rounded-3xl p-3.5 flex flex-col divide-y divide-white/[0.07]">
+<!-- Event 4: Housekeeping -->
+<div class="py-3 first:pt-1 last:pb-1 flex items-center justify-between group">
+<div class="flex items-center space-x-3">
+<div class="w-10 h-10 rounded-full bg-tertiary-container/20 border border-tertiary/30 flex items-center justify-center text-tertiary">
+<span class="material-symbols-outlined text-lg" data-icon="dialpad">dialpad</span>
+</div>
+<div class="flex flex-col">
+<span class="text-sm font-semibold text-white tracking-tight">Housekeeping</span>
+<span class="text-xs text-on-surface-variant">Temporary PIN keypad</span>
+</div>
+</div>
+<div class="flex flex-col items-end space-y-1">
+<span class="text-xs font-medium text-on-surface-variant">6:15 PM</span>
+<span class="inline-flex items-center px-2 py-0.5 rounded-full text-[10px] font-semibold bg-secondary/15 text-secondary border border-secondary/30 shadow-[0_0_10px_rgba(255,192,122,0.15)]">
+                Guest Access
+              </span>
+</div>
+</div>
+<!-- Event 5: Front Door Auto-Locked -->
+<div class="py-3 flex items-center justify-between group">
+<div class="flex items-center space-x-3">
+<div class="w-10 h-10 rounded-full bg-white/[0.05] border border-white/10 flex items-center justify-center text-on-surface">
+<span class="material-symbols-outlined text-lg" data-icon="lock_clock">lock_clock</span>
+</div>
+<div class="flex flex-col">
+<span class="text-sm font-semibold text-white tracking-tight">Front Door Auto-Locked</span>
+<span class="text-xs text-on-surface-variant">Scheduled morning lock</span>
+</div>
+</div>
+<div class="flex flex-col items-end space-y-1">
+<span class="text-xs font-medium text-on-surface-variant">8:00 AM</span>
+<span class="inline-flex items-center px-2 py-0.5 rounded-full text-[10px] font-medium bg-white/[0.06] text-on-surface-variant border border-white/10">
+                Secured
+              </span>
+</div>
+</div>
+</div>
+</section>
+<!-- SECTION 3: EARLIER THIS WEEK -->
+<section class="space-y-2.5">
+<div class="flex items-center justify-between px-1">
+<h2 class="text-xs font-bold uppercase tracking-wider text-on-surface-variant font-label">Earlier This Week</h2>
+<span class="text-[11px] text-outline font-medium">Oct 14</span>
+</div>
+<div class="liquid-glass-card rounded-3xl p-3.5 flex flex-col divide-y divide-white/[0.07]">
+<!-- Event 6: Amazon Delivery -->
+<div class="py-3 first:pt-1 last:pb-1 flex items-center justify-between group">
+<div class="flex items-center space-x-3">
+<div class="w-10 h-10 rounded-full bg-white/[0.05] border border-white/10 flex items-center justify-center text-outline">
+<span class="material-symbols-outlined text-lg" data-icon="package_2">package_2</span>
+</div>
+<div class="flex flex-col">
+<span class="text-sm font-semibold text-on-surface tracking-tight">Amazon Delivery</span>
+<span class="text-xs text-outline">One-Time Passcode</span>
+</div>
+</div>
+<div class="flex flex-col items-end space-y-1">
+<span class="text-xs font-medium text-outline">Oct 14, 3:20 PM</span>
+<span class="inline-flex items-center px-2 py-0.5 rounded-full text-[10px] font-medium bg-white/[0.04] text-outline border border-white/10">
+                Expired
+              </span>
+</div>
+</div>
+</div>
+</section>
+<!-- Privacy & Hardware Encryption Footnote -->
+<footer class="pt-4 pb-8 flex items-center justify-center space-x-1.5 text-center text-xs text-white/40">
+<span class="material-symbols-outlined text-xs leading-none" data-icon="encrypted">encrypted</span>
+<span>End-to-end encrypted hardware event log.</span>
+</footer>
+</main>
+<!-- FLOATING LIQUID GLASS BOTTOM NAVIGATION DOCK (Derived directly from Shared Components JSON) -->
+<!-- Active State Logic applied to 'Activity' because current screen is the Activity Journal -->
+<nav class="fixed bottom-6 left-1/2 -translate-x-1/2 w-[92%] max-w-md z-50 flex justify-around items-center px-3 py-2 bg-surface-container-low/80 dark:bg-surface-container-low/80 backdrop-blur-2xl rounded-full shadow-2xl border border-white/15">
+<!-- Tab 1: Activity (Active) -->
+<button class="flex flex-col items-center justify-center bg-primary-container text-on-primary-container rounded-full px-4 py-2 shadow-inner active:scale-90 transition-transform duration-150">
+<span class="material-symbols-outlined text-lg leading-none" data-icon="history" data-weight="fill" style="font-variation-settings: 'FILL' 1;">history</span>
+<span class="font-label text-xs tracking-tight mt-0.5 font-semibold">Activity</span>
+</button>
+<!-- Tab 2: Keys -->
+<button class="flex flex-col items-center justify-center text-on-surface-variant dark:text-on-surface-variant py-2 hover:text-on-surface dark:hover:text-on-surface transition-colors active:scale-90 duration-150">
+<span class="material-symbols-outlined text-lg leading-none" data-icon="vpn_key">vpn_key</span>
+<span class="font-label text-xs tracking-tight mt-0.5">Keys</span>
+</button>
+<!-- Tab 3: Unlock -->
+<button class="flex flex-col items-center justify-center text-on-surface-variant dark:text-on-surface-variant py-2 hover:text-on-surface dark:hover:text-on-surface transition-colors active:scale-90 duration-150">
+<span class="material-symbols-outlined text-lg leading-none" data-icon="lock_open">lock_open</span>
+<span class="font-label text-xs tracking-tight mt-0.5">Unlock</span>
+</button>
+<!-- Tab 4: Automations -->
+<button class="flex flex-col items-center justify-center text-on-surface-variant dark:text-on-surface-variant py-2 hover:text-on-surface dark:hover:text-on-surface transition-colors active:scale-90 duration-150">
+<span class="material-symbols-outlined text-lg leading-none" data-icon="auto_mode">auto_mode</span>
+<span class="font-label text-xs tracking-tight mt-0.5">Automations</span>
+</button>
+<!-- Tab 5: Settings -->
+<button class="flex flex-col items-center justify-center text-on-surface-variant dark:text-on-surface-variant py-2 hover:text-on-surface dark:hover:text-on-surface transition-colors active:scale-90 duration-150">
+<span class="material-symbols-outlined text-lg leading-none" data-icon="settings">settings</span>
+<span class="font-label text-xs tracking-tight mt-0.5">Settings</span>
+</button>
+</nav>
+</div>
+</body></html>

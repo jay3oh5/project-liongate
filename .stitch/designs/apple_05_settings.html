@@ -1,0 +1,457 @@
+<!DOCTYPE html>
+
+<html class="dark" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Smart Lock Settings</title>
+<!-- Material Symbols Outlined -->
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<!-- Google Fonts: Plus Jakarta Sans & Public Sans -->
+<link href="https://fonts.googleapis.com" rel="preconnect"/>
+<link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect"/>
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&amp;family=Public+Sans:wght@400;500;600&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<!-- Tailwind CSS CDN with plugins -->
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<script id="tailwind-config">
+    tailwind.config = {
+      darkMode: "class",
+      theme: {
+        extend: {
+          "colors": {
+            "secondary": "#ffc07a",
+            "on-background": "#e2e2e2",
+            "primary-fixed-dim": "#aac7ff",
+            "on-secondary-container": "#623a00",
+            "tertiary": "#ffb691",
+            "surface-container-high": "#2a2a2a",
+            "on-tertiary": "#552000",
+            "surface-variant": "#353535",
+            "surface-bright": "#393939",
+            "on-error": "#690005",
+            "surface-container-highest": "#353535",
+            "primary-container": "#3e90ff",
+            "on-tertiary-fixed": "#341100",
+            "secondary-container": "#fa9b00",
+            "on-surface-variant": "#c0c6d6",
+            "surface-container-lowest": "#0e0e0e",
+            "secondary-fixed": "#ffddbb",
+            "surface-dim": "#131313",
+            "tertiary-fixed": "#ffdbcb",
+            "inverse-on-surface": "#303030",
+            "error": "#ffb4ab",
+            "background": "#131313",
+            "on-secondary": "#482900",
+            "surface-tint": "#aac7ff",
+            "on-primary-fixed": "#001b3e",
+            "on-primary": "#003064",
+            "on-primary-fixed-variant": "#00468d",
+            "outline-variant": "#414754",
+            "outline": "#8b91a0",
+            "on-primary-container": "#002957",
+            "tertiary-container": "#eb6a12",
+            "on-surface": "#e2e2e2",
+            "surface-container": "#1f1f1f",
+            "primary-fixed": "#d6e3ff",
+            "on-tertiary-fixed-variant": "#793100",
+            "on-secondary-fixed-variant": "#673d00",
+            "tertiary-fixed-dim": "#ffb691",
+            "surface-container-low": "#1b1b1b",
+            "primary": "#aac7ff",
+            "on-tertiary-container": "#4a1b00",
+            "secondary-fixed-dim": "#ffb868",
+            "on-secondary-fixed": "#2b1700",
+            "on-error-container": "#ffdad6",
+            "surface": "#131313",
+            "inverse-surface": "#e2e2e2",
+            "inverse-primary": "#005db8",
+            "error-container": "#93000a"
+          },
+          "borderRadius": {
+            "DEFAULT": "1rem",
+            "lg": "2rem",
+            "xl": "3rem",
+            "full": "9999px"
+          },
+          "fontFamily": {
+            "headline": ["Plus Jakarta Sans"],
+            "display": ["Plus Jakarta Sans"],
+            "body": ["Plus Jakarta Sans"],
+            "label": ["Public Sans"]
+          }
+        },
+      },
+    }
+  </script>
+<style>
+    .material-symbols-outlined {
+      font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+      display: inline-block;
+      vertical-align: middle;
+      line-height: 1;
+    }
+    /* Liquid Glass Specular Shimmer and Glows */
+    .glass-specular {
+      box-shadow: inset 0 1px 1px 0 rgba(255, 255, 255, 0.15), 0 20px 40px -15px rgba(0, 0, 0, 0.7);
+    }
+    .glass-inner-border {
+      box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.08);
+    }
+    /* Hide scrollbars */
+    ::-webkit-scrollbar {
+      display: none;
+    }
+    body {
+      -ms-overflow-style: none;
+      scrollbar-width: none;
+    }
+  </style>
+<style>
+    body {
+      min-height: max(884px, 100dvh);
+    }
+  </style>
+  </head>
+<body class="bg-background text-on-surface font-body antialiased min-h-screen selection:bg-primary-container selection:text-on-primary-container relative pb-36">
+<!-- Atmospheric Glow Elements -->
+<div class="fixed top-0 left-1/2 -translate-x-1/2 w-96 h-96 bg-primary-container/10 rounded-full blur-[120px] pointer-events-none z-0"></div>
+<div class="fixed bottom-20 right-10 w-72 h-72 bg-secondary-container/10 rounded-full blur-[100px] pointer-events-none z-0"></div>
+<!-- Shared Component: TopAppBar -->
+<!-- Executed using exact keys: headline 'Front Entry', leading_icon 'door_front', trailing_icon 'battery_charging_full', style classes -->
+<header class="fixed top-0 inset-x-0 z-40 bg-surface-container/60 dark:bg-surface-container/60 backdrop-blur-xl shadow-none">
+<div class="flex justify-between items-center w-full px-6 py-4 max-w-md mx-auto">
+<div class="flex items-center gap-3">
+<button aria-label="Door Front" class="w-9 h-9 rounded-full bg-surface-container-high/60 flex items-center justify-center text-primary dark:text-primary hover:bg-surface-container-high/50 dark:hover:bg-surface-container-high/50 transition-colors active:scale-95 duration-150">
+<span class="material-symbols-outlined text-[20px]" data-icon="door_front">door_front</span>
+</button>
+<div>
+<span class="font-headline text-lg font-semibold tracking-tight text-on-surface dark:text-on-surface block leading-tight">Front Entry</span>
+<div class="flex items-center gap-1.5 mt-0.5">
+<span class="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse"></span>
+<span class="text-[10px] font-medium tracking-tight text-outline">Online · Matter v1.3</span>
+</div>
+</div>
+</div>
+<div class="flex items-center gap-2">
+<div class="flex items-center gap-1.5 bg-surface-container-high/70 px-2.5 py-1 rounded-full border border-white/5">
+<span class="material-symbols-outlined text-[16px] text-emerald-400" data-icon="battery_charging_full">battery_charging_full</span>
+<span class="font-label text-xs font-semibold text-on-surface">88%</span>
+</div>
+</div>
+</div>
+</header>
+<!-- Main Scrollable Canvas -->
+<main class="w-full max-w-md mx-auto px-5 pt-24 z-10 relative">
+<!-- Page Title Header -->
+<div class="mb-6 px-1">
+<h1 class="font-headline text-3xl font-extrabold tracking-tight text-on-surface">Settings</h1>
+<p class="font-body text-sm text-on-surface-variant mt-0.5">Front Door Configuration &amp; Hardware</p>
+</div>
+<!-- Group 1: Device Hardware Profile Bento Card -->
+<section class="mb-7 relative group">
+<div class="relative overflow-hidden rounded-2xl bg-surface-container-low/70 backdrop-blur-2xl p-5 border border-white/10 glass-specular">
+<!-- Subdued ambient gradient sheen inside card -->
+<div class="absolute -right-12 -top-12 w-44 h-44 bg-primary/10 rounded-full blur-2xl pointer-events-none"></div>
+<div class="flex items-center gap-4 mb-5">
+<!-- Smart Lock Device Icon Visual -->
+<div class="relative w-16 h-16 rounded-2xl bg-gradient-to-br from-surface-bright via-surface-container-high to-surface-container-low p-0.5 flex-shrink-0 shadow-lg border border-white/10 flex items-center justify-center">
+<div class="w-full h-full rounded-[14px] bg-surface-container-lowest/80 flex items-center justify-center">
+<span class="material-symbols-outlined text-3xl text-primary" data-icon="lock" style="font-variation-settings: 'FILL' 1;">lock</span>
+</div>
+<div class="absolute -bottom-1 -right-1 w-5 h-5 rounded-full bg-surface-container-high flex items-center justify-center border border-white/15">
+<span class="material-symbols-outlined text-[11px] text-emerald-400" data-icon="check_circle" style="font-variation-settings: 'FILL' 1;">check_circle</span>
+</div>
+</div>
+<div class="flex-1 min-w-0">
+<div class="flex items-center gap-2">
+<h2 class="font-headline text-lg font-bold tracking-tight text-on-surface truncate">LionGate PL10B</h2>
+<span class="px-2 py-0.5 text-[10px] font-semibold bg-primary-container/20 text-primary border border-primary/20 rounded-full">Active</span>
+</div>
+<p class="text-xs text-on-surface-variant font-label mt-0.5">Smart Mortise Deadbolt · Entry Hall</p>
+<div class="flex items-center gap-2 mt-1.5">
+<span class="inline-flex items-center gap-1 text-[11px] font-medium text-outline">
+<span class="w-1.5 h-1.5 rounded-full bg-emerald-400"></span> Thread Connected
+              </span>
+</div>
+</div>
+</div>
+<!-- Metrics Strip Grid -->
+<div class="grid grid-cols-3 gap-2.5 pt-4 border-t border-white/5">
+<div class="bg-surface-container-high/40 rounded-xl p-2.5 text-center border border-white/5">
+<span class="text-[10px] font-medium uppercase tracking-wider text-outline block mb-0.5">Power</span>
+<div class="flex items-center justify-center gap-1 text-on-surface font-headline font-bold text-sm">
+<span class="material-symbols-outlined text-[14px] text-emerald-400" data-icon="bolt">bolt</span>
+              88%
+            </div>
+<span class="text-[9px] text-on-surface-variant font-label">Healthy</span>
+</div>
+<div class="bg-surface-container-high/40 rounded-xl p-2.5 text-center border border-white/5">
+<span class="text-[10px] font-medium uppercase tracking-wider text-outline block mb-0.5">Protocol</span>
+<div class="flex items-center justify-center gap-1 text-on-surface font-headline font-bold text-sm">
+<span class="material-symbols-outlined text-[14px] text-primary" data-icon="hub">hub</span>
+              Matter
+            </div>
+<span class="text-[9px] text-on-surface-variant font-label">Over Thread</span>
+</div>
+<div class="bg-surface-container-high/40 rounded-xl p-2.5 text-center border border-white/5">
+<span class="text-[10px] font-medium uppercase tracking-wider text-outline block mb-0.5">Firmware</span>
+<div class="flex items-center justify-center gap-1 text-on-surface font-headline font-bold text-sm">
+<span class="material-symbols-outlined text-[14px] text-secondary" data-icon="memory">memory</span>
+              v2.4.1
+            </div>
+<span class="text-[9px] text-emerald-400 font-label">Latest</span>
+</div>
+</div>
+</div>
+</section>
+<!-- Group 2: HARDWARE FEEDBACK & TIMERS -->
+<section class="mb-7">
+<div class="px-2 mb-2 flex items-center justify-between">
+<h3 class="text-xs font-semibold tracking-wider text-outline uppercase font-label">Hardware Feedback &amp; Timers</h3>
+<span class="text-[10px] font-medium text-outline-variant">Core Controls</span>
+</div>
+<div class="rounded-2xl bg-surface-container-low/80 backdrop-blur-2xl border border-white/10 overflow-hidden divide-y divide-white/5 glass-inner-border shadow-lg">
+<!-- Row 1: Chime Volume with Segmented Pill -->
+<div class="p-4 flex flex-col gap-3">
+<div class="flex items-center justify-between">
+<div class="flex items-center gap-3">
+<div class="w-8 h-8 rounded-xl bg-primary-container/20 text-primary flex items-center justify-center">
+<span class="material-symbols-outlined text-lg" data-icon="volume_up">volume_up</span>
+</div>
+<div>
+<span class="font-headline text-sm font-semibold text-on-surface block">Chime Volume</span>
+<span class="text-xs text-on-surface-variant font-body">Feedback sound level on lock/unlock</span>
+</div>
+</div>
+</div>
+<!-- Segmented Pill Selector -->
+<div class="grid grid-cols-3 bg-surface-container-highest/60 p-1 rounded-xl border border-white/5 gap-1" id="volume-selector">
+<button class="py-1.5 rounded-lg text-xs font-medium text-on-surface-variant transition-all hover:text-on-surface text-center" onclick="setSegment(this)">Silent</button>
+<button class="py-1.5 rounded-lg text-xs font-medium text-on-surface-variant transition-all hover:text-on-surface text-center" onclick="setSegment(this)">Quiet</button>
+<button class="py-1.5 rounded-lg text-xs font-semibold bg-surface-container text-primary shadow-sm border border-white/10 transition-all text-center" onclick="setSegment(this)">Standard</button>
+</div>
+</div>
+<!-- Row 2: Auto-Lock Delay -->
+<button class="w-full p-4 flex items-center justify-between hover:bg-surface-container-high/40 transition-colors text-left group">
+<div class="flex items-center gap-3">
+<div class="w-8 h-8 rounded-xl bg-secondary-container/20 text-secondary flex items-center justify-center">
+<span class="material-symbols-outlined text-lg" data-icon="timer">timer</span>
+</div>
+<div>
+<span class="font-headline text-sm font-semibold text-on-surface block">Auto-Lock Delay</span>
+<span class="text-xs text-on-surface-variant">Lock automatically after door closes</span>
+</div>
+</div>
+<div class="flex items-center gap-1.5 text-on-surface-variant group-hover:text-on-surface transition-colors">
+<span class="text-xs font-medium font-label bg-surface-container-high/60 px-2 py-0.5 rounded-md border border-white/5 text-on-surface">10 Seconds</span>
+<span class="material-symbols-outlined text-base" data-icon="chevron_right">chevron_right</span>
+</div>
+</button>
+<!-- Row 3: Passage Mode -->
+<div class="p-4 flex items-center justify-between">
+<div class="flex items-center gap-3">
+<div class="w-8 h-8 rounded-xl bg-tertiary-container/20 text-tertiary flex items-center justify-center">
+<span class="material-symbols-outlined text-lg" data-icon="sensor_door">sensor_door</span>
+</div>
+<div>
+<span class="font-headline text-sm font-semibold text-on-surface block">Passage Mode</span>
+<span class="text-xs text-on-surface-variant">Keep door unlatched during day</span>
+</div>
+</div>
+<!-- iOS style toggle switch (OFF) -->
+<button aria-checked="false" class="relative inline-flex h-6 w-11 flex-shrink-0 cursor-pointer rounded-full border-2 border-transparent bg-surface-variant transition-colors duration-200 ease-in-out focus:outline-none" onclick="toggleSwitch(this)" role="switch" type="button">
+<span class="pointer-events-none inline-block h-5 w-5 transform rounded-full bg-white shadow ring-0 transition duration-200 ease-in-out translate-x-0"></span>
+</button>
+</div>
+<!-- Row 4: Tamper Alert -->
+<div class="p-4 flex items-center justify-between">
+<div class="flex items-center gap-3">
+<div class="w-8 h-8 rounded-xl bg-error-container/20 text-error flex items-center justify-center">
+<span class="material-symbols-outlined text-lg" data-icon="shield">shield</span>
+</div>
+<div>
+<span class="font-headline text-sm font-semibold text-on-surface block">Tamper Alert</span>
+<span class="text-xs text-on-surface-variant">Audible siren on forced entry attempt</span>
+</div>
+</div>
+<!-- iOS style toggle switch (ON) -->
+<button aria-checked="true" class="relative inline-flex h-6 w-11 flex-shrink-0 cursor-pointer rounded-full border-2 border-transparent bg-primary-container transition-colors duration-200 ease-in-out focus:outline-none" onclick="toggleSwitch(this)" role="switch" type="button">
+<span class="pointer-events-none inline-block h-5 w-5 transform rounded-full bg-white shadow ring-0 transition duration-200 ease-in-out translate-x-5"></span>
+</button>
+</div>
+</div>
+</section>
+<!-- Group 3: SECURITY CREDENTIALS -->
+<section class="mb-7">
+<div class="px-2 mb-2 flex items-center justify-between">
+<h3 class="text-xs font-semibold tracking-wider text-outline uppercase font-label">Security Credentials</h3>
+<span class="text-[10px] font-medium text-emerald-400">Protected</span>
+</div>
+<div class="rounded-2xl bg-surface-container-low/80 backdrop-blur-2xl border border-white/10 overflow-hidden divide-y divide-white/5 glass-inner-border shadow-lg">
+<!-- Master PIN Code -->
+<button class="w-full p-4 flex items-center justify-between hover:bg-surface-container-high/40 transition-colors text-left group">
+<div class="flex items-center gap-3">
+<div class="w-8 h-8 rounded-xl bg-primary-container/20 text-primary flex items-center justify-center">
+<span class="material-symbols-outlined text-lg" data-icon="pin">pin</span>
+</div>
+<div>
+<span class="font-headline text-sm font-semibold text-on-surface block">Master PIN Code</span>
+<span class="text-xs text-on-surface-variant">Change admin passcode</span>
+</div>
+</div>
+<div class="flex items-center gap-1.5 text-on-surface-variant group-hover:text-on-surface transition-colors">
+<span class="text-xs font-label text-outline">•••• 4821</span>
+<span class="material-symbols-outlined text-base" data-icon="chevron_right">chevron_right</span>
+</div>
+</button>
+<!-- Biometric Touch ID -->
+<button class="w-full p-4 flex items-center justify-between hover:bg-surface-container-high/40 transition-colors text-left group">
+<div class="flex items-center gap-3">
+<div class="w-8 h-8 rounded-xl bg-secondary-container/20 text-secondary flex items-center justify-center">
+<span class="material-symbols-outlined text-lg" data-icon="fingerprint">fingerprint</span>
+</div>
+<div>
+<span class="font-headline text-sm font-semibold text-on-surface block">Biometric Touch ID</span>
+<span class="text-xs text-on-surface-variant">Capacitive sensor reader</span>
+</div>
+</div>
+<div class="flex items-center gap-1.5 text-on-surface-variant group-hover:text-on-surface transition-colors">
+<span class="text-xs font-medium font-label bg-surface-container-high/60 px-2 py-0.5 rounded-md border border-white/5 text-on-surface">3 prints enrolled</span>
+<span class="material-symbols-outlined text-base" data-icon="chevron_right">chevron_right</span>
+</div>
+</button>
+<!-- Bluetooth Security Bond -->
+<div class="p-4 flex items-center justify-between">
+<div class="flex items-center gap-3">
+<div class="w-8 h-8 rounded-xl bg-primary/20 text-primary flex items-center justify-center">
+<span class="material-symbols-outlined text-lg" data-icon="bluetooth">bluetooth</span>
+</div>
+<div>
+<span class="font-headline text-sm font-semibold text-on-surface block">Bluetooth Security Bond</span>
+<span class="text-xs text-on-surface-variant">AES-128 verified hardware link</span>
+</div>
+</div>
+<div class="flex items-center gap-1 text-emerald-400 bg-emerald-500/10 px-2.5 py-1 rounded-full border border-emerald-500/20">
+<span class="material-symbols-outlined text-[13px]" data-icon="verified" style="font-variation-settings: 'FILL' 1;">verified</span>
+<span class="text-[11px] font-semibold font-label">Paired</span>
+</div>
+</div>
+</div>
+</section>
+<!-- Group 4: DEVICE MAINTENANCE -->
+<section class="mb-8">
+<div class="px-2 mb-2 flex items-center justify-between">
+<h3 class="text-xs font-semibold tracking-wider text-outline uppercase font-label">Device Maintenance</h3>
+</div>
+<div class="rounded-2xl bg-surface-container-low/80 backdrop-blur-2xl border border-white/10 overflow-hidden divide-y divide-white/5 glass-inner-border shadow-lg">
+<!-- Calibrate Latch Sensor -->
+<button class="w-full p-4 flex items-center justify-between hover:bg-surface-container-high/40 transition-colors text-left group">
+<div class="flex items-center gap-3">
+<div class="w-8 h-8 rounded-xl bg-surface-bright text-on-surface-variant flex items-center justify-center">
+<span class="material-symbols-outlined text-lg" data-icon="tune">tune</span>
+</div>
+<div>
+<span class="font-headline text-sm font-semibold text-on-surface block">Calibrate Latch Sensor</span>
+<span class="text-xs text-on-surface-variant">Re-orient motor deadbolt stop positions</span>
+</div>
+</div>
+<span class="material-symbols-outlined text-base text-on-surface-variant group-hover:text-on-surface transition-colors" data-icon="chevron_right">chevron_right</span>
+</button>
+<!-- Firmware Updates -->
+<button class="w-full p-4 flex items-center justify-between hover:bg-surface-container-high/40 transition-colors text-left group">
+<div class="flex items-center gap-3">
+<div class="w-8 h-8 rounded-xl bg-surface-bright text-on-surface-variant flex items-center justify-center">
+<span class="material-symbols-outlined text-lg" data-icon="system_update_alt">system_update_alt</span>
+</div>
+<div>
+<span class="font-headline text-sm font-semibold text-on-surface block">Firmware Updates</span>
+<span class="text-xs text-on-surface-variant">Over-The-Air Matter thread channel</span>
+</div>
+</div>
+<div class="flex items-center gap-1.5 text-on-surface-variant group-hover:text-on-surface transition-colors">
+<span class="text-[11px] font-medium font-label text-emerald-400 bg-emerald-500/10 px-2 py-0.5 rounded-full border border-emerald-500/20">Up to date (v2.4.1)</span>
+<span class="material-symbols-outlined text-base" data-icon="chevron_right">chevron_right</span>
+</div>
+</button>
+<!-- Factory Reset / Remove Device -->
+<button class="w-full p-4 flex items-center justify-between hover:bg-error-container/10 transition-colors text-left group">
+<div class="flex items-center gap-3">
+<div class="w-8 h-8 rounded-xl bg-error-container/20 text-error flex items-center justify-center">
+<span class="material-symbols-outlined text-lg" data-icon="delete_forever">delete_forever</span>
+</div>
+<div>
+<span class="font-headline text-sm font-semibold text-error block">Remove Device</span>
+<span class="text-xs text-on-surface-variant">Unpair lock &amp; erase all credentials</span>
+</div>
+</div>
+<span class="material-symbols-outlined text-base text-error/70 group-hover:text-error transition-colors" data-icon="chevron_right">chevron_right</span>
+</button>
+</div>
+<!-- Legal / Regulatory Footnote -->
+<div class="mt-4 px-2 text-center">
+<p class="text-[11px] text-outline-variant font-label leading-relaxed">
+          LionGate Matter Security Architecture v1.3.0 · Device ID: <span class="font-mono">LG-884-FL</span>
+</p>
+</div>
+</section>
+</main>
+<!-- Shared Component: BottomNavBar -->
+<!-- Executed verbatim using JSON items: Activity, Keys, Unlock, Automations, Settings -->
+<!-- Semantic Active Lock applied to 'Settings' (matching page title and primary intent) -->
+<nav aria-label="Main Navigation" class="fixed bottom-6 left-1/2 -translate-x-1/2 w-[92%] max-w-md z-50 flex justify-around items-center px-3 py-2 bg-surface-container-low/80 dark:bg-surface-container-low/80 backdrop-blur-2xl rounded-full shadow-2xl border border-white/10">
+<!-- Tab 1: Activity -->
+<a class="flex flex-col items-center justify-center text-on-surface-variant dark:text-on-surface-variant py-2 hover:text-on-surface dark:hover:text-on-surface transition-colors active:scale-90 duration-150" href="#">
+<span class="material-symbols-outlined text-[22px]" data-icon="history">history</span>
+<span class="font-label text-xs tracking-tight mt-0.5">Activity</span>
+</a>
+<!-- Tab 2: Keys -->
+<a class="flex flex-col items-center justify-center text-on-surface-variant dark:text-on-surface-variant py-2 hover:text-on-surface dark:hover:text-on-surface transition-colors active:scale-90 duration-150" href="#">
+<span class="material-symbols-outlined text-[22px]" data-icon="vpn_key">vpn_key</span>
+<span class="font-label text-xs tracking-tight mt-0.5">Keys</span>
+</a>
+<!-- Tab 3: Unlock -->
+<a class="flex flex-col items-center justify-center text-on-surface-variant dark:text-on-surface-variant py-2 hover:text-on-surface dark:hover:text-on-surface transition-colors active:scale-90 duration-150" href="#">
+<span class="material-symbols-outlined text-[22px]" data-icon="lock_open">lock_open</span>
+<span class="font-label text-xs tracking-tight mt-0.5">Unlock</span>
+</a>
+<!-- Tab 4: Automations -->
+<a class="flex flex-col items-center justify-center text-on-surface-variant dark:text-on-surface-variant py-2 hover:text-on-surface dark:hover:text-on-surface transition-colors active:scale-90 duration-150" href="#">
+<span class="material-symbols-outlined text-[22px]" data-icon="auto_mode">auto_mode</span>
+<span class="font-label text-xs tracking-tight mt-0.5">Automations</span>
+</a>
+<!-- Tab 5: Settings (ACTIVE) -->
+<a aria-current="page" class="flex flex-col items-center justify-center bg-primary-container text-on-primary-container rounded-full px-4 py-2 shadow-inner active:scale-90 transition-transform duration-150" href="#">
+<span class="material-symbols-outlined text-[22px]" data-icon="settings" style="font-variation-settings: 'FILL' 1;">settings</span>
+<span class="font-label text-xs tracking-tight mt-0.5 font-semibold">Settings</span>
+</a>
+</nav>
+<!-- Interactive Micro-Interactions Script -->
+<script>
+    function toggleSwitch(button) {
+      const isChecked = button.getAttribute('aria-checked') === 'true';
+      const thumb = button.querySelector('span');
+      if (isChecked) {
+        button.setAttribute('aria-checked', 'false');
+        button.classList.remove('bg-primary-container');
+        button.classList.add('bg-surface-variant');
+        thumb.classList.remove('translate-x-5');
+        thumb.classList.add('translate-x-0');
+      } else {
+        button.setAttribute('aria-checked', 'true');
+        button.classList.remove('bg-surface-variant');
+        button.classList.add('bg-primary-container');
+        thumb.classList.remove('translate-x-0');
+        thumb.classList.add('translate-x-5');
+      }
+    }
+
+    function setSegment(btn) {
+      const container = document.getElementById('volume-selector');
+      const buttons = container.querySelectorAll('button');
+      buttons.forEach(b => {
+        b.className = 'py-1.5 rounded-lg text-xs font-medium text-on-surface-variant transition-all hover:text-on-surface text-center';
+      });
+      btn.className = 'py-1.5 rounded-lg text-xs font-semibold bg-surface-container text-primary shadow-sm border border-white/10 transition-all text-center';
+    }
+  </script>
+</body></html>

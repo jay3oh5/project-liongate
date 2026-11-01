@@ -1,0 +1,401 @@
+<!DOCTYPE html>
+
+<html class="dark" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Keys &amp; Access - Smart Home Key</title>
+<!-- Material Symbols Outlined -->
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<!-- Google Fonts: Plus Jakarta Sans & Public Sans -->
+<link href="https://fonts.googleapis.com" rel="preconnect"/>
+<link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect"/>
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&amp;family=Public+Sans:wght@400;500;600;700&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<!-- Tailwind CSS CDN -->
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<!-- Tailwind Configuration -->
+<script id="tailwind-config">
+    tailwind.config = {
+      darkMode: "class",
+      theme: {
+        extend: {
+          "colors": {
+            "secondary-fixed-dim": "#ffb868",
+            "surface-container-highest": "#353535",
+            "inverse-surface": "#e2e2e2",
+            "on-tertiary-fixed": "#341100",
+            "surface-bright": "#393939",
+            "error": "#ffb4ab",
+            "on-secondary-fixed-variant": "#673d00",
+            "surface-container-lowest": "#0e0e0e",
+            "secondary": "#ffc07a",
+            "on-tertiary": "#552000",
+            "on-primary-fixed": "#001b3e",
+            "error-container": "#93000a",
+            "outline": "#8b91a0",
+            "on-background": "#e2e2e2",
+            "on-surface-variant": "#c0c6d6",
+            "primary-fixed-dim": "#aac7ff",
+            "tertiary-container": "#eb6a12",
+            "tertiary": "#ffb691",
+            "surface-container-high": "#2a2a2a",
+            "tertiary-fixed-dim": "#ffb691",
+            "primary-fixed": "#d6e3ff",
+            "on-surface": "#e2e2e2",
+            "on-secondary-container": "#623a00",
+            "tertiary-fixed": "#ffdbcb",
+            "on-tertiary-fixed-variant": "#793100",
+            "on-secondary-fixed": "#2b1700",
+            "on-primary-container": "#002957",
+            "on-error-container": "#ffdad6",
+            "on-secondary": "#482900",
+            "surface-variant": "#353535",
+            "surface-tint": "#aac7ff",
+            "inverse-primary": "#005db8",
+            "primary": "#aac7ff",
+            "on-primary-fixed-variant": "#00468d",
+            "surface-container": "#1f1f1f",
+            "on-tertiary-container": "#4a1b00",
+            "surface-dim": "#131313",
+            "surface": "#131313",
+            "inverse-on-surface": "#303030",
+            "surface-container-low": "#1b1b1b",
+            "secondary-fixed": "#ffddbb",
+            "outline-variant": "#414754",
+            "on-error": "#690005",
+            "background": "#131313",
+            "secondary-container": "#fa9b00",
+            "on-primary": "#003064",
+            "primary-container": "#3e90ff"
+          },
+          "borderRadius": {
+            "DEFAULT": "1rem",
+            "lg": "2rem",
+            "xl": "3rem",
+            "full": "9999px"
+          },
+          "fontFamily": {
+            "headline": ["Plus Jakarta Sans"],
+            "display": ["Plus Jakarta Sans"],
+            "body": ["Plus Jakarta Sans"],
+            "label": ["Public Sans"]
+          }
+        },
+      },
+    }
+  </script>
+<style>
+    .material-symbols-outlined {
+      font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+      display: inline-block;
+      vertical-align: middle;
+      line-height: 1;
+    }
+    
+    /* Liquid Glass Specular Shimmers */
+    .liquid-glass-card {
+      background: linear-gradient(135deg, rgba(255, 255, 255, 0.08) 0%, rgba(255, 255, 255, 0.02) 100%);
+      box-shadow: inset 0 1px 1px 0 rgba(255, 255, 255, 0.2), 0 20px 40px -15px rgba(0, 0, 0, 0.7);
+    }
+    .wallet-pass-iridescent {
+      background: radial-gradient(circle at 85% 15%, rgba(170, 199, 255, 0.28) 0%, rgba(25, 30, 45, 0.85) 50%, rgba(10, 12, 18, 0.98) 100%);
+      box-shadow: inset 0 1.5px 2px rgba(255, 255, 255, 0.35), inset 0 -2px 6px rgba(0, 0, 0, 0.8), 0 25px 50px -12px rgba(0, 41, 87, 0.5);
+    }
+    .nfc-wave-glow {
+      animation: pulse-ring 3s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+    }
+    @keyframes pulse-ring {
+      0%, 100% { opacity: 0.3; transform: scale(1); }
+      50% { opacity: 0.8; transform: scale(1.06); }
+    }
+  </style>
+<style>
+    body {
+      min-height: max(884px, 100dvh);
+    }
+  </style>
+  </head>
+<body class="bg-black text-on-surface font-body antialiased min-h-screen selection:bg-primary selection:text-on-primary overflow-x-hidden">
+<!-- Ambient Liquid Lighting Spheres -->
+<div class="fixed inset-0 pointer-events-none overflow-hidden z-0">
+<div class="absolute -top-32 -left-20 w-96 h-96 bg-primary-container/20 rounded-full blur-[120px]"></div>
+<div class="absolute top-1/3 -right-24 w-80 h-80 bg-secondary-container/15 rounded-full blur-[100px]"></div>
+<div class="absolute bottom-20 left-1/4 w-72 h-72 bg-tertiary-container/10 rounded-full blur-[90px]"></div>
+</div>
+<!-- Shared Component: TopAppBar -->
+<header class="fixed top-0 inset-x-0 z-40 bg-surface-container/60 backdrop-blur-xl shadow-none">
+<div class="flex justify-between items-center w-full px-6 py-4 max-w-md mx-auto">
+<div class="flex items-center gap-2.5">
+<span class="material-symbols-outlined text-primary text-xl" data-icon="door_front">door_front</span>
+<span class="font-headline text-lg font-semibold tracking-tight text-on-surface">Front Entry</span>
+<!-- Live Secure Hardware Status Indicator -->
+<span class="inline-flex items-center gap-1.5 px-2 py-0.5 rounded-full bg-surface-container-high/80 text-[11px] font-label font-medium text-primary border border-outline-variant/40">
+<span class="w-1.5 h-1.5 rounded-full bg-primary animate-ping"></span>
+<span>Online</span>
+</span>
+</div>
+<div class="flex items-center gap-3">
+<div class="flex items-center gap-1 text-xs text-on-surface-variant font-label">
+<span>98%</span>
+<span class="material-symbols-outlined text-primary text-lg" data-icon="battery_charging_full">battery_charging_full</span>
+</div>
+</div>
+</div>
+</header>
+<!-- Main Canvas Container -->
+<main class="relative z-10 w-full max-w-md mx-auto pt-24 pb-36 px-5 space-y-6">
+<!-- Screen Title & Action Header -->
+<div class="flex items-end justify-between pt-1">
+<div>
+<h1 class="font-headline text-3xl font-extrabold tracking-tight text-on-surface">Keys &amp; Access</h1>
+<p class="font-body text-xs text-on-surface-variant tracking-wide mt-0.5">Authorized Members &amp; Passes</p>
+</div>
+<!-- Top Right Translucent Glass Pill Action -->
+<button class="flex items-center gap-1.5 px-3.5 py-2 rounded-full liquid-glass-card border border-white/15 text-primary text-xs font-semibold tracking-tight active:scale-95 transition-transform duration-150 backdrop-blur-xl">
+<span class="material-symbols-outlined text-base" data-icon="add">add</span>
+<span>Share Key</span>
+</button>
+</div>
+<!-- Segmented Control Bar (Frosted Glass Container) -->
+<div class="p-1 rounded-full bg-surface-container-low/70 border border-outline-variant/30 backdrop-blur-2xl grid grid-cols-2 gap-1">
+<button class="py-2 rounded-full font-headline text-xs font-semibold tracking-tight bg-primary text-on-primary shadow-lg shadow-primary/20 flex items-center justify-center gap-1.5 transition-all">
+<span>Household (3)</span>
+</button>
+<button class="py-2 rounded-full font-headline text-xs font-medium tracking-tight text-on-surface-variant hover:text-on-surface flex items-center justify-center gap-1.5 transition-all">
+<span>Guest Passes (2)</span>
+</button>
+</div>
+<!-- Hero Card: Apple Wallet Digital Home Key Pass -->
+<section class="relative w-full rounded-2xl wallet-pass-iridescent border border-white/20 p-5 overflow-hidden text-on-surface">
+<!-- Metallic specular highlight overlay -->
+<div class="absolute inset-0 bg-gradient-to-tr from-white/0 via-white/5 to-white/10 pointer-events-none"></div>
+<!-- Card Top Bar: Apple Wallet Brand & Status -->
+<div class="relative z-10 flex items-center justify-between">
+<div class="flex items-center gap-2">
+<div class="w-8 h-8 rounded-full bg-primary/20 border border-primary/40 flex items-center justify-center text-primary shadow-inner">
+<span class="material-symbols-outlined text-lg" data-icon="key">key</span>
+</div>
+<div>
+<span class="font-headline text-sm font-bold tracking-tight block leading-tight text-white">Home Key</span>
+<span class="font-label text-[11px] text-on-surface-variant tracking-normal">Front Door &amp; Entryway</span>
+</div>
+</div>
+<!-- Express Mode Status Pill -->
+<div class="flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-surface-container-highest/60 border border-white/15 text-[10px] font-label font-semibold text-secondary-fixed tracking-wide shadow-sm">
+<span class="w-2 h-2 rounded-full bg-secondary animate-pulse"></span>
+<span>Express Mode: On</span>
+</div>
+</div>
+<!-- Card Visual Center: Iridescent NFC Waves -->
+<div class="relative z-10 my-7 flex flex-col items-center justify-center text-center">
+<div class="relative flex items-center justify-center w-20 h-20 mb-2">
+<!-- Animated Ring Ambient Effects -->
+<div class="absolute inset-0 rounded-full bg-primary/10 border border-primary/30 nfc-wave-glow"></div>
+<div class="absolute inset-2 rounded-full bg-primary/20 border border-primary/50"></div>
+<span class="material-symbols-outlined text-primary text-3xl" data-icon="contactless" style="font-variation-settings: 'FILL' 1;">contactless</span>
+</div>
+<span class="text-xs font-label text-on-surface-variant tracking-wider font-medium">Hold Near Smart Deadbolt</span>
+</div>
+<!-- Card Bottom Strip: Holder Details & Pass Security -->
+<div class="relative z-10 pt-3 border-t border-white/10 flex items-center justify-between">
+<div>
+<span class="block text-[10px] font-label uppercase tracking-widest text-on-surface-variant/70">Key Holder</span>
+<span class="text-xs font-headline font-semibold text-white">Julian David (Owner)</span>
+</div>
+<div class="flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-white/10 text-white text-[11px] font-medium border border-white/15">
+<span class="material-symbols-outlined text-sm text-primary" data-icon="verified_user">verified_user</span>
+<span>NFC Ready</span>
+</div>
+</div>
+</section>
+<!-- Section: Household Members -->
+<section class="space-y-3">
+<div class="flex items-center justify-between px-1">
+<h2 class="font-headline text-sm font-bold tracking-tight text-on-surface uppercase text-opacity-80">Household Members</h2>
+<span class="text-xs font-label font-medium text-primary px-2 py-0.5 rounded-full bg-primary-container/20 border border-primary/20">3 Active</span>
+</div>
+<!-- Glass Bento Stack for Household Members -->
+<div class="space-y-2.5">
+<!-- Member 1: Julian David (Owner) -->
+<div class="liquid-glass-card rounded-xl p-3.5 border border-white/10 flex items-center justify-between hover:border-white/25 transition-all">
+<div class="flex items-center gap-3">
+<div class="relative">
+<div class="w-11 h-11 rounded-full bg-surface-container-high border border-primary/40 flex items-center justify-center font-headline font-bold text-sm text-primary shadow-inner">
+                JD
+              </div>
+<span class="absolute -bottom-1 -right-1 w-4 h-4 rounded-full bg-primary text-on-primary flex items-center justify-center text-[10px]">
+<span class="material-symbols-outlined text-[10px]" data-icon="check">check</span>
+</span>
+</div>
+<div>
+<div class="flex items-center gap-1.5">
+<span class="font-headline text-sm font-semibold text-white">Julian David</span>
+<span class="text-[10px] font-label uppercase px-1.5 py-0.5 rounded bg-surface-container-highest text-secondary-fixed font-bold tracking-wide">Owner</span>
+</div>
+<div class="flex items-center gap-1 text-xs text-on-surface-variant font-label mt-0.5">
+<span class="material-symbols-outlined text-sm text-primary" data-icon="fingerprint">fingerprint</span>
+<span>Touch ID &amp; Passcode</span>
+<span class="mx-1">•</span>
+<span class="text-primary font-medium">Active Now</span>
+</div>
+</div>
+</div>
+<button aria-label="Julian David Settings" class="p-2 text-on-surface-variant hover:text-white rounded-full transition-colors">
+<span class="material-symbols-outlined text-xl" data-icon="chevron_right">chevron_right</span>
+</button>
+</div>
+<!-- Member 2: Elena Vance (Family) -->
+<div class="liquid-glass-card rounded-xl p-3.5 border border-white/10 flex items-center justify-between hover:border-white/25 transition-all">
+<div class="flex items-center gap-3">
+<div class="relative">
+<div class="w-11 h-11 rounded-full bg-surface-container-high border border-white/10 flex items-center justify-center font-headline font-bold text-sm text-secondary-fixed shadow-inner">
+                EV
+              </div>
+<span class="absolute -bottom-1 -right-1 w-4 h-4 rounded-full bg-secondary-container text-on-secondary flex items-center justify-center text-[10px]">
+<span class="material-symbols-outlined text-[10px]" data-icon="key">key</span>
+</span>
+</div>
+<div>
+<div class="flex items-center gap-1.5">
+<span class="font-headline text-sm font-semibold text-white">Elena Vance</span>
+<span class="text-[10px] font-label uppercase px-1.5 py-0.5 rounded bg-surface-container text-on-surface-variant font-medium tracking-wide">Family</span>
+</div>
+<div class="flex items-center gap-1 text-xs text-on-surface-variant font-label mt-0.5">
+<span class="material-symbols-outlined text-sm text-secondary-fixed" data-icon="wallet">wallet</span>
+<span>Apple Wallet Home Key</span>
+</div>
+</div>
+</div>
+<button aria-label="Elena Vance Settings" class="p-2 text-on-surface-variant hover:text-white rounded-full transition-colors">
+<span class="material-symbols-outlined text-xl" data-icon="chevron_right">chevron_right</span>
+</button>
+</div>
+<!-- Member 3: Marcus Vance (Family) -->
+<div class="liquid-glass-card rounded-xl p-3.5 border border-white/10 flex items-center justify-between hover:border-white/25 transition-all">
+<div class="flex items-center gap-3">
+<div class="relative">
+<div class="w-11 h-11 rounded-full bg-surface-container-high border border-white/10 flex items-center justify-center font-headline font-bold text-sm text-tertiary-fixed shadow-inner">
+                MV
+              </div>
+<span class="absolute -bottom-1 -right-1 w-4 h-4 rounded-full bg-tertiary-container text-on-tertiary flex items-center justify-center text-[10px]">
+<span class="material-symbols-outlined text-[10px]" data-icon="pin">pin</span>
+</span>
+</div>
+<div>
+<div class="flex items-center gap-1.5">
+<span class="font-headline text-sm font-semibold text-white">Marcus Vance</span>
+<span class="text-[10px] font-label uppercase px-1.5 py-0.5 rounded bg-surface-container text-on-surface-variant font-medium tracking-wide">Family</span>
+</div>
+<div class="flex items-center gap-1 text-xs text-on-surface-variant font-label mt-0.5">
+<span class="material-symbols-outlined text-sm text-tertiary" data-icon="pin">pin</span>
+<span>Passcode Access (Keypad)</span>
+</div>
+</div>
+</div>
+<button aria-label="Marcus Vance Settings" class="p-2 text-on-surface-variant hover:text-white rounded-full transition-colors">
+<span class="material-symbols-outlined text-xl" data-icon="chevron_right">chevron_right</span>
+</button>
+</div>
+</div>
+</section>
+<!-- Section: Guest Passes -->
+<section class="space-y-3">
+<div class="flex items-center justify-between px-1">
+<h2 class="font-headline text-sm font-bold tracking-tight text-on-surface uppercase text-opacity-80">Guest Passes</h2>
+<span class="text-xs font-label font-medium text-secondary-fixed px-2 py-0.5 rounded-full bg-secondary-container/20 border border-secondary/20">2 Configured</span>
+</div>
+<div class="grid grid-cols-1 gap-2.5">
+<!-- Pass 1: Housekeeping (Recurring) -->
+<div class="liquid-glass-card rounded-xl p-4 border border-white/10 space-y-3 hover:border-white/20 transition-all">
+<div class="flex items-start justify-between">
+<div class="flex items-center gap-3">
+<div class="w-10 h-10 rounded-xl bg-surface-container-high border border-white/10 flex items-center justify-center text-secondary">
+<span class="material-symbols-outlined text-xl" data-icon="cleaning_services">cleaning_services</span>
+</div>
+<div>
+<h3 class="font-headline text-sm font-bold text-white">Housekeeping</h3>
+<span class="text-xs font-label text-on-surface-variant flex items-center gap-1">
+<span class="material-symbols-outlined text-xs" data-icon="update">update</span>
+<span>Recurring Schedule</span>
+</span>
+</div>
+</div>
+<span class="text-[10px] font-label font-semibold uppercase px-2 py-1 rounded-full bg-surface-container-highest/80 text-secondary-fixed border border-secondary/30">
+              Scheduled
+            </span>
+</div>
+<div class="bg-surface-container-lowest/60 rounded-lg p-2.5 flex items-center justify-between text-xs font-label border border-white/5">
+<span class="text-on-surface-variant font-medium">Mon &amp; Thu • 10:00 AM – 2:00 PM</span>
+<span class="text-primary font-semibold flex items-center gap-1">
+<span class="material-symbols-outlined text-sm" data-icon="key">key</span>
+<span>PIN Active</span>
+</span>
+</div>
+</div>
+<!-- Pass 2: Courier Delivery (Temporary One-Time PIN) -->
+<div class="liquid-glass-card rounded-xl p-4 border border-white/10 space-y-3 hover:border-white/20 transition-all">
+<div class="flex items-start justify-between">
+<div class="flex items-center gap-3">
+<div class="w-10 h-10 rounded-xl bg-surface-container-high border border-white/10 flex items-center justify-center text-tertiary">
+<span class="material-symbols-outlined text-xl" data-icon="local_shipping">local_shipping</span>
+</div>
+<div>
+<h3 class="font-headline text-sm font-bold text-white">Courier Delivery</h3>
+<span class="text-xs font-label text-on-surface-variant flex items-center gap-1">
+<span class="material-symbols-outlined text-xs" data-icon="timer">timer</span>
+<span>One-Time PIN • Entryway Only</span>
+</span>
+</div>
+</div>
+<span class="text-[10px] font-label font-semibold uppercase px-2 py-1 rounded-full bg-error-container/40 text-error border border-error/30">
+              Expires Soon
+            </span>
+</div>
+<div class="bg-surface-container-lowest/60 rounded-lg p-2.5 flex items-center justify-between text-xs font-label border border-white/5">
+<span class="text-on-surface-variant font-medium">Valid Today until 6:00 PM</span>
+<span class="font-mono text-xs tracking-wider text-secondary-fixed bg-surface-container-high px-2 py-0.5 rounded">
+              PIN: 8492
+            </span>
+</div>
+</div>
+</div>
+</section>
+<!-- Bottom Quick Action & Access Log Banner -->
+<div class="p-3.5 rounded-xl bg-surface-container/40 border border-white/5 flex items-center justify-between">
+<div class="flex items-center gap-2.5">
+<span class="material-symbols-outlined text-on-surface-variant text-lg" data-icon="history_toggle_off">history_toggle_off</span>
+<span class="text-xs font-label text-on-surface-variant">Last unlocked 14 min ago by Julian</span>
+</div>
+<button class="text-xs font-headline font-semibold text-primary hover:underline">View History</button>
+</div>
+</main>
+<!-- Shared Component: BottomNavBar -->
+<!-- Contextual Active Destination: 'Keys' (Exact matching intent for the Keys & Access screen) -->
+<nav aria-label="Bottom Navigation" class="fixed bottom-6 left-1/2 -translate-x-1/2 w-[92%] max-w-md z-50 flex justify-around items-center px-3 py-2 bg-surface-container-low/80 backdrop-blur-2xl rounded-full shadow-2xl border border-white/10">
+<!-- Item 1: Activity -->
+<a class="flex flex-col items-center justify-center text-on-surface-variant py-2 hover:text-on-surface transition-colors active:scale-90 transition-transform duration-150" href="#">
+<span class="material-symbols-outlined text-xl" data-icon="history">history</span>
+<span class="font-label text-xs tracking-tight mt-0.5">Activity</span>
+</a>
+<!-- Item 2: Keys (ACTIVE DESTINATION) -->
+<a class="flex flex-col items-center justify-center bg-primary-container text-on-primary-container rounded-full px-4 py-2 shadow-inner active:scale-90 transition-transform duration-150" href="#">
+<span class="material-symbols-outlined text-xl" data-icon="vpn_key" style="font-variation-settings: 'FILL' 1;">vpn_key</span>
+<span class="font-label text-xs tracking-tight font-semibold mt-0.5">Keys</span>
+</a>
+<!-- Item 3: Unlock -->
+<a class="flex flex-col items-center justify-center text-on-surface-variant py-2 hover:text-on-surface transition-colors active:scale-90 transition-transform duration-150" href="#">
+<span class="material-symbols-outlined text-xl" data-icon="lock_open">lock_open</span>
+<span class="font-label text-xs tracking-tight mt-0.5">Unlock</span>
+</a>
+<!-- Item 4: Automations -->
+<a class="flex flex-col items-center justify-center text-on-surface-variant py-2 hover:text-on-surface transition-colors active:scale-90 transition-transform duration-150" href="#">
+<span class="material-symbols-outlined text-xl" data-icon="auto_mode">auto_mode</span>
+<span class="font-label text-xs tracking-tight mt-0.5">Automations</span>
+</a>
+<!-- Item 5: Settings -->
+<a class="flex flex-col items-center justify-center text-on-surface-variant py-2 hover:text-on-surface transition-colors active:scale-90 transition-transform duration-150" href="#">
+<span class="material-symbols-outlined text-xl" data-icon="settings">settings</span>
+<span class="font-label text-xs tracking-tight mt-0.5">Settings</span>
+</a>
+</nav>
+</body></html>
