@@ -25,10 +25,10 @@
 - Never commit secrets, binaries, or decompiled vendor code to Git.
 
 <!-- agent-state:start -->
-Task: Google Stitch Minimal Luxury SmartLock 5-Screen UI Redesign
-Base: e0308b0
-Status: awaiting-review
-Next: Present 5-screen quiet luxury designs to user for feedback before dispatching code implementation to Jules
+Task: Decouple Connection, Support Dual Credentials (Admin SuperPwd), and Fix Passage Mode
+Base: c84dd8c
+Status: idle
+Next: Perform live hardware verification of Passage Mode and persistent connection with user
 Blockers: None
-Verified: Generated 5 minimalist luxury mobile screens in Google Stitch (projects/12863245899233476956) with Nordic Architectural Atelier theme (assets/feeebab3e77849b7bbd496661d3b5acc). Downloaded assets to docs/designs/minimal_* and .stitch/designs/, committed to origin/feature/app-parity (e0308b0).
+Verified: Dispatched to Google Jules (session 7444395691256774146), applied patch, resolved TelemetryAmber in SettingsScreen, built successfully on GitHub Actions (run 41272184506), and installed to Samsung Galaxy S24 Ultra via ADB (Streamed Install Success).
 <!-- agent-state:end -->
