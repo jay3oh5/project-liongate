@@ -25,10 +25,10 @@
 - Never commit secrets, binaries, or decompiled vendor code to Git.
 
 <!-- agent-state:start -->
-Task: Decouple Connection, Support Dual Credentials (Admin SuperPwd), and Fix Passage Mode
-Base: c84dd8c
-Status: idle
-Next: Perform live hardware verification of Passage Mode and persistent connection with user
+Task: Google Stitch Apple iOS 18 / visionOS Liquid Glass 5-Screen UI Redesign
+Base: b873078
+Status: awaiting-review
+Next: Present updated Apple Liquid Glass designs with floating capsule dock and see-through glass tab switcher to user for feedback
 Blockers: None
-Verified: Dispatched to Google Jules (session 7444395691256774146), applied patch, resolved TelemetryAmber in SettingsScreen, built successfully on GitHub Actions (run 41272184506), and installed to Samsung Galaxy S24 Ultra via ADB (Streamed Install Success).
+Verified: Generated 5 Apple Liquid Glass mobile screens in Google Stitch (projects/272627489238079212) with Apple Liquid Glass theme (assets/11818643585476070468). Features floating liquid glass capsule dock with sliding translucent magnifying glass tab indicator. Saved to docs/designs/apple_* and committed to origin/feature/app-parity (b873078).
 <!-- agent-state:end -->
