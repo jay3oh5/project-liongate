@@ -1,0 +1,48 @@
+{
+  "projectId": "12863245899233476956",
+  "title": "LionGate - Minimal Luxury SmartLock",
+  "designSystem": "assets/feeebab3e77849b7bbd496661d3b5acc",
+  "deviceType": "MOBILE",
+  "screens": [
+    {
+      "tabIndex": 0,
+      "tabName": "Activity",
+      "screenId": "70280c161b584c278e4fe638c3cee068",
+      "title": "LionGate - Activity Journal",
+      "html": ".stitch/designs/minimal_01_activity.html",
+      "image": ".stitch/designs/minimal_01_activity.png"
+    },
+    {
+      "tabIndex": 1,
+      "tabName": "Members",
+      "screenId": "59429164e2214458ad6dc75a8f6cdee2",
+      "title": "LionGate - Access & Members",
+      "html": ".stitch/designs/minimal_02_members.html",
+      "image": ".stitch/designs/minimal_02_members.png"
+    },
+    {
+      "tabIndex": 2,
+      "tabName": "Unlock (Center)",
+      "screenId": "703c76215fb84b7a8802ffd1ae3187b3",
+      "title": "LionGate - Sanctuary Unlock",
+      "html": ".stitch/designs/minimal_03_unlock.html",
+      "image": ".stitch/designs/minimal_03_unlock.png"
+    },
+    {
+      "tabIndex": 3,
+      "tabName": "Schedules",
+      "screenId": "13ae44fe6c6a43e3bfb08cfe80111549",
+      "title": "LionGate - Schedules & Automation",
+      "html": ".stitch/designs/minimal_04_schedules.html",
+      "image": ".stitch/designs/minimal_04_schedules.png"
+    },
+    {
+      "tabIndex": 4,
+      "tabName": "Settings",
+      "screenId": "6b599be23d0646b185eba83448c21cf4",
+      "title": "LionGate - Lock Preferences & Settings",
+      "html": ".stitch/designs/minimal_05_settings.html",
+      "image": ".stitch/designs/minimal_05_settings.png"
+    }
+  ]
+}

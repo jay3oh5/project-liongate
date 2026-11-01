@@ -1,0 +1,467 @@
+<!DOCTYPE html>
+
+<html class="dark" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>LIONGATE — Access &amp; Members</title>
+<!-- Google Fonts: EB Garamond & Manrope -->
+<link href="https://fonts.googleapis.com" rel="preconnect"/>
+<link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect"/>
+<link href="https://fonts.googleapis.com/css2?family=EB+Garamond:ital,wght@0,400..700;1,400..700&amp;family=Manrope:wght@300;400;500;600;700&amp;display=swap" rel="stylesheet"/>
+<!-- Material Symbols Outlined -->
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<!-- Tailwind CSS CDN -->
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<script id="tailwind-config">
+    tailwind.config = {
+      darkMode: "class",
+      theme: {
+        extend: {
+          "colors": {
+            "surface-container": "#201f21",
+            "on-secondary-fixed-variant": "#554425",
+            "outline": "#99907c",
+            "on-primary-container": "#554300",
+            "error": "#ffb4ab",
+            "tertiary-fixed-dim": "#ccc6bd",
+            "surface-variant": "#353437",
+            "secondary-container": "#584727",
+            "surface-container-lowest": "#0e0e10",
+            "secondary-fixed": "#f9dfb4",
+            "secondary": "#dcc39a",
+            "outline-variant": "#4d4635",
+            "surface-tint": "#e9c349",
+            "primary": "#f2ca50",
+            "inverse-on-surface": "#303032",
+            "primary-fixed-dim": "#e9c349",
+            "on-tertiary-fixed-variant": "#4a4640",
+            "on-tertiary-container": "#48453e",
+            "surface-container-high": "#2a2a2c",
+            "on-secondary-container": "#cdb58d",
+            "on-secondary-fixed": "#261901",
+            "surface-dim": "#131315",
+            "on-primary-fixed": "#241a00",
+            "error-container": "#93000a",
+            "inverse-primary": "#735c00",
+            "background": "#131315",
+            "on-primary": "#3c2f00",
+            "inverse-surface": "#e5e1e4",
+            "tertiary": "#d4cdc4",
+            "on-error-container": "#ffdad6",
+            "secondary-fixed-dim": "#dcc39a",
+            "primary-fixed": "#ffe088",
+            "surface-container-highest": "#353437",
+            "on-surface-variant": "#d0c5af",
+            "on-primary-fixed-variant": "#574500",
+            "surface-container-low": "#1b1b1d",
+            "surface": "#131315",
+            "on-background": "#e5e1e4",
+            "on-surface": "#e5e1e4",
+            "surface-bright": "#39393b",
+            "tertiary-fixed": "#e8e1d8",
+            "on-tertiary": "#33302a",
+            "tertiary-container": "#b8b2a9",
+            "primary-container": "#d4af37",
+            "on-tertiary-fixed": "#1e1b16",
+            "on-secondary": "#3d2e10",
+            "on-error": "#690005"
+          },
+          "borderRadius": {
+            "DEFAULT": "0.125rem",
+            "lg": "0.25rem",
+            "xl": "0.5rem",
+            "full": "0.75rem"
+          },
+          "spacing": {
+            "gutter-mobile": "1rem",
+            "space-sm": "0.75rem",
+            "space-xl": "4rem",
+            "gutter": "2rem",
+            "space-xs": "0.375rem",
+            "space-lg": "2.5rem",
+            "space-md": "1.5rem",
+            "margin": "4rem",
+            "margin-mobile": "1.5rem"
+          },
+          "fontFamily": {
+            "display-xl-mobile": ["EB Garamond"],
+            "display-xl": ["EB Garamond"],
+            "headline-lg": ["EB Garamond"],
+            "label-md": ["Manrope"],
+            "label-sm": ["Manrope"],
+            "body-md": ["Manrope"],
+            "label-lg": ["Manrope"],
+            "headline-md": ["EB Garamond"],
+            "body-sm": ["Manrope"],
+            "body-lg": ["Manrope"],
+            "headline-sm": ["Manrope"],
+            "headline-lg-mobile": ["EB Garamond"]
+          },
+          "fontSize": {
+            "display-xl-mobile": ["40px", { "lineHeight": "48px", "letterSpacing": "-0.015em", "fontWeight": "400" }],
+            "display-xl": ["56px", { "lineHeight": "64px", "letterSpacing": "-0.02em", "fontWeight": "400" }],
+            "headline-lg": ["36px", { "lineHeight": "44px", "letterSpacing": "-0.01em", "fontWeight": "400" }],
+            "label-md": ["11px", { "lineHeight": "14px", "letterSpacing": "0.12em", "fontWeight": "600" }],
+            "label-sm": ["10px", { "lineHeight": "12px", "letterSpacing": "0.14em", "fontWeight": "600" }],
+            "body-md": ["14px", { "lineHeight": "24px", "letterSpacing": "0.01em", "fontWeight": "400" }],
+            "label-lg": ["13px", { "lineHeight": "16px", "letterSpacing": "0.08em", "fontWeight": "500" }],
+            "headline-md": ["24px", { "lineHeight": "32px", "letterSpacing": "0em", "fontWeight": "400" }],
+            "body-sm": ["12px", { "lineHeight": "18px", "letterSpacing": "0.02em", "fontWeight": "400" }],
+            "body-lg": ["16px", { "lineHeight": "28px", "letterSpacing": "0.01em", "fontWeight": "400" }],
+            "headline-sm": ["18px", { "lineHeight": "26px", "letterSpacing": "0.01em", "fontWeight": "600" }],
+            "headline-lg-mobile": ["28px", { "lineHeight": "36px", "letterSpacing": "-0.01em", "fontWeight": "400" }]
+          }
+        },
+      },
+    }
+  </script>
+<style>
+    .material-symbols-outlined {
+      font-variation-settings: 'FILL' 0, 'wght' 300, 'GRAD' 0, 'opsz' 20;
+    }
+    .material-symbols-filled {
+      font-variation-settings: 'FILL' 1, 'wght' 400, 'GRAD' 0, 'opsz' 20;
+    }
+  </style>
+<style>
+    body {
+      min-height: max(884px, 100dvh);
+    }
+  </style>
+  </head>
+<body class="bg-background text-on-surface antialiased min-h-screen pb-28 selection:bg-primary-container selection:text-on-primary">
+<!-- Top System & Status Bar -->
+<header class="sticky top-0 z-40 bg-surface/90 backdrop-blur-md">
+<!-- Discrete Hardware Diagnostics Bar -->
+<div class="flex justify-between items-center px-margin-mobile py-2 bg-surface-container-lowest text-outline-variant text-[10px] tracking-widest uppercase border-b border-outline-variant/20">
+<div class="flex items-center space-x-2">
+<span class="w-1.5 h-1.5 rounded-full bg-primary inline-block animate-pulse"></span>
+<span class="font-label-sm text-label-sm text-secondary font-medium">PORTAL 01 · CONNECTED</span>
+</div>
+<div class="flex items-center space-x-1.5 text-on-surface-variant font-label-sm text-label-sm">
+<span>AES-256</span>
+<span>·</span>
+<span class="text-secondary font-medium">88%</span>
+<span class="material-symbols-outlined text-xs text-primary" data-icon="battery_full">battery_full</span>
+</div>
+</div>
+<!-- Master Shared TopAppBar -->
+<div class="flex justify-between items-center w-full px-margin-mobile py-space-sm bg-surface">
+<button aria-label="Open Navigation Menu" class="flex items-center justify-center p-1 text-on-surface-variant hover:text-primary transition-colors duration-200 active:opacity-75">
+<span class="material-symbols-outlined text-2xl" data-icon="menu">menu</span>
+</button>
+<span class="text-headline-sm font-headline-sm tracking-widest text-on-surface uppercase">LIONGATE</span>
+<div class="flex items-center">
+<button aria-label="Portal Diagnostics" class="flex items-center justify-center p-1 text-on-surface-variant hover:text-primary transition-colors duration-200 active:opacity-75">
+<span class="material-symbols-outlined text-xl" data-icon="battery_full">battery_full</span>
+</button>
+</div>
+</div>
+<!-- Editorial Header Title & Primary Add Action -->
+<div class="px-margin-mobile pt-3 pb-4">
+<div class="flex items-end justify-between">
+<div>
+<span class="block text-label-sm font-label-sm text-outline tracking-widest uppercase mb-1">Architectural Credential Vault</span>
+<h1 class="text-headline-lg-mobile font-headline-lg-mobile text-on-surface tracking-tight">Access</h1>
+<p class="text-body-sm font-body-sm text-on-surface-variant mt-0.5">Authorized Members &amp; Key Profiles</p>
+</div>
+<!-- Add Member Luxury Button -->
+<button class="inline-flex items-center space-x-1.5 px-3 py-2 bg-surface-container-high border border-outline-variant/60 rounded text-secondary hover:border-primary hover:text-primary transition-all duration-200 group active:scale-95 shadow-sm">
+<span class="material-symbols-outlined text-base group-hover:rotate-90 transition-transform duration-300" data-icon="add">add</span>
+<span class="text-label-sm font-label-sm uppercase tracking-wider text-on-surface group-hover:text-primary">New Access</span>
+</button>
+</div>
+<!-- Segmented Category Filter Plinth -->
+<div class="mt-5 grid grid-cols-2 p-1 bg-surface-container-lowest border border-outline-variant/30 rounded">
+<button class="py-2 text-center text-label-md font-label-md uppercase tracking-wider bg-surface-container-high text-primary border border-primary/30 rounded shadow-inner transition-all">
+          Permanent (3)
+        </button>
+<button class="py-2 text-center text-label-md font-label-md uppercase tracking-wider text-outline hover:text-on-surface transition-colors">
+          Temporary Guests (2)
+        </button>
+</div>
+</div>
+</header>
+<!-- Main Canvas -->
+<main class="px-margin-mobile space-y-7 mt-3">
+<!-- Section 1: Household & Family Members -->
+<section>
+<!-- Section Title Plinth -->
+<div class="flex items-center justify-between pb-2 mb-3 border-b border-outline-variant/30">
+<div class="flex items-center space-x-2">
+<span class="material-symbols-outlined text-sm text-primary" data-icon="shield_person">shield_person</span>
+<h2 class="text-label-sm font-label-sm uppercase tracking-widest text-secondary font-semibold">Household &amp; Family</h2>
+</div>
+<span class="text-[10px] font-label-sm uppercase px-2 py-0.5 rounded bg-surface-container-high border border-outline-variant/40 text-on-surface-variant tracking-wider">
+          3 Members
+        </span>
+</div>
+<!-- Member Cards Stack -->
+<div class="space-y-3">
+<!-- Member 1: Julian David (Owner) -->
+<article class="p-4 bg-surface-container-low border border-outline-variant/40 rounded hover:border-primary/50 transition-all duration-200 group">
+<div class="flex items-start justify-between">
+<div class="flex items-center space-x-3.5">
+<!-- Monogram Avatar -->
+<div class="w-11 h-11 rounded-full bg-surface-container-high border border-primary/50 flex items-center justify-center text-primary font-headline-sm text-sm tracking-wider shadow-sm group-hover:border-primary">
+                JD
+              </div>
+<div>
+<div class="flex items-center space-x-2">
+<h3 class="text-body-lg font-body-lg text-on-surface font-medium leading-none">Julian David</h3>
+<span class="w-1.5 h-1.5 rounded-full bg-primary" title="Active Master Profile"></span>
+</div>
+<p class="text-body-sm font-body-sm text-secondary font-medium mt-1">Owner · Full Sovereign Access</p>
+</div>
+</div>
+<!-- Management Chevron -->
+<button aria-label="Edit Julian David credentials" class="text-outline-variant group-hover:text-primary transition-colors p-1">
+<span class="material-symbols-outlined text-lg" data-icon="chevron_right">chevron_right</span>
+</button>
+</div>
+<!-- Credential Badges List -->
+<div class="flex flex-wrap gap-1.5 mt-3.5 pt-3 border-t border-outline-variant/20">
+<span class="inline-flex items-center space-x-1 px-2 py-1 rounded bg-surface-container border border-primary/30 text-primary text-[10px] font-label-sm uppercase tracking-wider">
+<span class="material-symbols-outlined text-xs" data-icon="fingerprint">fingerprint</span>
+<span>Biometric Registered</span>
+</span>
+<span class="inline-flex items-center space-x-1 px-2 py-1 rounded bg-surface-container border border-outline-variant/40 text-secondary text-[10px] font-label-sm uppercase tracking-wider">
+<span class="material-symbols-outlined text-xs" data-icon="pin">pin</span>
+<span>Master PIN (6-Digit)</span>
+</span>
+<span class="inline-flex items-center space-x-1 px-2 py-1 rounded bg-surface-container-high border border-outline-variant/30 text-on-surface-variant text-[10px] font-label-sm uppercase tracking-wider">
+<span class="material-symbols-outlined text-xs" data-icon="verified_user">verified_user</span>
+<span>Root Admin</span>
+</span>
+</div>
+<!-- Discrete Usage Metadata -->
+<div class="flex items-center justify-between mt-3 text-[11px] font-body-sm text-outline pt-2">
+<span>Last unlocked Portal 01 via Biometric</span>
+<span class="text-on-surface-variant">Today, 08:42 AM</span>
+</div>
+</article>
+<!-- Member 2: Elena Vance (Co-Owner) -->
+<article class="p-4 bg-surface-container-low border border-outline-variant/40 rounded hover:border-primary/50 transition-all duration-200 group">
+<div class="flex items-start justify-between">
+<div class="flex items-center space-x-3.5">
+<!-- Monogram Avatar -->
+<div class="w-11 h-11 rounded-full bg-surface-container-high border border-outline-variant/60 flex items-center justify-center text-secondary font-headline-sm text-sm tracking-wider group-hover:border-secondary">
+                EV
+              </div>
+<div>
+<div class="flex items-center space-x-2">
+<h3 class="text-body-lg font-body-lg text-on-surface font-medium leading-none">Elena Vance</h3>
+<span class="w-1.5 h-1.5 rounded-full bg-secondary" title="Active Authorized Profile"></span>
+</div>
+<p class="text-body-sm font-body-sm text-secondary font-medium mt-1">Co-Owner · Full Access</p>
+</div>
+</div>
+<!-- Management Chevron -->
+<button aria-label="Edit Elena Vance credentials" class="text-outline-variant group-hover:text-primary transition-colors p-1">
+<span class="material-symbols-outlined text-lg" data-icon="chevron_right">chevron_right</span>
+</button>
+</div>
+<!-- Credential Badges List -->
+<div class="flex flex-wrap gap-1.5 mt-3.5 pt-3 border-t border-outline-variant/20">
+<span class="inline-flex items-center space-x-1 px-2 py-1 rounded bg-surface-container border border-primary/30 text-primary text-[10px] font-label-sm uppercase tracking-wider">
+<span class="material-symbols-outlined text-xs" data-icon="fingerprint">fingerprint</span>
+<span>Biometric Sensor</span>
+</span>
+<span class="inline-flex items-center space-x-1 px-2 py-1 rounded bg-surface-container border border-outline-variant/40 text-secondary text-[10px] font-label-sm uppercase tracking-wider">
+<span class="material-symbols-outlined text-xs" data-icon="pin">pin</span>
+<span>Personal PIN</span>
+</span>
+<span class="inline-flex items-center space-x-1 px-2 py-1 rounded bg-surface-container border border-outline-variant/30 text-on-surface-variant text-[10px] font-label-sm uppercase tracking-wider">
+<span class="material-symbols-outlined text-xs" data-icon="nfc">nfc</span>
+<span>NFC Keycard #04</span>
+</span>
+</div>
+<!-- Discrete Usage Metadata -->
+<div class="flex items-center justify-between mt-3 text-[11px] font-body-sm text-outline pt-2">
+<span>Last unlocked via Touchpass</span>
+<span class="text-on-surface-variant">Yesterday, 7:15 PM</span>
+</div>
+</article>
+<!-- Member 3: Marcus Vance (Family Member) -->
+<article class="p-4 bg-surface-container-low border border-outline-variant/40 rounded hover:border-primary/50 transition-all duration-200 group">
+<div class="flex items-start justify-between">
+<div class="flex items-center space-x-3.5">
+<!-- Monogram Avatar -->
+<div class="w-11 h-11 rounded-full bg-surface-container-high border border-outline-variant/60 flex items-center justify-center text-tertiary font-headline-sm text-sm tracking-wider">
+                MV
+              </div>
+<div>
+<div class="flex items-center space-x-2">
+<h3 class="text-body-lg font-body-lg text-on-surface font-medium leading-none">Marcus Vance</h3>
+</div>
+<p class="text-body-sm font-body-sm text-on-surface-variant mt-1">Family · Standard Access</p>
+</div>
+</div>
+<!-- Management Chevron -->
+<button aria-label="Edit Marcus Vance credentials" class="text-outline-variant group-hover:text-primary transition-colors p-1">
+<span class="material-symbols-outlined text-lg" data-icon="chevron_right">chevron_right</span>
+</button>
+</div>
+<!-- Credential Badges List -->
+<div class="flex flex-wrap gap-1.5 mt-3.5 pt-3 border-t border-outline-variant/20">
+<span class="inline-flex items-center space-x-1 px-2 py-1 rounded bg-surface-container border border-outline-variant/40 text-secondary text-[10px] font-label-sm uppercase tracking-wider">
+<span class="material-symbols-outlined text-xs" data-icon="pin">pin</span>
+<span>PIN Code</span>
+</span>
+<span class="inline-flex items-center space-x-1 px-2 py-1 rounded bg-surface-container border border-outline-variant/30 text-on-surface-variant text-[10px] font-label-sm uppercase tracking-wider">
+<span class="material-symbols-outlined text-xs" data-icon="phone_iphone">phone_iphone</span>
+<span>App Passkey</span>
+</span>
+</div>
+<!-- Discrete Usage Metadata -->
+<div class="flex items-center justify-between mt-3 text-[11px] font-body-sm text-outline pt-2">
+<span>Access windows restricted</span>
+<span class="text-on-surface-variant">06:00 AM – 11:00 PM</span>
+</div>
+</article>
+</div>
+</section>
+<!-- Section 2: Guest & Service Passes -->
+<section>
+<!-- Section Title Plinth -->
+<div class="flex items-center justify-between pb-2 mb-3 border-b border-outline-variant/30">
+<div class="flex items-center space-x-2">
+<span class="material-symbols-outlined text-sm text-primary" data-icon="key_vertical">key_vertical</span>
+<h2 class="text-label-sm font-label-sm uppercase tracking-widest text-secondary font-semibold">Guest &amp; Service Passes</h2>
+</div>
+<span class="text-[10px] font-label-sm uppercase px-2 py-0.5 rounded bg-surface-container-high border border-outline-variant/40 text-on-surface-variant tracking-wider">
+          2 Active
+        </span>
+</div>
+<!-- Guest Cards Stack -->
+<div class="space-y-3">
+<!-- Guest 1: Housekeeping Staff -->
+<article class="p-4 bg-surface-container-low border border-outline-variant/40 rounded hover:border-primary/50 transition-all duration-200 group">
+<div class="flex items-start justify-between">
+<div class="flex items-center space-x-3.5">
+<!-- Monogram Avatar -->
+<div class="w-11 h-11 rounded-full bg-surface-container-high border border-outline-variant/60 flex items-center justify-center text-secondary font-headline-sm text-sm tracking-wider">
+                HK
+              </div>
+<div>
+<div class="flex items-center space-x-2">
+<h3 class="text-body-lg font-body-lg text-on-surface font-medium leading-none">Housekeeping Staff</h3>
+</div>
+<div class="flex items-center space-x-1.5 mt-1 text-outline">
+<span class="material-symbols-outlined text-xs text-primary" data-icon="schedule">schedule</span>
+<p class="text-body-sm font-body-sm text-on-surface-variant">Recurring Schedule</p>
+</div>
+</div>
+</div>
+<!-- Active Window State Tag -->
+<span class="text-[9px] font-label-sm font-bold uppercase tracking-widest px-2 py-0.5 bg-primary/10 border border-primary/40 text-primary rounded">
+              Active Window
+            </span>
+</div>
+<!-- Schedule Rules Box -->
+<div class="mt-3 p-2.5 bg-surface-container rounded border border-outline-variant/20 flex items-start space-x-2 text-xs">
+<span class="material-symbols-outlined text-sm text-secondary mt-0.5" data-icon="calendar_month">calendar_month</span>
+<div class="space-y-0.5 text-body-sm font-body-sm">
+<span class="text-on-surface block font-medium">Mon &amp; Thu · 10:00 AM – 2:00 PM</span>
+<span class="text-outline text-[11px] block">Auto-invalidates outside designated timeframe</span>
+</div>
+</div>
+<!-- Credential Badges & Revoke Footer -->
+<div class="flex items-center justify-between mt-3 pt-2.5 border-t border-outline-variant/20">
+<span class="inline-flex items-center space-x-1 px-2 py-0.5 rounded bg-surface-container-high border border-outline-variant/30 text-secondary text-[10px] font-label-sm uppercase tracking-wider">
+<span class="material-symbols-outlined text-xs" data-icon="pin">pin</span>
+<span>Temporary PIN #9021</span>
+</span>
+<button class="text-xs font-label-sm uppercase tracking-wider text-outline hover:text-error transition-colors flex items-center space-x-1">
+<span class="material-symbols-outlined text-xs" data-icon="cancel">cancel</span>
+<span>Revoke Pass</span>
+</button>
+</div>
+</article>
+<!-- Guest 2: Amazon Courier -->
+<article class="p-4 bg-surface-container-low border border-outline-variant/40 rounded hover:border-primary/50 transition-all duration-200 group">
+<div class="flex items-start justify-between">
+<div class="flex items-center space-x-3.5">
+<!-- Monogram Avatar -->
+<div class="w-11 h-11 rounded-full bg-surface-container-high border border-outline-variant/60 flex items-center justify-center text-outline font-headline-sm text-sm tracking-wider">
+                AC
+              </div>
+<div>
+<div class="flex items-center space-x-2">
+<h3 class="text-body-lg font-body-lg text-on-surface font-medium leading-none">Amazon Courier</h3>
+</div>
+<div class="flex items-center space-x-1.5 mt-1 text-outline">
+<span class="material-symbols-outlined text-xs text-secondary" data-icon="pin_drop">pin_drop</span>
+<p class="text-body-sm font-body-sm text-on-surface-variant">Vestibule Drop-Off Token</p>
+</div>
+</div>
+</div>
+<!-- Pending Usage Status -->
+<span class="text-[9px] font-label-sm font-bold uppercase tracking-widest px-2 py-0.5 bg-surface-container-high border border-outline-variant/50 text-outline rounded">
+              Pending Usage
+            </span>
+</div>
+<!-- One-Time Policy Box -->
+<div class="mt-3 p-2.5 bg-surface-container rounded border border-outline-variant/20 flex items-start space-x-2 text-xs">
+<span class="material-symbols-outlined text-sm text-primary mt-0.5" data-icon="timer">timer</span>
+<div class="space-y-0.5 text-body-sm font-body-sm">
+<span class="text-on-surface block font-medium">Valid for 1 Entry · Expires Today at 6:00 PM</span>
+<span class="text-outline text-[11px] block">Cryptographic disposable authorization</span>
+</div>
+</div>
+<!-- Credential Badges & Revoke Footer -->
+<div class="flex items-center justify-between mt-3 pt-2.5 border-t border-outline-variant/20">
+<span class="inline-flex items-center space-x-1 px-2 py-0.5 rounded bg-surface-container-high border border-outline-variant/30 text-secondary text-[10px] font-label-sm uppercase tracking-wider">
+<span class="material-symbols-outlined text-xs" data-icon="pin">pin</span>
+<span>One-Time Code (4-Digit)</span>
+</span>
+<button class="text-xs font-label-sm uppercase tracking-wider text-outline hover:text-error transition-colors flex items-center space-x-1">
+<span class="material-symbols-outlined text-xs" data-icon="cancel">cancel</span>
+<span>Revoke Pass</span>
+</button>
+</div>
+</article>
+</div>
+</section>
+<!-- Section 3: Shared Security Hardware Keystore Footnote -->
+<div class="p-4 rounded bg-surface-container-lowest border border-outline-variant/20 text-center space-y-1.5">
+<div class="flex items-center justify-center space-x-2 text-primary">
+<span class="material-symbols-outlined text-base" data-icon="verified">verified</span>
+<span class="text-label-sm font-label-sm uppercase tracking-widest">Hardware Security Module</span>
+</div>
+<p class="text-body-sm font-body-sm text-outline max-w-xs mx-auto">
+        256-Bit Hardware Keystore · Cryptographic Credentials Localized &amp; Isolated to Portal 01.
+      </p>
+</div>
+</main>
+<!-- Shared BottomNavBar Navigation Shell (Docked full-width bottom-0, active: Access) -->
+<nav class="fixed bottom-0 left-0 w-full z-50 flex justify-around items-center px-gutter-mobile py-space-xs pb-6 bg-surface-container-low/90 backdrop-blur-md shadow-2xl">
+<!-- Tab 1: Sanctuary (Inactive) -->
+<button class="flex flex-col items-center justify-center text-on-surface-variant py-1 hover:text-primary transition-colors duration-200 active:scale-95 group">
+<span class="material-symbols-outlined text-xl mb-1 group-hover:text-primary" data-icon="home">home</span>
+<span class="text-label-sm font-label-sm">Sanctuary</span>
+</button>
+<!-- Tab 2: Passcode (Inactive) -->
+<button class="flex flex-col items-center justify-center text-on-surface-variant py-1 hover:text-primary transition-colors duration-200 active:scale-95 group">
+<span class="material-symbols-outlined text-xl mb-1 group-hover:text-primary" data-icon="key">key</span>
+<span class="text-label-sm font-label-sm">Passcode</span>
+</button>
+<!-- Tab 3: Access (ACTIVE MATCH for Access & Members) -->
+<button aria-current="page" class="flex flex-col items-center justify-center text-primary py-1 active:scale-95 group relative">
+<span class="absolute -top-1 w-5 h-0.5 bg-primary rounded-full"></span>
+<span class="material-symbols-outlined text-xl mb-1 material-symbols-filled" data-icon="lock_open">lock_open</span>
+<span class="text-label-sm font-label-sm font-semibold tracking-wider text-primary">Access</span>
+</button>
+<!-- Tab 4: Activity (Inactive) -->
+<button class="flex flex-col items-center justify-center text-on-surface-variant py-1 hover:text-primary transition-colors duration-200 active:scale-95 group">
+<span class="material-symbols-outlined text-xl mb-1 group-hover:text-primary" data-icon="history">history</span>
+<span class="text-label-sm font-label-sm">Activity</span>
+</button>
+<!-- Tab 5: Settings (Inactive) -->
+<button class="flex flex-col items-center justify-center text-on-surface-variant py-1 hover:text-primary transition-colors duration-200 active:scale-95 group">
+<span class="material-symbols-outlined text-xl mb-1 group-hover:text-primary" data-icon="tune">tune</span>
+<span class="text-label-sm font-label-sm">Settings</span>
+</button>
+</nav>
+</body></html>
