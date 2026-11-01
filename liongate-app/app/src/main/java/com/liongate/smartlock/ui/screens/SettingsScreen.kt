@@ -155,7 +155,7 @@ fun SettingsScreen(
                                 }
                             },
                             colors = OutlinedTextFieldDefaults.colors(
-                                focusedBorderColor = SecurityAmber,
+                                focusedBorderColor = TelemetryAmber,
                                 unfocusedBorderColor = SurfaceTier3,
                                 focusedTextColor = Color.White,
                                 unfocusedTextColor = Color.White
@@ -169,7 +169,7 @@ fun SettingsScreen(
                                     coroutineScope.launch { bleManager.changeAdminPassword(adminPinText) }
                                 }
                             },
-                            colors = ButtonDefaults.buttonColors(containerColor = SecurityAmber),
+                            colors = ButtonDefaults.buttonColors(containerColor = TelemetryAmber),
                             shape = RoundedCornerShape(8.dp),
                             modifier = Modifier.height(48.dp)
                         ) {
