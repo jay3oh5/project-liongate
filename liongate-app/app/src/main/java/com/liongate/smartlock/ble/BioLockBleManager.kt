@@ -99,8 +99,10 @@ class BioLockBleManager(private val context: Context) {
     private var sessionId: Int? = null
     private var requestNr: Int = 0
     private var currentPin: String = "123456"
+    private var currentAdminPin: String = "12345678"
     private var userPin: Int = 2
     private val pullRxBuffer = java.io.ByteArrayOutputStream()
+    private var unlockRequested: Boolean = false
 
     private val scope = CoroutineScope(Dispatchers.IO)
     private val mainHandler = Handler(Looper.getMainLooper())
@@ -244,6 +246,22 @@ class BioLockBleManager(private val context: Context) {
         }, 30000)
     }
 
+    fun connect(address: String, pin: String, adminPin: String) {
+        val device = try {
+            bluetoothAdapter?.getRemoteDevice(address)
+        } catch (e: Exception) {
+            null
+        }
+
+        if (device != null) {
+            unlockRequested = false
+            currentAdminPin = adminPin.ifEmpty { "12345678" }
+            connectDevice(device, pin)
+        } else {
+            _connectionState.value = LockConnectionState.Error("Invalid lock address: $address")
+        }
+    }
+
     fun connectAndUnlock(address: String, pin: String) {
         val device = try {
             bluetoothAdapter?.getRemoteDevice(address)
@@ -259,6 +277,11 @@ class BioLockBleManager(private val context: Context) {
     }
 
     fun connectAndUnlock(device: BluetoothDevice, pin: String) {
+        unlockRequested = true
+        connectDevice(device, pin)
+    }
+    
+    private fun connectDevice(device: BluetoothDevice, pin: String) {
         stopScan()
         currentPin = pin.ifEmpty { "123456" }
         sessionId = null
@@ -280,14 +303,48 @@ class BioLockBleManager(private val context: Context) {
     }
 
     fun disconnect() {
-        try {
-            activeGatt?.disconnect()
-            activeGatt?.close()
-            activeGatt = null
-        } catch (e: Exception) {
-            Log.e(TAG, "Error disconnecting", e)
+        scope.launch {
+            if (activeGatt != null && sessionId != null) {
+                log("Releasing C3 session before disconnect...")
+                try {
+                    val discMsg = buildSessionC3Message(command = ZkProtocol.CMD_DISCONNECT)
+                    sendC3Packet(activeGatt!!, discMsg, timeoutMs = 1000)
+                } catch (e: Exception) {
+                    log("Disconnect sequence notice: ${e.message}")
+                }
+            }
+            try {
+                activeGatt?.disconnect()
+                activeGatt?.close()
+                activeGatt = null
+            } catch (e: Exception) {
+                Log.e(TAG, "Error disconnecting", e)
+            }
+            _connectionState.value = LockConnectionState.Disconnected
         }
-        _connectionState.value = LockConnectionState.Disconnected
+    }
+    
+    fun unlock(address: String? = null, pin: String? = null, adminPin: String? = null, durationSeconds: Int = 5) {
+        val gatt = activeGatt
+        if (gatt != null && connectionState.value is LockConnectionState.Connected) {
+            scope.launch {
+                executeUnlockOnly(gatt, durationSeconds, disconnectAfter = false)
+            }
+        } else if (connectionState.value is LockConnectionState.Disconnected || connectionState.value is LockConnectionState.Error) {
+            // Re-use connectAndUnlock flow to support widget
+            val deviceMac = address ?: bluetoothAdapter?.bondedDevices?.firstOrNull()?.address
+            if (deviceMac != null) {
+                if (pin != null) {
+                    currentPin = pin.ifEmpty { "123456" }
+                }
+                if (adminPin != null) {
+                    currentAdminPin = adminPin.ifEmpty { "12345678" }
+                }
+                connectAndUnlock(deviceMac, currentPin)
+            } else {
+                _connectionState.value = LockConnectionState.Error("No device MAC provided")
+            }
+        }
     }
 
     private val gattCallback = object : BluetoothGattCallback() {
@@ -334,10 +391,13 @@ class BioLockBleManager(private val context: Context) {
                 pullChar = service.getCharacteristic(ZkProtocol.UUID_CHAR_PULL)
                 cmdChar = service.getCharacteristic(ZkProtocol.UUID_CHAR_CMD)
 
-                log("Lock services discovered. Starting unlock sequence...")
+                log("Lock services discovered. Starting connection sequence...")
 
                 scope.launch {
-                    executeUnlockSequence(gatt)
+                    executeConnectSequence(gatt)
+                    if (unlockRequested) {
+                        executeUnlockOnly(gatt, 5, disconnectAfter = true)
+                    }
                 }
             } else {
                 log("Service discovery failed: $status")
@@ -431,7 +491,7 @@ class BioLockBleManager(private val context: Context) {
         return resp
     }
 
-    private suspend fun executeUnlockSequence(gatt: BluetoothGatt) {
+    private suspend fun executeConnectSequence(gatt: BluetoothGatt) {
         // Step 1: Enable notifications on CMD
         log("Enabling notifications on CMD characteristic...")
         enableNotification(gatt, cmdChar)
@@ -443,8 +503,9 @@ class BioLockBleManager(private val context: Context) {
         delay(200)
 
         // Step 3: Send Passkey AT command
-        _connectionState.value = LockConnectionState.Unlocking
         val pin = currentPin.ifEmpty { "123456" }
+        val adminPin = currentAdminPin.ifEmpty { "12345678" }
+        
         log("Verifying Passkey ($pin)...")
         val passkeyDeferred = CompletableDeferred<Boolean>()
         pendingPasskeyResponse = passkeyDeferred
@@ -465,7 +526,12 @@ class BioLockBleManager(private val context: Context) {
         // Step 4: C3 Handshake / Authentication & Privilege Discovery
         val phoneMac = bluetoothAdapter?.address ?: "02:00:00:00:00:00"
         val candidates = listOf(
-            "$pin\n02:00:00:00:00:00-1\n", // Administrator session
+            "$adminPin\n02:00:00:00:00:00-1\n", // Administrator session
+            "$adminPin\n$phoneMac-1\n",
+            "$adminPin\n1-1\n",
+            "$adminPin\n",
+            "$adminPin\n\n",
+            "$pin\n02:00:00:00:00:00-1\n",
             "$pin\n$phoneMac-1\n",
             "$pin\n1-1\n",
             "$pin\n",
@@ -610,7 +676,7 @@ class BioLockBleManager(private val context: Context) {
 
         delay(150)
 
-        // Step 5c: Read current lock state (DSM, LockOn, etc.) and enforce DSM=1 (Normal Close / Auto-Relock)
+        // Step 5c: Read current lock state (DSM, LockOn, etc.)
         try {
             val queryStateMsg = ZkProtocol.buildC3Message(
                 command = 0x04.toByte(),
@@ -620,32 +686,55 @@ class BioLockBleManager(private val context: Context) {
             if (stateResp != null) {
                 val sStr = String(stateResp.data, Charsets.US_ASCII).trim()
                 log("Current Lock State from hardware: $sStr")
+                val map = mutableMapOf<String, String>()
+                sStr.split(",").forEach { pair ->
+                    val parts = pair.split("=")
+                    if (parts.size == 2) {
+                        map[parts[0].trim()] = parts[1].trim()
+                    }
+                }
+                map["LockOn"]?.toIntOrNull()?.let { _lockOnSeconds.value = it }
+                map["DSM"]?.toIntOrNull()?.let { _doorSensorMode.value = it }
+                if (map["DSM"] == "0") {
+                    _isPassageMode.value = true
+                } else {
+                    _isPassageMode.value = false
+                }
             }
-
-            log("Enforcing DSM=1 (Normal Close / Auto-Relock Mode) and LockOn=5...")
-            val dsmPayload = "DSM=1,LockOn=5".toByteArray(Charsets.US_ASCII)
-            val setDsmMsg = ZkProtocol.buildC3Message(
-                command = 0x03.toByte(),
-                data = dsmPayload
-            )
-            val setDsmResp = sendC3Packet(gatt, setDsmMsg, timeoutMs = 2000)
-            log("Set DSM=1,LockOn=5 result: code=${setDsmResp?.returnCode}")
-
-            val disablePassagePayload = byteArrayOf(0x04, 0x01, 0x00, 0x00, 0x00)
-            val disablePassageMsg = ZkProtocol.buildC3Message(
-                command = ZkProtocol.CMD_CONTROL,
-                data = disablePassagePayload
-            )
-            val pmResp = sendC3Packet(gatt, disablePassageMsg, timeoutMs = 1500)
-            log("Passage mode disable (Op=4) result: code=${pmResp?.returnCode}")
         } catch (e: Exception) {
             log("Lock state configuration notice: ${e.message}")
         }
+        
+        _connectionState.value = LockConnectionState.Connected(gatt.device.name ?: "Lock", gatt.device.address)
+    }
 
-        delay(150)
+    private suspend fun executeUnlockOnly(gatt: BluetoothGatt, durationSeconds: Int, disconnectAfter: Boolean) {
+        _connectionState.value = LockConnectionState.Unlocking
+        
+        if (!_isPassageMode.value) {
+            log("Enforcing DSM=1 (Normal Close / Auto-Relock Mode)...")
+            try {
+                val dsmPayload = "DSM=1".toByteArray(Charsets.US_ASCII)
+                val setDsmMsg = ZkProtocol.buildC3Message(
+                    command = 0x03.toByte(),
+                    data = dsmPayload
+                )
+                val setDsmResp = sendC3Packet(gatt, setDsmMsg, timeoutMs = 2000)
+                log("Set DSM=1 result: code=${setDsmResp?.returnCode}")
 
-        // Step 6: Send C3 Timed Unlock Pulse
-        val durationSeconds = 5
+                val disablePassagePayload = byteArrayOf(0x04, 0x01, 0x00, 0x00, 0x00)
+                val disablePassageMsg = ZkProtocol.buildC3Message(
+                    command = ZkProtocol.CMD_CONTROL,
+                    data = disablePassagePayload
+                )
+                val pmResp = sendC3Packet(gatt, disablePassageMsg, timeoutMs = 1500)
+                log("Passage mode disable (Op=4) result: code=${pmResp?.returnCode}")
+            } catch (e: Exception) {
+                log("Lock state configuration notice during unlock: ${e.message}")
+            }
+            delay(150)
+        }
+
         log("Initiating C3 Unlock pulse for ${durationSeconds}s...")
 
         data class ControlCandidate(
@@ -663,14 +752,10 @@ class BioLockBleManager(private val context: Context) {
 
         val controlAttempts = mutableListOf<ControlCandidate>()
         if (sId != null) {
-            // Priority 1: Session authenticated pulse with PIN attribution (as sent by official BioLock app)
             controlAttempts.add(ControlCandidate("Session pulse with PIN ($userPin)", sId, rNr + 1, pinTimedPayload))
-            // Priority 2: Session authenticated standard pulse
             controlAttempts.add(ControlCandidate("Session standard pulse", sId, rNr + 1, baseTimedPayload))
         }
-        // Priority 3: Sessionless pulse with PIN
         controlAttempts.add(ControlCandidate("Sessionless pulse with PIN ($userPin)", null, null, pinTimedPayload))
-        // Priority 4: Sessionless standard pulse
         controlAttempts.add(ControlCandidate("Sessionless standard pulse", null, null, baseTimedPayload))
 
         var unlockSuccess = false
@@ -707,30 +792,27 @@ class BioLockBleManager(private val context: Context) {
             log("Door unlocked! Starting ${durationSeconds}s countdown...")
             _connectionState.value = LockConnectionState.Unlocked("Unlocked (Auto-locking in ${durationSeconds}s)")
 
-            scope.launch {
-                try {
-                    // Update user UI countdown
-                    for (s in durationSeconds downTo 1) {
-                        _connectionState.value = LockConnectionState.Unlocked("Unlocked ($s s)")
-                        delay(1000)
-                    }
-
-                    // Release session cleanly (hardware lock disengages clutch autonomously after 5s)
-                    log("Releasing C3 session and closing BLE connection...")
-                    val discMsg = buildSessionC3Message(command = ZkProtocol.CMD_DISCONNECT)
-                    sendC3Packet(gatt, discMsg, timeoutMs = 1000)
-                } catch (e: Exception) {
-                    log("Disconnect sequence notice: ${e.message}")
-                } finally {
-                    disconnect()
-                    _connectionState.value = LockConnectionState.Disconnected
-                    log("Door cycle finished and BLE link cleanly closed.")
+            try {
+                for (s in durationSeconds downTo 1) {
+                    _connectionState.value = LockConnectionState.Unlocked("Unlocked ($s s)")
+                    delay(1000)
                 }
+            } finally {
+                if (disconnectAfter) {
+                    disconnect()
+                } else {
+                    _connectionState.value = LockConnectionState.Connected(gatt.device.name ?: "Lock", gatt.device.address)
+                }
+                log("Door cycle finished.")
             }
         } else {
             log("All unlock candidates rejected. Last code: $lastErr")
             _connectionState.value = LockConnectionState.Error("Lock rejected unlock (code $lastErr)")
-            disconnect()
+            if (disconnectAfter) {
+                disconnect()
+            } else {
+                _connectionState.value = LockConnectionState.Connected(gatt.device.name ?: "Lock", gatt.device.address)
+            }
         }
     }
 
@@ -790,21 +872,124 @@ class BioLockBleManager(private val context: Context) {
     suspend fun setPassageMode(enable: Boolean): Result<Boolean> {
         val gatt = activeGatt ?: return Result.failure(IllegalStateException("Not connected"))
         return try {
-            log("Sending Passage Mode (Op=4, enable=$enable)...")
-            val payload = ZkProtocol.buildPassageModePayload(enable)
-            val msg = buildSessionC3Message(command = ZkProtocol.CMD_CONTROL, data = payload)
-            val resp = sendC3Packet(gatt, msg, timeoutMs = 2500)
-            if (resp != null && resp.isSuccess) {
-                _isPassageMode.value = enable
-                log("Passage Mode updated: enable=$enable (code=${resp.returnCode})")
+            var success = false
+            if (enable) {
+                log("Enabling Passage Mode...")
+                // Set DSM=0
+                val dsmPayload = "DSM=0".toByteArray(Charsets.US_ASCII)
+                val setDsmMsg = buildSessionC3Message(command = ZkProtocol.CMD_SET_PARAM, data = dsmPayload)
+                sendC3Packet(gatt, setDsmMsg, timeoutMs = 2000)
+                delay(150)
+                // Op=4 Enable
+                val pmPayload = ZkProtocol.buildPassageModePayload(true)
+                val pmMsg = buildSessionC3Message(command = ZkProtocol.CMD_CONTROL, data = pmPayload)
+                sendC3Packet(gatt, pmMsg, timeoutMs = 2000)
+                delay(150)
+                // Pulse to engage clutch
+                val unlockPayload = byteArrayOf(0x01, 0x01, 0x00, 0x05, 0x00)
+                val unlockMsg = buildSessionC3Message(command = ZkProtocol.CMD_CONTROL, data = unlockPayload)
+                val resp = sendC3Packet(gatt, unlockMsg, timeoutMs = 2500)
+                if (resp != null && resp.isSuccess) success = true
+            } else {
+                log("Disabling Passage Mode...")
+                // Set DSM=1
+                val dsmPayload = "DSM=1".toByteArray(Charsets.US_ASCII)
+                val setDsmMsg = buildSessionC3Message(command = ZkProtocol.CMD_SET_PARAM, data = dsmPayload)
+                sendC3Packet(gatt, setDsmMsg, timeoutMs = 2000)
+                delay(150)
+                // Op=4 Disable
+                val pmPayload = ZkProtocol.buildPassageModePayload(false)
+                val pmMsg = buildSessionC3Message(command = ZkProtocol.CMD_CONTROL, data = pmPayload)
+                sendC3Packet(gatt, pmMsg, timeoutMs = 2000)
+                delay(150)
+                // Force Lock
+                val lockPayload = ZkProtocol.buildForceLockPayload()
+                val lockMsg = buildSessionC3Message(command = ZkProtocol.CMD_CONTROL, data = lockPayload)
+                val resp = sendC3Packet(gatt, lockMsg, timeoutMs = 2000)
+                if (resp != null && resp.isSuccess) success = true
+            }
+            
+            // Verify via CMD_GET_DEVICE_PARAM
+            if (success) {
+                delay(150)
+                val queryStateMsg = buildSessionC3Message(
+                    command = ZkProtocol.CMD_GET_PARAM,
+                    data = "DSM".toByteArray(Charsets.US_ASCII)
+                )
+                val stateResp = sendC3Packet(gatt, queryStateMsg, timeoutMs = 2000)
+                if (stateResp != null && stateResp.isSuccess) {
+                    val sStr = String(stateResp.data, Charsets.US_ASCII).trim()
+                    val map = mutableMapOf<String, String>()
+                    sStr.split(",").forEach { pair ->
+                        val parts = pair.split("=")
+                        if (parts.size == 2) {
+                            map[parts[0].trim()] = parts[1].trim()
+                        }
+                    }
+                    if (map["DSM"] == "0") {
+                        _isPassageMode.value = true
+                        log("Passage Mode verified enabled.")
+                    } else if (map["DSM"] == "1") {
+                        _isPassageMode.value = false
+                        log("Passage Mode verified disabled.")
+                    }
+                }
                 Result.success(true)
             } else {
-                val err = resp?.returnCode ?: -1
-                log("Passage Mode rejected: code=$err")
-                Result.failure(RuntimeException("Rejected by lock: $err"))
+                Result.failure(RuntimeException("Rejected by lock"))
             }
         } catch (e: Exception) {
             log("Error setting passage mode: ${e.message}")
+            Result.failure(e)
+        }
+    }
+
+    suspend fun changeAdminPassword(newAdminPin: String): Result<Boolean> {
+        val gatt = activeGatt ?: return Result.failure(IllegalStateException("Not connected"))
+        return try {
+            log("Changing Admin Password (SuperPwd)...")
+            val payload = "SuperPwd=$newAdminPin".toByteArray(Charsets.US_ASCII)
+            val msg = buildSessionC3Message(command = ZkProtocol.CMD_SET_PARAM, data = payload)
+            val resp = sendC3Packet(gatt, msg, timeoutMs = 2500)
+            if (resp != null && resp.isSuccess) {
+                currentAdminPin = newAdminPin
+                log("Admin Password successfully changed.")
+                Result.success(true)
+            } else {
+                val err = resp?.returnCode ?: -1
+                log("Admin Password change rejected: code=$err")
+                Result.failure(RuntimeException("Rejected: $err"))
+            }
+        } catch (e: Exception) {
+            log("Error changing Admin Password: ${e.message}")
+            Result.failure(e)
+        }
+    }
+
+    suspend fun changePairPin(newPin: String): Result<Boolean> {
+        val gatt = activeGatt ?: return Result.failure(IllegalStateException("Not connected"))
+        return try {
+            log("Changing Bluetooth Pair PIN (Passkey)...")
+            val cmdDeferred = CompletableDeferred<Boolean>()
+            pendingPasskeyResponse = cmdDeferred
+            
+            val passkeyCmd = ZkProtocol.buildPasskeyCommand(newPin)
+            val ok = cmdChar?.let { writeCharacteristicSequentially(gatt, it, passkeyCmd) } ?: false
+            if (ok) {
+                val success = withTimeoutOrNull(3000) { cmdDeferred.await() } ?: false
+                if (success) {
+                    currentPin = newPin
+                    log("Pair PIN successfully changed.")
+                    Result.success(true)
+                } else {
+                    log("Pair PIN change rejected or timed out.")
+                    Result.failure(RuntimeException("Rejected or timed out"))
+                }
+            } else {
+                Result.failure(RuntimeException("Failed to write Passkey command"))
+            }
+        } catch (e: Exception) {
+            log("Error changing Pair PIN: ${e.message}")
             Result.failure(e)
         }
     }

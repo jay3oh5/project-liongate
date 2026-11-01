@@ -23,6 +23,7 @@ class MainActivity : ComponentActivity() {
     companion object {
         private const val PREFS_NAME = "liongate_prefs"
         private const val KEY_PIN = "key_pin"
+        private const val KEY_ADMIN_PIN = "key_admin_pin"
         private const val KEY_DEVICE_MAC = "key_device_mac"
         private const val KEY_DEVICE_NAME = "key_device_name"
     }
@@ -62,6 +63,9 @@ class MainActivity : ComponentActivity() {
             var currentPin by androidx.compose.runtime.remember {
                 androidx.compose.runtime.mutableStateOf(prefs.getString(KEY_PIN, "123456") ?: "123456")
             }
+            var currentAdminPin by androidx.compose.runtime.remember {
+                androidx.compose.runtime.mutableStateOf(prefs.getString(KEY_ADMIN_PIN, BuildConfig.DEFAULT_ADMIN_PIN) ?: BuildConfig.DEFAULT_ADMIN_PIN)
+            }
             var currentMac by androidx.compose.runtime.remember {
                 androidx.compose.runtime.mutableStateOf(prefs.getString(KEY_DEVICE_MAC, "") ?: "")
             }
@@ -76,6 +80,11 @@ class MainActivity : ComponentActivity() {
                     onSavePin = { pin ->
                         currentPin = pin
                         prefs.edit().putString(KEY_PIN, pin).apply()
+                    },
+                    savedAdminPin = currentAdminPin,
+                    onSaveAdminPin = { pin ->
+                        currentAdminPin = pin
+                        prefs.edit().putString(KEY_ADMIN_PIN, pin).apply()
                     },
                     savedDeviceMac = currentMac,
                     savedDeviceName = currentName,

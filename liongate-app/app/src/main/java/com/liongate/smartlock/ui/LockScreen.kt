@@ -127,6 +127,8 @@ fun LockScreen(
     bleManager: BioLockBleManager,
     savedPin: String,
     onSavePin: (String) -> Unit,
+    savedAdminPin: String,
+    onSaveAdminPin: (String) -> Unit,
     savedDeviceMac: String,
     savedDeviceName: String,
     onSaveDevice: (String, String) -> Unit
@@ -142,6 +144,8 @@ fun LockScreen(
 
     var pinText by remember(savedPin) { mutableStateOf(savedPin) }
     var showPin by remember { mutableStateOf(false) }
+    var adminPinText by remember(savedAdminPin) { mutableStateOf(savedAdminPin) }
+    var showAdminPin by remember { mutableStateOf(false) }
     var showDeviceSheet by remember { mutableStateOf(false) }
     var showSettingsSheet by remember { mutableStateOf(false) }
     var showHistorySheet by remember { mutableStateOf(false) }
@@ -187,6 +191,26 @@ fun LockScreen(
                     }
                 },
                 actions = {
+                    if (connectionState !is LockConnectionState.Connected && connectionState !is LockConnectionState.Unlocked) {
+                        Button(
+                            onClick = { bleManager.connect(savedDeviceMac, pinText, adminPinText) },
+                            enabled = savedDeviceMac.isNotEmpty(),
+                            colors = ButtonDefaults.buttonColors(containerColor = Cyan500)
+                        ) {
+                            Text("Connect", fontSize = 12.sp, color = Color.Black)
+                        }
+                    } else {
+                        Row(verticalAlignment = Alignment.CenterVertically) {
+                            Text("Connected (Admin)", color = Emerald500, fontSize = 12.sp, fontWeight = FontWeight.Bold)
+                            Spacer(modifier = Modifier.width(8.dp))
+                            Button(
+                                onClick = { bleManager.disconnect() },
+                                colors = ButtonDefaults.buttonColors(containerColor = Rose500)
+                            ) {
+                                Text("Disconnect", fontSize = 12.sp, color = Color.White)
+                            }
+                        }
+                    }
                     IconButton(onClick = { showHistorySheet = true; coroutineScope.launch { bleManager.fetchAuditLogs() } }) {
                         Icon(
                             Icons.Default.History,
@@ -302,11 +326,11 @@ fun LockScreen(
     ) { padding ->
         Box(modifier = Modifier.padding(padding)) {
             when (currentTab) {
-                0 -> ControlScreen(bleManager, savedPin, onSavePin, savedDeviceMac, savedDeviceName, onSaveDevice, onShowDeviceSheet = { showDeviceSheet = true })
+                0 -> ControlScreen(bleManager, savedPin, onSavePin, savedAdminPin, onSaveAdminPin, savedDeviceMac, savedDeviceName, onSaveDevice, onShowDeviceSheet = { showDeviceSheet = true })
                 1 -> UserScreen(bleManager)
                 2 -> ScheduleScreen(bleManager)
                 3 -> HistoryScreen(bleManager)
-                4 -> SettingsScreen(bleManager)
+                4 -> SettingsScreen(bleManager, savedPin, onSavePin, savedAdminPin, onSaveAdminPin)
             }
         }
     }
@@ -667,7 +691,116 @@ fun LockScreen(
 
                 Spacer(modifier = Modifier.height(12.dp))
 
-                // Section 4: Query Lock Parameters
+                Spacer(modifier = Modifier.height(12.dp))
+
+                // Section 4: Credentials
+                Card(
+                    modifier = Modifier.fillMaxWidth(),
+                    colors = CardDefaults.cardColors(containerColor = Slate700.copy(alpha = 0.6f)),
+                    shape = RoundedCornerShape(12.dp)
+                ) {
+                    Column(modifier = Modifier.padding(14.dp)) {
+                        Row(verticalAlignment = Alignment.CenterVertically) {
+                            Icon(Icons.Default.Key, contentDescription = null, tint = Cyan500, modifier = Modifier.size(20.dp))
+                            Spacer(modifier = Modifier.width(8.dp))
+                            Text("Unlock Passkey (Bluetooth Pair PIN)", fontWeight = FontWeight.SemiBold, color = Color.White)
+                        }
+                        Spacer(modifier = Modifier.height(8.dp))
+                        Row(verticalAlignment = Alignment.CenterVertically) {
+                            OutlinedTextField(
+                                value = pinText,
+                                onValueChange = { pinText = it },
+                                modifier = Modifier.weight(1f),
+                                keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.NumberPassword),
+                                visualTransformation = if (showPin) VisualTransformation.None else PasswordVisualTransformation(),
+                                trailingIcon = {
+                                    IconButton(onClick = { showPin = !showPin }) {
+                                        Icon(
+                                            imageVector = if (showPin) Icons.Default.Visibility else Icons.Default.VisibilityOff,
+                                            contentDescription = "Toggle PIN",
+                                            tint = Slate400
+                                        )
+                                    }
+                                },
+                                colors = OutlinedTextFieldDefaults.colors(
+                                    focusedBorderColor = Cyan500,
+                                    unfocusedBorderColor = Slate700,
+                                    focusedTextColor = Color.White,
+                                    unfocusedTextColor = Color.White
+                                )
+                            )
+                            Spacer(modifier = Modifier.width(8.dp))
+                            Button(
+                                onClick = { 
+                                    if (pinText.length == 6) {
+                                        onSavePin(pinText)
+                                        coroutineScope.launch { bleManager.changePairPin(pinText) }
+                                    }
+                                },
+                                colors = ButtonDefaults.buttonColors(containerColor = Cyan500),
+                                shape = RoundedCornerShape(8.dp)
+                            ) {
+                                Text("Apply")
+                            }
+                        }
+                        if (pinText.length != 6) {
+                            Text("Passkey must be exactly 6 digits", color = Rose500, fontSize = 10.sp, modifier = Modifier.padding(top = 4.dp))
+                        }
+
+                        Spacer(modifier = Modifier.height(16.dp))
+                        
+                        Row(verticalAlignment = Alignment.CenterVertically) {
+                            Icon(Icons.Default.Badge, contentDescription = null, tint = Amber500, modifier = Modifier.size(20.dp))
+                            Spacer(modifier = Modifier.width(8.dp))
+                            Text("Administrator Password (SuperPwd)", fontWeight = FontWeight.SemiBold, color = Color.White)
+                        }
+                        Spacer(modifier = Modifier.height(8.dp))
+                        Row(verticalAlignment = Alignment.CenterVertically) {
+                            OutlinedTextField(
+                                value = adminPinText,
+                                onValueChange = { adminPinText = it },
+                                modifier = Modifier.weight(1f),
+                                keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.NumberPassword),
+                                visualTransformation = if (showAdminPin) VisualTransformation.None else PasswordVisualTransformation(),
+                                trailingIcon = {
+                                    IconButton(onClick = { showAdminPin = !showAdminPin }) {
+                                        Icon(
+                                            imageVector = if (showAdminPin) Icons.Default.Visibility else Icons.Default.VisibilityOff,
+                                            contentDescription = "Toggle PIN",
+                                            tint = Slate400
+                                        )
+                                    }
+                                },
+                                colors = OutlinedTextFieldDefaults.colors(
+                                    focusedBorderColor = Amber500,
+                                    unfocusedBorderColor = Slate700,
+                                    focusedTextColor = Color.White,
+                                    unfocusedTextColor = Color.White
+                                )
+                            )
+                            Spacer(modifier = Modifier.width(8.dp))
+                            Button(
+                                onClick = { 
+                                    if (adminPinText.length == 8) {
+                                        onSaveAdminPin(adminPinText)
+                                        coroutineScope.launch { bleManager.changeAdminPassword(adminPinText) }
+                                    }
+                                },
+                                colors = ButtonDefaults.buttonColors(containerColor = Amber500),
+                                shape = RoundedCornerShape(8.dp)
+                            ) {
+                                Text("Apply")
+                            }
+                        }
+                        if (adminPinText.length != 8) {
+                            Text("Admin Password must be exactly 8 digits", color = Rose500, fontSize = 10.sp, modifier = Modifier.padding(top = 4.dp))
+                        }
+                    }
+                }
+
+                Spacer(modifier = Modifier.height(12.dp))
+
+                // Section 5: Query Lock Parameters
                 Button(
                     onClick = { coroutineScope.launch { bleManager.queryLockParams() } },
                     modifier = Modifier.fillMaxWidth(),

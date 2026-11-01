@@ -11,6 +11,7 @@ if (localPropsFile.exists()) {
     localProps.load(localPropsFile.inputStream())
 }
 val defaultPin = localProps.getProperty("LIONGATE_DEFAULT_PIN") ?: "123456"
+val defaultAdminPin = localProps.getProperty("LIONGATE_DEFAULT_ADMIN_PIN") ?: "12345678"
 val defaultMac = localProps.getProperty("LIONGATE_DEFAULT_MAC") ?: ""
 
 android {
@@ -25,6 +26,7 @@ android {
         versionName = "0.1.0"
 
         buildConfigField("String", "DEFAULT_PIN", "\"$defaultPin\"")
+        buildConfigField("String", "DEFAULT_ADMIN_PIN", "\"$defaultAdminPin\"")
         buildConfigField("String", "DEFAULT_MAC", "\"$defaultMac\"")
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"

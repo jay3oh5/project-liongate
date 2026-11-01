@@ -29,12 +29,30 @@ import java.text.SimpleDateFormat
 import java.util.Date
 import java.util.Locale
 
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
+import androidx.compose.ui.text.input.PasswordVisualTransformation
+import androidx.compose.ui.text.input.VisualTransformation
+import androidx.compose.ui.text.input.KeyboardType
+import androidx.compose.foundation.text.KeyboardOptions
+
 @Composable
-fun SettingsScreen(bleManager: BioLockBleManager) {
+fun SettingsScreen(
+    bleManager: BioLockBleManager,
+    savedPin: String = "123456",
+    onSavePin: (String) -> Unit = {},
+    savedAdminPin: String = "12345678",
+    onSaveAdminPin: (String) -> Unit = {}
+) {
     val lockOnSeconds by bleManager.lockOnSeconds.collectAsState()
     val doorSensorMode by bleManager.doorSensorMode.collectAsState()
     val lastTimeSync by bleManager.lastTimeSync.collectAsState()
     val coroutineScope = rememberCoroutineScope()
+    var pinText by remember(savedPin) { mutableStateOf(savedPin) }
+    var showPin by remember { mutableStateOf(false) }
+    var adminPinText by remember(savedAdminPin) { mutableStateOf(savedAdminPin) }
+    var showAdminPin by remember { mutableStateOf(false) }
 
     LazyColumn(
         modifier = Modifier
@@ -51,6 +69,116 @@ fun SettingsScreen(bleManager: BioLockBleManager) {
                     Icon(Icons.Default.Settings, contentDescription = null, tint = ElectricCyan)
                     Spacer(modifier = Modifier.width(8.dp))
                     Text("Lock Hardware Settings", fontWeight = FontWeight.Bold, fontSize = 18.sp, color = Color.White)
+                }
+            }
+
+            Spacer(modifier = Modifier.height(16.dp))
+
+            // Credentials Configuration Card
+            Card(
+                modifier = Modifier.fillMaxWidth(),
+                colors = CardDefaults.cardColors(containerColor = SurfaceTier1),
+                shape = RoundedCornerShape(12.dp),
+                border = androidx.compose.foundation.BorderStroke(1.dp, SurfaceTier3)
+            ) {
+                Column(modifier = Modifier.padding(16.dp)) {
+                    Row(verticalAlignment = Alignment.CenterVertically) {
+                        Icon(Icons.Default.Key, contentDescription = null, tint = ElectricCyan, modifier = Modifier.size(20.dp))
+                        Spacer(modifier = Modifier.width(8.dp))
+                        Text("AUTHENTICATION CREDENTIALS", fontFamily = FontFamily.Monospace, fontWeight = FontWeight.Bold, fontSize = 11.sp, color = ElectricCyan)
+                    }
+
+                    Spacer(modifier = Modifier.height(16.dp))
+
+                    Text("UNLOCK PASSKEY (BLUETOOTH PAIR PIN)", fontFamily = FontFamily.Monospace, fontSize = 10.sp, color = Slate400)
+                    Spacer(modifier = Modifier.height(6.dp))
+                    Row(verticalAlignment = Alignment.CenterVertically) {
+                        OutlinedTextField(
+                            value = pinText,
+                            onValueChange = { pinText = it },
+                            modifier = Modifier.weight(1f),
+                            keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.NumberPassword),
+                            visualTransformation = if (showPin) VisualTransformation.None else PasswordVisualTransformation(),
+                            trailingIcon = {
+                                IconButton(onClick = { showPin = !showPin }) {
+                                    Icon(
+                                        imageVector = if (showPin) Icons.Default.Visibility else Icons.Default.VisibilityOff,
+                                        contentDescription = "Toggle PIN",
+                                        tint = Slate400
+                                    )
+                                }
+                            },
+                            colors = OutlinedTextFieldDefaults.colors(
+                                focusedBorderColor = ElectricCyan,
+                                unfocusedBorderColor = SurfaceTier3,
+                                focusedTextColor = Color.White,
+                                unfocusedTextColor = Color.White
+                            )
+                        )
+                        Spacer(modifier = Modifier.width(8.dp))
+                        Button(
+                            onClick = {
+                                if (pinText.length == 6) {
+                                    onSavePin(pinText)
+                                    coroutineScope.launch { bleManager.changePairPin(pinText) }
+                                }
+                            },
+                            colors = ButtonDefaults.buttonColors(containerColor = ElectricCyan),
+                            shape = RoundedCornerShape(8.dp),
+                            modifier = Modifier.height(48.dp)
+                        ) {
+                            Text("Apply", color = CanvasVoid, fontWeight = FontWeight.Bold)
+                        }
+                    }
+                    if (pinText.length != 6) {
+                        Text("Passkey must be exactly 6 digits", color = CyberCrimson, fontSize = 10.sp, modifier = Modifier.padding(top = 4.dp))
+                    }
+
+                    Spacer(modifier = Modifier.height(16.dp))
+
+                    Text("ADMINISTRATOR PASSWORD (SUPERPWD)", fontFamily = FontFamily.Monospace, fontSize = 10.sp, color = Slate400)
+                    Spacer(modifier = Modifier.height(6.dp))
+                    Row(verticalAlignment = Alignment.CenterVertically) {
+                        OutlinedTextField(
+                            value = adminPinText,
+                            onValueChange = { adminPinText = it },
+                            modifier = Modifier.weight(1f),
+                            keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.NumberPassword),
+                            visualTransformation = if (showAdminPin) VisualTransformation.None else PasswordVisualTransformation(),
+                            trailingIcon = {
+                                IconButton(onClick = { showAdminPin = !showAdminPin }) {
+                                    Icon(
+                                        imageVector = if (showAdminPin) Icons.Default.Visibility else Icons.Default.VisibilityOff,
+                                        contentDescription = "Toggle Admin PIN",
+                                        tint = Slate400
+                                    )
+                                }
+                            },
+                            colors = OutlinedTextFieldDefaults.colors(
+                                focusedBorderColor = SecurityAmber,
+                                unfocusedBorderColor = SurfaceTier3,
+                                focusedTextColor = Color.White,
+                                unfocusedTextColor = Color.White
+                            )
+                        )
+                        Spacer(modifier = Modifier.width(8.dp))
+                        Button(
+                            onClick = {
+                                if (adminPinText.length == 8) {
+                                    onSaveAdminPin(adminPinText)
+                                    coroutineScope.launch { bleManager.changeAdminPassword(adminPinText) }
+                                }
+                            },
+                            colors = ButtonDefaults.buttonColors(containerColor = SecurityAmber),
+                            shape = RoundedCornerShape(8.dp),
+                            modifier = Modifier.height(48.dp)
+                        ) {
+                            Text("Apply", color = CanvasVoid, fontWeight = FontWeight.Bold)
+                        }
+                    }
+                    if (adminPinText.length != 8) {
+                        Text("Admin Password must be exactly 8 digits", color = CyberCrimson, fontSize = 10.sp, modifier = Modifier.padding(top = 4.dp))
+                    }
                 }
             }
 

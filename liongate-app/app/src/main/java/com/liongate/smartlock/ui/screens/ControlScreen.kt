@@ -73,6 +73,8 @@ fun ControlScreen(
     bleManager: BioLockBleManager,
     savedPin: String,
     onSavePin: (String) -> Unit,
+    savedAdminPin: String = "12345678",
+    onSaveAdminPin: (String) -> Unit = {},
     savedDeviceMac: String,
     savedDeviceName: String,
     onSaveDevice: (String, String) -> Unit,
@@ -169,7 +171,7 @@ fun ControlScreen(
                     .background(SurfaceTier2)
                     .border(2.dp, if (isUnlocked) SecurityEmerald else CyberCrimson, CircleShape)
                     .clickable(enabled = !isUnlocking && savedDeviceMac.isNotEmpty()) {
-                        bleManager.connectAndUnlock(savedDeviceMac, pinText)
+                        bleManager.unlock(savedDeviceMac, pinText, savedAdminPin)
                     },
                 contentAlignment = Alignment.Center
             ) {
